@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "package": "net.rizecookey.combatedit.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "server": [
+    "ItemMixin$MiningToolItemMixin",
+    "ItemMixin$SwordItemMixin",
+    "ItemMixin$TridentItemMixin",
+    "ItemsMixin",
+    "KnockbackMixin$LivingEntityKnockback",
+    "KnockbackMixin$PlayerEntityKnockback",
+    "PacketModiferMixin$ClientConnectionMixin",
+    "PlayerEntityMixin",
+    "PlayerManagerMixin",
+    "ServerPlayNetworkHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
