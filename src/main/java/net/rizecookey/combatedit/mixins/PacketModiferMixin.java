@@ -35,7 +35,7 @@ public class PacketModiferMixin {
             Packet<?> newPacket = packet;
             if (packet instanceof InventoryS2CPacket) {
                 InventoryS2CPacket inventoryS2CPacket = (InventoryS2CPacket) packet;
-                List<ItemStack> slotStackList = (List<ItemStack>) getFieldValue("slotStackList", inventoryS2CPacket);
+                List<ItemStack> slotStackList = (List<ItemStack>) getFieldValue("field_12147", inventoryS2CPacket);
                 List<ItemStack> modifiedStacks = DefaultedList.ofSize(slotStackList.size(), ItemStack.EMPTY);
                 for (ItemStack itemStack : slotStackList) {
                     modifiedStacks.set(slotStackList.indexOf(itemStack), fixItemStackData(itemStack));
@@ -44,7 +44,7 @@ public class PacketModiferMixin {
                 newPacket = inventoryS2CPacket;
             } else if (packet instanceof ContainerSlotUpdateS2CPacket) {
                 ContainerSlotUpdateS2CPacket containerSlotUpdateS2CPacket = (ContainerSlotUpdateS2CPacket) packet;
-                ItemStack itemStack = (ItemStack) getFieldValue("stack", containerSlotUpdateS2CPacket);
+                ItemStack itemStack = (ItemStack) getFieldValue("field_12153", containerSlotUpdateS2CPacket);
                 setFieldValue("stack", containerSlotUpdateS2CPacket, fixItemStackData(itemStack));
                 newPacket = containerSlotUpdateS2CPacket;
             }
