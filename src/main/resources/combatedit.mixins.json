@@ -9,7 +9,8 @@
     "ItemsMixin",
     "KnockbackMixin$LivingEntityKnockback",
     "KnockbackMixin$PlayerEntityKnockback",
-    "PacketModiferMixin$ClientConnectionMixin",
+    "PacketModifierMixin$ContainerSlotUpdateS2CPacketMixin",
+    "PacketModifierMixin$InventoryS2CMixin",
     "PlayerEntityMixin",
     "PlayerManagerMixin",
     "ServerPlayNetworkHandlerMixin"

@@ -1,4 +1,4 @@
-package net.rizecookey.combatedit.utils.item;
+package net.rizecookey.combatedit.item;
 
 import net.minecraft.item.ToolMaterial;
 

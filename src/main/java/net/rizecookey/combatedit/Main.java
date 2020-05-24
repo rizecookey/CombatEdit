@@ -10,7 +10,7 @@ public class Main implements ModInitializer {
     @Override
     public void onInitialize() {
         Logger logger = LogManager.getLogger();
-        logger.info("Successfully initialized CombatEdit.");
+        logger.info(prefix + " Successfully initialized.");
     }
 
 }
