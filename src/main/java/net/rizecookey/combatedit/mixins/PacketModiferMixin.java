@@ -40,12 +40,12 @@ public class PacketModiferMixin {
                 for (ItemStack itemStack : slotStackList) {
                     modifiedStacks.set(slotStackList.indexOf(itemStack), fixItemStackData(itemStack));
                 }
-                setFieldValue("slotStackList", inventoryS2CPacket, modifiedStacks);
+                setFieldValue("field_12147", inventoryS2CPacket, modifiedStacks);
                 newPacket = inventoryS2CPacket;
             } else if (packet instanceof ContainerSlotUpdateS2CPacket) {
                 ContainerSlotUpdateS2CPacket containerSlotUpdateS2CPacket = (ContainerSlotUpdateS2CPacket) packet;
                 ItemStack itemStack = (ItemStack) getFieldValue("field_12153", containerSlotUpdateS2CPacket);
-                setFieldValue("stack", containerSlotUpdateS2CPacket, fixItemStackData(itemStack));
+                setFieldValue("field_12153", containerSlotUpdateS2CPacket, fixItemStackData(itemStack));
                 newPacket = containerSlotUpdateS2CPacket;
             }
             return newPacket;
