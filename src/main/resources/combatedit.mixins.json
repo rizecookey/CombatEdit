@@ -2,20 +2,24 @@
   "required": true,
   "package": "net.rizecookey.combatedit.mixins",
   "compatibilityLevel": "JAVA_8",
-  "server": [
+  "mixins": [
     "ItemMixin$MiningToolItemMixin",
     "ItemMixin$SwordItemMixin",
     "ItemMixin$TridentItemMixin",
     "ItemsMixin",
     "KnockbackMixin$LivingEntityKnockback",
     "KnockbackMixin$PlayerEntityKnockback",
-    "PacketModifierMixin$ContainerSlotUpdateS2CPacketMixin",
-    "PacketModifierMixin$InventoryS2CMixin",
     "PlayerEntityMixin",
     "PlayerManagerMixin",
     "ServerPlayNetworkHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "server": [
+    "PacketModifierMixin$ClickWindowC2SPacketMixin",
+    "PacketModifierMixin$ContainerSlotUpdateS2CPacketMixin",
+    "PacketModifierMixin$CreativeInventoryActionC2SPacketMixin",
+    "PacketModifierMixin$InventoryS2CMixin"
+  ]
 }
