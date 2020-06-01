@@ -55,15 +55,4 @@ public abstract class ItemMixin {
             return false;
         }
     }
-    @Environment(EnvType.SERVER)
-    @Mixin(HoeItem.class)
-    public static class HoeItemMixin extends ToolItem {
-
-        public HoeItemMixin(ToolMaterial material, Settings settings) {
-            super(material, settings);
-        }
-
-        @Redirect(method = "getModifiers", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/Multimap;put(Ljava/lang/Object;Ljava/lang/Object;)Z", ordinal = 1))
-        public boolean cancelAttackSpeedModifier(Multimap multimap, Object key, Object value) { return false; }
-    }
 }
