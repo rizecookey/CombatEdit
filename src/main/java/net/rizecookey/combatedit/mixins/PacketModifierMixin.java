@@ -20,7 +20,6 @@ import java.util.List;
 
 public class PacketModifierMixin {
     //Server to Client packet modification
-    @Environment(EnvType.SERVER)
     @Mixin(InventoryS2CPacket.class)
     public static class InventoryS2CMixin {
         @Shadow private List<ItemStack> slotStackList;
@@ -34,7 +33,6 @@ public class PacketModifierMixin {
             this.slotStackList = modifiedSlotStackList;
         }
     }
-    @Environment(EnvType.SERVER)
     @Mixin(ContainerSlotUpdateS2CPacket.class)
     public static class ContainerSlotUpdateS2CPacketMixin {
         @Shadow private ItemStack stack;
@@ -45,7 +43,6 @@ public class PacketModifierMixin {
         }
     }
     //Client to Server packet modification
-    @Environment(EnvType.SERVER)
     @Mixin(ClickWindowC2SPacket.class)
     public static class ClickWindowC2SPacketMixin {
         @Shadow private ItemStack stack;
@@ -55,7 +52,6 @@ public class PacketModifierMixin {
             this.stack = AttributeHelper.reverseDisplayModifiers(this.stack);
         }
     }
-    @Environment(EnvType.SERVER)
     @Mixin(CreativeInventoryActionC2SPacket.class)
     public static class CreativeInventoryActionC2SPacketMixin {
         @Shadow private ItemStack stack;

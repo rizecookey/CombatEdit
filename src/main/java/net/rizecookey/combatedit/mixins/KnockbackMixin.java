@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 public class KnockbackMixin {
-    @Environment(EnvType.SERVER)
     @Mixin(LivingEntity.class)
     public static class LivingEntityKnockback {
         @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;takeKnockback(Lnet/minecraft/entity/Entity;FDD)V"))
@@ -26,7 +25,6 @@ public class KnockbackMixin {
             livingEntity.setVelocity(velocity);
         }
     }
-    @Environment(EnvType.SERVER)
     @Mixin(PlayerEntity.class)
     public static class PlayerEntityKnockback {
         @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;takeKnockback(Lnet/minecraft/entity/Entity;FDD)V"))

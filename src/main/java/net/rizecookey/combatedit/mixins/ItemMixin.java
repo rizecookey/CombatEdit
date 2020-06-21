@@ -11,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 public abstract class ItemMixin {
-    @Environment(EnvType.SERVER)
     @Mixin(SwordItem.class)
     public static class SwordItemMixin extends ToolItem {
 
@@ -24,7 +23,6 @@ public abstract class ItemMixin {
             return false;
         }
     }
-    @Environment(EnvType.SERVER)
     @Mixin(MiningToolItem.class)
     public static class MiningToolItemMixin extends ToolItem {
 
@@ -37,7 +35,6 @@ public abstract class ItemMixin {
             return false;
         }
     }
-    @Environment(EnvType.SERVER)
     @Mixin(TridentItem.class)
     public static class TridentItemMixin extends Item {
 
@@ -55,7 +52,6 @@ public abstract class ItemMixin {
             return false;
         }
     }
-    @Environment(EnvType.SERVER)
     @Mixin(HoeItem.class)
     public static class HoeItemMixin extends ToolItem {
 
