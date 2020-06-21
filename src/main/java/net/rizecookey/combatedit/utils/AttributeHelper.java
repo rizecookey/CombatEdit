@@ -2,9 +2,11 @@ package net.rizecookey.combatedit.utils;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.SetMultimap;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.*;
@@ -17,12 +19,12 @@ public class AttributeHelper {
     public static final String ORIGINAL_ATTRIBUTE_TAG = "UnmodifiedAttributeModifiers";
     public static final String IS_PACKET_MODIFIED_TAG = "isPacketModified";
 
-    public static Multimap<String, EntityAttributeModifier> getDisplayModifiers(ItemStack itemStack, EquipmentSlot equipmentSlot) {
-        Multimap<String, EntityAttributeModifier> displayModifiers = MultimapBuilder.hashKeys().hashSetValues().build(itemStack.getAttributeModifiers(equipmentSlot));
+    public static Multimap<EntityAttribute, EntityAttributeModifier> getDisplayModifiers(ItemStack itemStack, EquipmentSlot equipmentSlot) {
+        Multimap<EntityAttribute, EntityAttributeModifier> displayModifiers = MultimapBuilder.hashKeys().hashSetValues().build(itemStack.getAttributeModifiers(equipmentSlot));
         int sharpnessLevel = EnchantmentHelper.getLevel(Enchantments.SHARPNESS, itemStack.copy());
         if (sharpnessLevel > 0 && equipmentSlot.equals(EquipmentSlot.MAINHAND)) {
             float sharpnessDamage = 1 + (sharpnessLevel - 1) * 0.5f;
-            EntityAttributeModifier[] damageModifierArray = displayModifiers.get(EntityAttributes.ATTACK_DAMAGE.getId()).toArray(new EntityAttributeModifier[0]);
+            EntityAttributeModifier[] damageModifierArray = displayModifiers.get(EntityAttributes.GENERIC_ATTACK_DAMAGE).toArray(new EntityAttributeModifier[0]);
             int addSharpnessToIndex = 0;
             EntityAttributeModifier addSharpnessTo = null;
             for (int i = 0; i < damageModifierArray.length; i++) {
@@ -32,13 +34,13 @@ public class AttributeHelper {
                 }
             }
             if (addSharpnessTo != null) {
-                addSharpnessTo = new EntityAttributeModifier(addSharpnessTo.getName(), addSharpnessTo.getAmount() + sharpnessDamage, addSharpnessTo.getOperation());
+                addSharpnessTo = new EntityAttributeModifier(addSharpnessTo.getName(), addSharpnessTo.getValue() + sharpnessDamage, addSharpnessTo.getOperation());
                 damageModifierArray[addSharpnessToIndex] = addSharpnessTo;
-                displayModifiers.get(EntityAttributes.ATTACK_DAMAGE.getId()).clear();
-                displayModifiers.putAll(EntityAttributes.ATTACK_DAMAGE.getId(), Arrays.asList(damageModifierArray));
+                displayModifiers.get(EntityAttributes.GENERIC_ATTACK_DAMAGE).clear();
+                displayModifiers.putAll(EntityAttributes.GENERIC_ATTACK_DAMAGE, Arrays.asList(damageModifierArray));
             }
             else {
-                displayModifiers.put(EntityAttributes.ATTACK_DAMAGE.getId(), new EntityAttributeModifier("Packet sharpness modificiation", 1 + (sharpnessLevel - 1) * 0.5, EntityAttributeModifier.Operation.ADDITION));
+                displayModifiers.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier("Packet sharpness modification", 1 + (sharpnessLevel - 1) * 0.5, EntityAttributeModifier.Operation.ADDITION));
             }
         }
         return displayModifiers;
@@ -58,8 +60,8 @@ public class AttributeHelper {
                 modifiedStack.getTag().remove(ATTRIBUTE_TAG);
             }
             for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-                Multimap<String, EntityAttributeModifier> modifierMap = getDisplayModifiers(itemStack, equipmentSlot);
-                for (String entityAttribute : modifierMap.keys()) {
+                Multimap<EntityAttribute, EntityAttributeModifier> modifierMap = getDisplayModifiers(itemStack, equipmentSlot);
+                for (EntityAttribute entityAttribute : modifierMap.keys()) {
                     for (EntityAttributeModifier modifier : modifierMap.get(entityAttribute)) {
                         modifiedStack.addAttributeModifier(entityAttribute, modifier, equipmentSlot);
                     }

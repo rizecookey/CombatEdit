@@ -3,12 +3,12 @@ package net.rizecookey.combatedit.mixins;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.ClickWindowC2SPacket;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
-import net.minecraft.network.packet.s2c.play.ContainerSlotUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
-import net.minecraft.util.DefaultedList;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
+import net.minecraft.util.collection.DefaultedList;
 import net.rizecookey.combatedit.utils.AttributeHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,19 +23,19 @@ public class PacketModifierMixin {
     @Environment(EnvType.SERVER)
     @Mixin(InventoryS2CPacket.class)
     public static class InventoryS2CMixin {
-        @Shadow private List<ItemStack> slotStackList;
+        @Shadow private List<ItemStack> contents;
 
-        @Inject(method = "<init>(ILnet/minecraft/util/DefaultedList;)V", at = @At("TAIL"))
+        @Inject(method = "<init>(ILnet/minecraft/util/collection/DefaultedList;)V", at = @At("TAIL"))
         public void modifyItemStacks(int guiId, DefaultedList<ItemStack> slotStackList, CallbackInfo ci) {
-            List<ItemStack> modifiedSlotStackList = DefaultedList.ofSize(this.slotStackList.size(), ItemStack.EMPTY);
-            for (ItemStack itemStack : this.slotStackList) {
-                modifiedSlotStackList.set(this.slotStackList.indexOf(itemStack), AttributeHelper.changeDisplayModifiers(itemStack));
+            List<ItemStack> modifiedSlotStackList = DefaultedList.ofSize(this.contents.size(), ItemStack.EMPTY);
+            for (ItemStack itemStack : this.contents) {
+                modifiedSlotStackList.set(this.contents.indexOf(itemStack), AttributeHelper.changeDisplayModifiers(itemStack));
             }
-            this.slotStackList = modifiedSlotStackList;
+            this.contents = modifiedSlotStackList;
         }
     }
     @Environment(EnvType.SERVER)
-    @Mixin(ContainerSlotUpdateS2CPacket.class)
+    @Mixin(ScreenHandlerSlotUpdateS2CPacket.class)
     public static class ContainerSlotUpdateS2CPacketMixin {
         @Shadow private ItemStack stack;
 

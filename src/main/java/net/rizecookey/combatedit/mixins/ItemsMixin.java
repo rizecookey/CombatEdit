@@ -1,21 +1,17 @@
 package net.rizecookey.combatedit.mixins;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.Items;
+import net.minecraft.item.ToolItem;
 import net.minecraft.util.Identifier;
-import net.rizecookey.combatedit.item.AxeItem;
-import net.rizecookey.combatedit.item.PickaxeItem;
-import net.rizecookey.combatedit.item.SwordItem;
-import net.rizecookey.combatedit.item.ShovelItem;
-import net.rizecookey.combatedit.item.HoeItem;
+import net.rizecookey.combatedit.item.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Environment(EnvType.SERVER)
 @Mixin(Items.class)
 public abstract class ItemsMixin {
     @Shadow
@@ -36,7 +32,7 @@ public abstract class ItemsMixin {
             } else if (item instanceof net.minecraft.item.ShovelItem) {
                 newItem = new ShovelItem(((net.minecraft.item.ShovelItem) item).getMaterial(), 1.0f, 0f, (new Item.Settings()).group(ItemGroup.TOOLS));
             } else if (item instanceof net.minecraft.item.HoeItem) {
-                newItem = new HoeItem(((net.minecraft.item.HoeItem) item).getMaterial(), 0f, (new Item.Settings()).group(ItemGroup.TOOLS));
+                newItem = new HoeItem(((net.minecraft.item.HoeItem) item).getMaterial(), 0, 0f, (new Item.Settings()).group(ItemGroup.TOOLS));
             }
             Item registeredItem = register(new Identifier(id), newItem);
             cir.cancel();

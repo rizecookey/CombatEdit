@@ -1,7 +1,5 @@
 package net.rizecookey.combatedit.mixins;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -14,14 +12,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Objects;
 
-@Environment(EnvType.SERVER)
 @Mixin(ServerPlayNetworkHandler.class)
 public abstract class ServerPlayNetworkHandlerMixin {
     @Shadow public ServerPlayerEntity player;
     @Inject(method = "onDisconnected", at = @At("HEAD"))
     public void handleDisconnected(Text reason, CallbackInfo ci) {
-        if (player.getAttributes().get(EntityAttributes.ATTACK_SPEED) != null && player.getAttributes().get(EntityAttributes.ATTACK_SPEED).getBaseValue() == 20D) {
-            Objects.requireNonNull(player.getAttributes().get(EntityAttributes.ATTACK_SPEED)).setBaseValue(4D);
+        if (player.getAttributes().hasAttribute(EntityAttributes.GENERIC_ATTACK_SPEED) && player.getAttributes().getBaseValue(EntityAttributes.GENERIC_ATTACK_SPEED) == 20D) {
+            Objects.requireNonNull(player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED)).setBaseValue(4D);
         }
     }
 }
