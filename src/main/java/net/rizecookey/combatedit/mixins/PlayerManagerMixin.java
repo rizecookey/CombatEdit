@@ -1,7 +1,5 @@
 package net.rizecookey.combatedit.mixins;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.network.ClientConnection;
@@ -16,12 +14,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class PlayerManagerMixin {
     @Inject(method = "onPlayerConnect", at = @At("TAIL"))
     public void setupAttribute(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
-        EntityAttributeInstance attackSpeedInstance = player.getAttributeInstance(EntityAttributes.ATTACK_SPEED);
+        EntityAttributeInstance attackSpeedInstance = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
         if (attackSpeedInstance != null) {
             attackSpeedInstance.setBaseValue(20D);
-        }
-        else {
-            player.getAttributes().register(EntityAttributes.ATTACK_SPEED).setBaseValue(20D);
         }
     }
 }
