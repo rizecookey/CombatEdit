@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
+    PlayerEntity instance = (PlayerEntity) (Object) this;
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> type, World world) {
         super(type, world);
@@ -35,12 +36,12 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         if (sound != SoundEvents.ENTITY_PLAYER_ATTACK_KNOCKBACK && sound != SoundEvents.ENTITY_PLAYER_ATTACK_NODAMAGE && sound != SoundEvents.ENTITY_PLAYER_ATTACK_STRONG && sound != SoundEvents.ENTITY_PLAYER_ATTACK_WEAK && sound != SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP) {
             world.playSound(player, x, y, z, sound, category, volume, pitch);
         }
+        System.out.println(((PlayerEntity) (Object) this).getAttributeBaseValue(EntityAttributes.GENERIC_ATTACK_SPEED));
     }
 
     @ModifyVariable(method = "attack", name = "bl4", ordinal = 0, at = @At("FIELD"))
     public boolean checkIfSweepEnchant(boolean bl4) {
-        PlayerEntity playerEntity = (PlayerEntity) (Object) this;
-        if (EnchantmentHelper.getEquipmentLevel(Enchantments.SWEEPING, playerEntity) == 0) {
+        if (EnchantmentHelper.getEquipmentLevel(Enchantments.SWEEPING, instance) == 0) {
             bl4 = false;
         }
         return bl4;

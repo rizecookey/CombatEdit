@@ -11,6 +11,7 @@
     "KnockbackMixin$PlayerEntityKnockback",
     "PlayerEntityMixin",
     "PlayerManagerMixin",
+    "ServerPlayerEntityMixin",
     "ServerPlayNetworkHandlerMixin"
   ],
   "injectors": {
