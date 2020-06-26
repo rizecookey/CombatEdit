@@ -36,7 +36,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         if (sound != SoundEvents.ENTITY_PLAYER_ATTACK_KNOCKBACK && sound != SoundEvents.ENTITY_PLAYER_ATTACK_NODAMAGE && sound != SoundEvents.ENTITY_PLAYER_ATTACK_STRONG && sound != SoundEvents.ENTITY_PLAYER_ATTACK_WEAK && sound != SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP) {
             world.playSound(player, x, y, z, sound, category, volume, pitch);
         }
-        System.out.println(((PlayerEntity) (Object) this).getAttributeBaseValue(EntityAttributes.GENERIC_ATTACK_SPEED));
     }
 
     @ModifyVariable(method = "attack", name = "bl4", ordinal = 0, at = @At("FIELD"))
