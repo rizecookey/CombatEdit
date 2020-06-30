@@ -3,6 +3,7 @@
   "package": "net.rizecookey.combatedit.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "ItemMixin$BaseItemMixin",
     "ItemMixin$MiningToolItemMixin",
     "ItemMixin$SwordItemMixin",
     "ItemMixin$TridentItemMixin",

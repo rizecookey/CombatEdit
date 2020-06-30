@@ -26,6 +26,7 @@ public class KnockbackMixin {
     public static class PlayerEntityKnockback {
         @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;takeKnockback(FDD)V"))
         public void handleTakeKnockback(LivingEntity livingEntity, float speed, double xMovement, double zMovement) {
+            speed = (float)((double)speed * (1.0D - livingEntity.getAttributeInstance(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE).getValue()));
             livingEntity.addVelocity(- (xMovement * speed), 0.1D, - (zMovement * speed));
         }
     }

@@ -21,18 +21,19 @@ public abstract class ItemsMixin {
 
     @Inject(method = "register(Ljava/lang/String;Lnet/minecraft/item/Item;)Lnet/minecraft/item/Item;", at = @At(value = "HEAD"), cancellable = true)
     private static void handleRegisterItem(String id, Item item, CallbackInfoReturnable<Item> cir) {
+        Item.Settings originalSettings = ((ExtendedItem) item).getSettings();
         if (item instanceof ToolItem) {
             Item newItem = item;
             if (item instanceof net.minecraft.item.AxeItem) {
-                newItem = new AxeItem(((net.minecraft.item.AxeItem) item).getMaterial(), 3.0F, 0f, (new Item.Settings()).group(ItemGroup.TOOLS));
+                newItem = new AxeItem(((net.minecraft.item.AxeItem) item).getMaterial(), 3.0F, 0f, originalSettings);
             } else if (item instanceof net.minecraft.item.SwordItem) {
-                newItem = new SwordItem(((net.minecraft.item.SwordItem) item).getMaterial(), 4, 0.0f, (new Item.Settings()).group(ItemGroup.COMBAT));
+                newItem = new SwordItem(((net.minecraft.item.SwordItem) item).getMaterial(), 4, 0.0f, originalSettings);
             } else if (item instanceof net.minecraft.item.PickaxeItem) {
-                newItem = new PickaxeItem(((net.minecraft.item.PickaxeItem) item).getMaterial(), 2, 0f, (new Item.Settings()).group(ItemGroup.TOOLS));
+                newItem = new PickaxeItem(((net.minecraft.item.PickaxeItem) item).getMaterial(), 2, 0f, originalSettings);
             } else if (item instanceof net.minecraft.item.ShovelItem) {
-                newItem = new ShovelItem(((net.minecraft.item.ShovelItem) item).getMaterial(), 1.0f, 0f, (new Item.Settings()).group(ItemGroup.TOOLS));
+                newItem = new ShovelItem(((net.minecraft.item.ShovelItem) item).getMaterial(), 1.0f, 0f, originalSettings);
             } else if (item instanceof net.minecraft.item.HoeItem) {
-                newItem = new HoeItem(((net.minecraft.item.HoeItem) item).getMaterial(), 0, 0f, (new Item.Settings()).group(ItemGroup.TOOLS));
+                newItem = new HoeItem(((net.minecraft.item.HoeItem) item).getMaterial(), 0, 0f, originalSettings);
             }
             Item registeredItem = register(new Identifier(id), newItem);
             cir.cancel();

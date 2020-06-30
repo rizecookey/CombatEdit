@@ -6,13 +6,35 @@ import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.*;
+import net.rizecookey.combatedit.item.ExtendedItem;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 public abstract class ItemMixin {
+    @Mixin(Item.class)
+    public static class BaseItemMixin implements ExtendedItem {
+        private final Item instance = (Item) (Object) this;
+        private Item.Settings settings = new Item.Settings();
+
+        @Inject(method = "<init>", at = @At("TAIL"))
+        public void initSettings(Item.Settings settings, CallbackInfo ci) {
+            this.settings = settings;
+        }
+
+        public Item.Settings getSettings() {
+            return settings;
+        }
+
+        public Item item() {
+            return instance;
+        }
+
+    }
     @Mixin(SwordItem.class)
     public static class SwordItemMixin extends ToolItem {
 
