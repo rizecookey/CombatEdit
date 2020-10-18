@@ -1,7 +1,5 @@
 package net.rizecookey.combatedit.mixins;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.ClickWindowC2SPacket;
@@ -18,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-public class PacketModifierMixin {
+public abstract class PacketModifierMixin {
     //Server to Client packet modification
     @Mixin(InventoryS2CPacket.class)
     public static class InventoryS2CMixin {

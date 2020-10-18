@@ -18,10 +18,6 @@ repositories {
 	maven { url = "https://minecraft.curseforge.com/api/maven" }
 	maven { url = 'http://maven.sargunv.s3-website-us-west-2.amazonaws.com/' }
 	mavenCentral()
-	maven {
-		name = 'sponge'
-		url = 'https://repo.spongepowered.org/maven'
-	}
 }
 
 dependencies {

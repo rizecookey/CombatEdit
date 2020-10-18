@@ -61,9 +61,6 @@ public abstract class ItemMixin {
     }
     @Mixin(TridentItem.class)
     public static class TridentItemMixin extends Item {
-
-        @Shadow @Final private Multimap<EntityAttribute, EntityAttributeModifier> field_23746;
-
         public TridentItemMixin(Settings settings) {
             super(settings);
         }
