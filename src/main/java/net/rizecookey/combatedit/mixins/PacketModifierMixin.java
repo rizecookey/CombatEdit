@@ -2,7 +2,7 @@ package net.rizecookey.combatedit.mixins;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.c2s.play.ClickWindowC2SPacket;
+import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
@@ -41,7 +41,7 @@ public abstract class PacketModifierMixin {
         }
     }
     //Client to Server packet modification
-    @Mixin(ClickWindowC2SPacket.class)
+    @Mixin(ClickSlotC2SPacket.class)
     public static class ClickWindowC2SPacketMixin {
         @Shadow private ItemStack stack;
 
