@@ -2,23 +2,30 @@ package net.rizecookey.combatedit.item;
 
 import net.minecraft.item.*;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+
 public class WeaponStats {
-    public static float getAttackDamage(Class<? extends Item> itemClass, ToolMaterial material) {
-        if (SwordItem.class.isAssignableFrom(itemClass)) {
-            return material.getAttackDamage() + 4.0F;
-        }
-        else if (AxeItem.class.isAssignableFrom(itemClass)) {
-            return material.getAttackDamage() + 3.0F;
-        }
-        else if (PickaxeItem.class.isAssignableFrom(itemClass)) {
-            return material.getAttackDamage() + 2.0F;
-        }
-        else if (ShovelItem.class.isAssignableFrom(itemClass)) {
-            return material.getAttackDamage() + 1.0F;
-        }
-        else if (HoeItem.class.isAssignableFrom(itemClass)) {
-            return material.getAttackDamage();
+    static Map<Class<? extends ToolItem>, Function<ToolItem, Float>> damageOverrides = new HashMap<>();
+
+    static {
+        damageOverrides.put(SwordItem.class, toolItem -> toolItem.getMaterial().getAttackDamage() + 4.0F);
+        damageOverrides.put(AxeItem.class, toolItem -> toolItem.getMaterial().getAttackDamage() + 3.0F);
+        damageOverrides.put(PickaxeItem.class, toolItem -> toolItem.getMaterial().getAttackDamage() + 2.0F);
+        damageOverrides.put(ShovelItem.class, toolItem -> toolItem.getMaterial().getAttackDamage() + 1.0F);
+        damageOverrides.put(HoeItem.class, toolItem -> toolItem.getMaterial().getAttackDamage());
+    }
+
+    public static float getAttackDamage(ToolItem toolItem) {
+        Class<? extends ToolItem> toolClass = toolItem.getClass();
+        if (damageOverrides.containsKey(toolClass)) {
+            return damageOverrides.get(toolClass).apply(toolItem);
         }
         return 0.0F;
+    }
+
+    public static boolean changeAttackDamage(ToolItem toolItem) {
+        return toolItem.getMaterial() != null && damageOverrides.containsKey(toolItem.getClass());
     }
 }
