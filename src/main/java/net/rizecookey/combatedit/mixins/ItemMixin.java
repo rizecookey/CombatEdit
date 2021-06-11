@@ -28,7 +28,7 @@ public abstract class ItemMixin {
         @Redirect(method = "<init>", at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/item/SwordItem;attackDamage:F"))
         public void changeAttackDamage(SwordItem swordItem, float f) {
             if (WeaponStats.changeAttackDamage(swordItem))
-                this.attackDamage = WeaponStats.getAttackDamage(this);
+                this.attackDamage = WeaponStats.getAttackDamage(this, f);
         }
 
         @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMultimap$Builder;put(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMultimap$Builder;", ordinal = 1))
@@ -49,7 +49,7 @@ public abstract class ItemMixin {
         @Redirect(method = "<init>", at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/item/MiningToolItem;attackDamage:F"))
         public void changeAttackDamage(MiningToolItem miningToolItem, float value) {
             if (WeaponStats.changeAttackDamage(miningToolItem))
-                this.attackDamage = WeaponStats.getAttackDamage(this);
+                this.attackDamage = WeaponStats.getAttackDamage(this, value);
         }
 
         @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMultimap$Builder;put(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMultimap$Builder;", ordinal = 1))

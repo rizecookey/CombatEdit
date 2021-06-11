@@ -17,12 +17,12 @@ public class WeaponStats {
         damageOverrides.put(HoeItem.class, toolItem -> toolItem.getMaterial().getAttackDamage());
     }
 
-    public static float getAttackDamage(ToolItem toolItem) {
+    public static float getAttackDamage(ToolItem toolItem, float fallback) {
         Class<? extends ToolItem> toolClass = toolItem.getClass();
         if (damageOverrides.containsKey(toolClass)) {
             return damageOverrides.get(toolClass).apply(toolItem);
         }
-        return 0.0F;
+        return fallback;
     }
 
     public static boolean changeAttackDamage(ToolItem toolItem) {
