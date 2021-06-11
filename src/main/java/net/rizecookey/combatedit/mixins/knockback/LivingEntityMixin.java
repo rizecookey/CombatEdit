@@ -1,22 +1,28 @@
 package net.rizecookey.combatedit.mixins.knockback;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
-    @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;takeKnockback(FDD)V"))
-    public void handleTakeKnockback(LivingEntity livingEntity, float speed, double xMovement, double zMovement) {
-        speed = (float) ((double) speed * (1.0D - livingEntity.getAttributeInstance(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE).getValue()));
-        Vec3d velocity = livingEntity.getVelocity().multiply(0.5D).add(new Vec3d(-xMovement, 0.0D, -zMovement).normalize().multiply(speed)).add(0.0D, speed, 0.0D);
-        if (velocity.getY() > 0.4D) {
-            velocity.multiply(1.0D, 0.0D, 1.0D);
-            velocity.add(0.0D, 0.4D, 0.0D);
-        }
-        livingEntity.setVelocity(velocity);
+    @Unique private Vec3d cache_vec3d;
+    @Unique private float cache_f;
+    @Inject(method = "takeKnockback", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(DDD)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
+    public void loadVec3d(float f, double d, double e, CallbackInfo ci, Vec3d vec3d, Vec3d vec3d2) {
+        this.cache_f = f;
+        this.cache_vec3d = vec3d;
+    }
+
+    @ModifyArg(method = "takeKnockback", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(DDD)V"), index = 1)
+    public double changeKnockbackY(double y) {
+        y = cache_vec3d.y / 2.0 + cache_f;
+        return cache_vec3d.y > 0.4D ? 0.4D : y;
     }
 }
