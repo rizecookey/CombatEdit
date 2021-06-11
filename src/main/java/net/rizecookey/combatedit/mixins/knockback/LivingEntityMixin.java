@@ -13,9 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
     @Unique private Vec3d cache_vec3d;
-    @Unique private float cache_f;
+    @Unique private double cache_f;
     @Inject(method = "takeKnockback", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(DDD)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
-    public void loadVec3d(float f, double d, double e, CallbackInfo ci, Vec3d vec3d, Vec3d vec3d2) {
+    public void loadVec3d(double f, double d, double e, CallbackInfo ci, Vec3d vec3d, Vec3d vec3d2) {
         this.cache_f = f;
         this.cache_vec3d = vec3d;
     }

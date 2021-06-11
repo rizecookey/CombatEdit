@@ -1,7 +1,11 @@
 {
   "required": true,
+  "minVersion": "0.8",
   "package": "net.rizecookey.combatedit.mixins",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_16",
+  "injectors": {
+    "defaultRequire": 1
+  },
   "mixins": [
     "ItemsMixin",
     "PlayerEntityMixin",
@@ -14,9 +18,6 @@
     "knockback.LivingEntityMixin",
     "knockback.PlayerEntityMixin"
   ],
-  "injectors": {
-    "defaultRequire": 1
-  },
   "server": [
     "packetmodifiers.c2s.ClickWindowC2SPacketMixin",
     "packetmodifiers.c2s.CreativeInventoryActionC2SPacketMixin",
