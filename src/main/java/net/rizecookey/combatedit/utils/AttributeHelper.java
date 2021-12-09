@@ -53,13 +53,13 @@ public class AttributeHelper {
         if ((itemStack.getItem() instanceof SwordItem
                 || itemStack.getItem() instanceof ToolItem
                 || itemStack.getItem() instanceof TridentItem)
-                && (!itemStack.hasTag()
-                || !itemStack.getTag().contains(IS_PACKET_MODIFIED_TAG)
-                || !itemStack.getTag().getBoolean(IS_PACKET_MODIFIED_TAG))) {
-            modifiedStack.getOrCreateTag().putBoolean(IS_PACKET_MODIFIED_TAG, true);
-            if (itemStack.hasTag() && itemStack.getTag().contains(ATTRIBUTE_TAG)) {
-                modifiedStack.getTag().put(ORIGINAL_ATTRIBUTE_TAG, itemStack.getTag().get(ATTRIBUTE_TAG));
-                modifiedStack.getTag().remove(ATTRIBUTE_TAG);
+                && (!itemStack.hasNbt()
+                || !itemStack.getNbt().contains(IS_PACKET_MODIFIED_TAG)
+                || !itemStack.getNbt().getBoolean(IS_PACKET_MODIFIED_TAG))) {
+            modifiedStack.getOrCreateNbt().putBoolean(IS_PACKET_MODIFIED_TAG, true);
+            if (itemStack.hasNbt() && itemStack.getNbt().contains(ATTRIBUTE_TAG)) {
+                modifiedStack.getNbt().put(ORIGINAL_ATTRIBUTE_TAG, itemStack.getNbt().get(ATTRIBUTE_TAG));
+                modifiedStack.getNbt().remove(ATTRIBUTE_TAG);
             }
             for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
                 Multimap<EntityAttribute, EntityAttributeModifier> modifierMap = getDisplayModifiers(itemStack, equipmentSlot);
@@ -75,15 +75,15 @@ public class AttributeHelper {
 
     public static ItemStack reverseDisplayModifiers(ItemStack itemStack) {
         ItemStack reversedStack = itemStack.copy();
-        if (itemStack.hasTag() && itemStack.getTag().contains(IS_PACKET_MODIFIED_TAG) && itemStack.getTag().getBoolean(IS_PACKET_MODIFIED_TAG)) {
-            if (itemStack.getTag().contains(ORIGINAL_ATTRIBUTE_TAG)) {
-                reversedStack.getTag().put(ATTRIBUTE_TAG, reversedStack.getTag().get(ORIGINAL_ATTRIBUTE_TAG));
-                reversedStack.getTag().remove(ORIGINAL_ATTRIBUTE_TAG);
+        if (itemStack.hasNbt() && itemStack.getNbt().contains(IS_PACKET_MODIFIED_TAG) && itemStack.getNbt().getBoolean(IS_PACKET_MODIFIED_TAG)) {
+            if (itemStack.getNbt().contains(ORIGINAL_ATTRIBUTE_TAG)) {
+                reversedStack.getNbt().put(ATTRIBUTE_TAG, reversedStack.getNbt().get(ORIGINAL_ATTRIBUTE_TAG));
+                reversedStack.getNbt().remove(ORIGINAL_ATTRIBUTE_TAG);
             }
             else {
-                reversedStack.getTag().remove(ATTRIBUTE_TAG);
+                reversedStack.getNbt().remove(ATTRIBUTE_TAG);
             }
-            reversedStack.getTag().remove(IS_PACKET_MODIFIED_TAG);
+            reversedStack.getNbt().remove(IS_PACKET_MODIFIED_TAG);
         }
         return reversedStack;
     }

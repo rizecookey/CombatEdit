@@ -28,7 +28,7 @@ public abstract class SwordItemMixin extends ToolItem implements DamageToolItem 
         super(material, settings);
     }
 
-    @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMultimap$Builder;put(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMultimap$Builder;", ordinal = 1))
+    @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMultimap$Builder;put(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMultimap$Builder;", ordinal = 1, remap = false))
     public ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> cancelAttackSpeedModifier(ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder, Object key, Object value) {
         return builder;
     }
