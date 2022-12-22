@@ -1,6 +1,11 @@
 package net.rizecookey.combatedit.item;
 
-import net.minecraft.item.*;
+import net.minecraft.item.AxeItem;
+import net.minecraft.item.HoeItem;
+import net.minecraft.item.PickaxeItem;
+import net.minecraft.item.ShovelItem;
+import net.minecraft.item.SwordItem;
+import net.minecraft.item.ToolItem;
 
 import java.util.HashMap;
 import java.util.Map;
