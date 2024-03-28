@@ -12,6 +12,7 @@
     "PlayerManagerMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkHandlerMixin",
+    "extension.EntityAttributeModifierMixin",
     "item.MiningToolItemMixin",
     "item.SwordItemMixin",
     "item.TridentItemMixin",

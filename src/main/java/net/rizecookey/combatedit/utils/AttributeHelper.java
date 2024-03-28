@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolItem;
 import net.minecraft.item.TridentItem;
+import net.rizecookey.combatedit.extension.EntityAttributeModifierExtension;
 
 import java.util.Arrays;
 
@@ -36,7 +37,8 @@ public class AttributeHelper {
                 }
             }
             if (addSharpnessTo != null) {
-                addSharpnessTo = new EntityAttributeModifier(addSharpnessTo.getName(), addSharpnessTo.getValue() + sharpnessDamage, addSharpnessTo.getOperation());
+                addSharpnessTo = new EntityAttributeModifier(((EntityAttributeModifierExtension) addSharpnessTo).getName(),
+                        addSharpnessTo.getValue() + sharpnessDamage, addSharpnessTo.getOperation());
                 damageModifierArray[addSharpnessToIndex] = addSharpnessTo;
                 displayModifiers.get(EntityAttributes.GENERIC_ATTACK_DAMAGE).clear();
                 displayModifiers.putAll(EntityAttributes.GENERIC_ATTACK_DAMAGE, Arrays.asList(damageModifierArray));
