@@ -40,7 +40,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @ModifyVariable(method = "attack", ordinal = 3, at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z", shift = At.Shift.BEFORE))
     public boolean checkIfSweepEnchant(boolean bl4) {
-        if (EnchantmentHelper.getEquipmentLevel(Enchantments.SWEEPING, instance) == 0) {
+        if (EnchantmentHelper.getEquipmentLevel(Enchantments.SWEEPING_EDGE, instance) == 0) {
             bl4 = false;
         }
         return bl4;

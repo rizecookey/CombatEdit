@@ -47,7 +47,7 @@ public abstract class SwordItemMixin extends ToolItem implements DamageToolItem 
                 builder.put(entry.getKey(), entry.getValue());
             }
         }
-        builder.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(ATTACK_DAMAGE_MODIFIER_ID, "Tool modifier", this.attackDamage, EntityAttributeModifier.Operation.ADDITION));
+        builder.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(ATTACK_DAMAGE_MODIFIER_ID, "Tool modifier", this.attackDamage, EntityAttributeModifier.Operation.ADD_VALUE));
 
         this.attributeModifiers = builder.build();
     }

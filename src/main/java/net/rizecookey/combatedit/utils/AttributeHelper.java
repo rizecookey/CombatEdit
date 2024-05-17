@@ -31,7 +31,7 @@ public class AttributeHelper {
             int addSharpnessToIndex = 0;
             EntityAttributeModifier addSharpnessTo = null;
             for (int i = 0; i < damageModifierArray.length; i++) {
-                if (damageModifierArray[i].getOperation().equals(EntityAttributeModifier.Operation.ADDITION)) {
+                if (damageModifierArray[i].getOperation().equals(EntityAttributeModifier.Operation.ADD_VALUE)) {
                     addSharpnessToIndex = i;
                     addSharpnessTo = damageModifierArray[i];
                 }
@@ -44,7 +44,7 @@ public class AttributeHelper {
                 displayModifiers.putAll(EntityAttributes.GENERIC_ATTACK_DAMAGE, Arrays.asList(damageModifierArray));
             }
             else {
-                displayModifiers.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier("Packet sharpness modification", 1 + (sharpnessLevel - 1) * 0.5, EntityAttributeModifier.Operation.ADDITION));
+                displayModifiers.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier("Packet sharpness modification", 1 + (sharpnessLevel - 1) * 0.5, EntityAttributeModifier.Operation.ADD_VALUE));
             }
         }
         return displayModifiers;
