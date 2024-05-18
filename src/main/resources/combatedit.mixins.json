@@ -7,15 +7,9 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "ItemsMixin",
     "PlayerEntityMixin",
-    "PlayerManagerMixin",
-    "ServerPlayerEntityMixin",
-    "ServerPlayNetworkHandlerMixin",
-    "extension.EntityAttributeModifierMixin",
-    "item.MiningToolItemMixin",
-    "item.SwordItemMixin",
-    "item.TridentItemMixin",
+    "compatibility.PlayerManagerMixin",
+    "item.ItemMixin",
     "knockback.LivingEntityMixin",
     "knockback.PlayerEntityMixin"
   ],

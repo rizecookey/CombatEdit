@@ -17,12 +17,14 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.rizecookey.combatedit.Main"
+      "net.rizecookey.combatedit.CombatEdit"
     ]
   },
   "mixins": [
     "combatedit.mixins.json"
   ],
+
+  "accessWidener": "combatedit.accesswidener",
 
   "depends": {
     "fabricloader": ">=0.12.0",

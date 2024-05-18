@@ -11,6 +11,10 @@ base {
 	archivesName = project.archives_base_name
 }
 
+loom {
+	accessWidenerPath = file("src/main/resources/combatedit.accesswidener")
+}
+
 repositories {
 	maven { url = "https://maven.fabricmc.net/" }
 	mavenCentral()
