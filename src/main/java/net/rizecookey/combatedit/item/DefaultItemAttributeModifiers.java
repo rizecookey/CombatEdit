@@ -1,5 +1,6 @@
 package net.rizecookey.combatedit.item;
 
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -23,17 +24,13 @@ public class DefaultItemAttributeModifiers implements ItemAttributeModifierProvi
             AxeItem.class, 3.0,
             PickaxeItem.class, 2.0,
             ShovelItem.class, 1.0,
-            HoeItem.class, 0.0
+            HoeItem.class, 2.0
     );
 
     @Override
     public AttributeModifiersComponent getModifiers(Identifier id, Item item) {
-        if (item instanceof TridentItem) {
-            return withDamageOnly(6.0D);
-        }
-
         if (!(item instanceof SwordItem) && !(item instanceof MiningToolItem)) {
-            return AttributeModifiersComponent.DEFAULT;
+            return stripAttackSpeedModifiers(item);
         }
 
         ToolItem toolItem = (ToolItem) item;
@@ -51,8 +48,28 @@ public class DefaultItemAttributeModifiers implements ItemAttributeModifierProvi
                 .build();
     }
 
+    private static AttributeModifiersComponent stripAttackSpeedModifiers(Item item) {
+        AttributeModifiersComponent original = item.getComponents().getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
+        if (original.modifiers().stream().noneMatch(modifier -> modifier.attribute().equals(EntityAttributes.GENERIC_ATTACK_SPEED))) {
+            return original;
+        }
+
+        AttributeModifiersComponent.Builder newModifiers = AttributeModifiersComponent.builder();
+        for (AttributeModifiersComponent.Entry entry : original.modifiers()) {
+            if (entry.attribute().equals(EntityAttributes.GENERIC_ATTACK_SPEED)) {
+                continue;
+            }
+
+            newModifiers.add(entry.attribute(), entry.modifier(), entry.slot());
+        }
+
+        return newModifiers.build();
+    }
+
     @Override
     public boolean shouldModifyItem(Identifier id, Item item) {
-        return item instanceof MiningToolItem || item instanceof SwordItem || item instanceof TridentItem;
+        return item instanceof MiningToolItem || item instanceof SwordItem || item instanceof TridentItem
+                || item.getComponents().getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT).modifiers()
+                .stream().anyMatch(modifier -> modifier.attribute().equals(EntityAttributes.GENERIC_ATTACK_SPEED));
     }
 }
