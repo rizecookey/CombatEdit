@@ -11,11 +11,13 @@ import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.Configuration;
+import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtension;
 import net.rizecookey.combatedit.extension.ItemExtension;
 import net.rizecookey.combatedit.item.DefaultEntityAttributeModifiers;
+import net.rizecookey.combatedit.item.DefaultItemAttributeModifiers;
 import net.rizecookey.combatedit.item.EntityAttributeModifierProvider;
 import net.rizecookey.combatedit.item.ItemAttributeModifierProvider;
-import net.rizecookey.combatedit.item.DefaultItemAttributeModifiers;
+import net.rizecookey.combatedit.utils.ItemStackAttributeHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,12 +26,14 @@ public class CombatEdit implements ModInitializer {
     private static final Logger LOGGER = LogManager.getLogger(CombatEdit.class);
 
     private Configuration config;
+    private ItemStackAttributeHelper attributeHelper;
 
     @Override
     public void onInitialize() {
         INSTANCE = this;
 
         setConfig(new Configuration(new DefaultItemAttributeModifiers(), new DefaultEntityAttributeModifiers()));
+        attributeHelper = new ItemStackAttributeHelper(this);
 
         LOGGER.info("Successfully initialized CombatEdit.");
     }
@@ -73,7 +77,9 @@ public class CombatEdit implements ModInitializer {
                 continue;
             }
 
-            builder.put(type, modifierProvider.getModifiers(id, type));
+            DefaultAttributeContainer modifiers = modifierProvider.getModifiers(id, type);
+            ((DefaultAttributeContainerExtension) modifiers).combatEdit$setSendAllAttributes(true);
+            builder.put(type, modifiers);
             LOGGER.debug("Added modification for entity type {}", id);
         }
 
@@ -82,6 +88,10 @@ public class CombatEdit implements ModInitializer {
 
     public Configuration getConfig() {
         return config;
+    }
+
+    public ItemStackAttributeHelper getAttributeHelper() {
+        return attributeHelper;
     }
 
     public static CombatEdit getInstance() {

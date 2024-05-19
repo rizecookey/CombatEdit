@@ -8,15 +8,16 @@
   },
   "mixins": [
     "PlayerEntityMixin",
-    "compatibility.PlayerManagerMixin",
+    "compatibility.AttributeContainerMixin",
+    "compatibility.DefaultAttributeContainerMixin",
     "item.ItemMixin",
     "knockback.LivingEntityMixin",
     "knockback.PlayerEntityMixin"
   ],
   "server": [
-    "packetmodifiers.c2s.ClickWindowC2SPacketMixin",
-    "packetmodifiers.c2s.CreativeInventoryActionC2SPacketMixin",
-    "packetmodifiers.s2c.ContainerSlotUpdateS2CPacketMixin",
-    "packetmodifiers.s2c.InventoryS2CMixin"
+    "compatibility.c2s.ClickWindowC2SPacketMixin",
+    "compatibility.c2s.CreativeInventoryActionC2SPacketMixin",
+    "compatibility.s2c.ContainerSlotUpdateS2CPacketMixin",
+    "compatibility.s2c.InventoryS2CMixin"
   ]
 }
