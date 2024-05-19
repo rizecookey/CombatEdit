@@ -12,7 +12,8 @@
     "compatibility.DefaultAttributeContainerMixin",
     "item.ItemMixin",
     "knockback.LivingEntityMixin",
-    "knockback.PlayerEntityMixin"
+    "knockback.PlayerEntityMixin",
+    "server.MinecraftServerMixin"
   ],
   "server": [
     "compatibility.c2s.ClickWindowC2SPacketMixin",
