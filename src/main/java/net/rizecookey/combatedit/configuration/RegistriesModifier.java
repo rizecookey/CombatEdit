@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtension;
 import net.rizecookey.combatedit.extension.ItemExtension;
-import net.rizecookey.combatedit.item.EntityAttributeModifierProvider;
+import net.rizecookey.combatedit.entity.EntityAttributeModifierProvider;
 import net.rizecookey.combatedit.item.ItemAttributeModifierProvider;
 
 import java.util.HashMap;

@@ -3,7 +3,7 @@ package net.rizecookey.combatedit;
 import net.fabricmc.api.ModInitializer;
 import net.rizecookey.combatedit.configuration.Configuration;
 import net.rizecookey.combatedit.configuration.RegistriesModifier;
-import net.rizecookey.combatedit.item.DefaultEntityAttributeModifiers;
+import net.rizecookey.combatedit.entity.DefaultEntityAttributeModifiers;
 import net.rizecookey.combatedit.item.DefaultItemAttributeModifiers;
 import net.rizecookey.combatedit.utils.ItemStackAttributeHelper;
 import org.apache.logging.log4j.LogManager;
