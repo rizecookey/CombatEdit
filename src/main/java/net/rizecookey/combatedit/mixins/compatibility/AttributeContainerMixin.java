@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @Mixin(AttributeContainer.class)
@@ -37,11 +38,23 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
     private void setSendAllAttributes(DefaultAttributeContainer defaultAttributes, CallbackInfo ci) {
         DefaultAttributeContainerExtension extendedContainer = (DefaultAttributeContainerExtension) defaultAttributes;
         combatEdit$sendAllAttributes = extendedContainer.combatEdit$sendAllAttributes();
-        if (combatEdit$sendAllAttributes) {
-            for (var instance : extendedContainer.combatEdit$getInstances()) {
-                updateTrackedStatus(instance);
-            }
+    }
+
+    @Inject(method = "getTracked", at = @At("HEAD"))
+    private void potentiallyAddAllRemainingAttributes(CallbackInfoReturnable<Set<EntityAttributeInstance>> cir) {
+        if (!combatEdit$sendAllAttributes) {
+            return;
         }
+
+        for (var instance : ((DefaultAttributeContainerExtension) fallback).combatEdit$getInstances()) {
+            if (custom.containsKey(instance.getAttribute())) {
+                continue;
+            }
+
+            updateTrackedStatus(instance);
+        }
+
+        combatEdit$sendAllAttributes = false;
     }
 
     @Inject(method = "getAttributesToSend", at = @At("HEAD"), cancellable = true)
