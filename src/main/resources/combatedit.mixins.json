@@ -10,6 +10,12 @@
     "PlayerEntityMixin",
     "compatibility.AttributeContainerMixin",
     "compatibility.DefaultAttributeContainerMixin",
+    "compatibility.EntityMixin",
+    "compatibility.EntityTypeMixin",
+    "compatibility.LevelPropertiesMixin",
+    "compatibility.LivingEntityMixin",
+    "compatibility.PlayerManagerMixin",
+    "compatibility.WorldSaveHandlerMixin",
     "item.ItemMixin",
     "knockback.LivingEntityMixin",
     "knockback.PlayerEntityMixin",
@@ -20,5 +26,8 @@
     "compatibility.c2s.CreativeInventoryActionC2SPacketMixin",
     "compatibility.s2c.ContainerSlotUpdateS2CPacketMixin",
     "compatibility.s2c.InventoryS2CMixin"
+  ],
+  "client": [
+    "compatibility.IntegratedPlayerManagerMixin"
   ]
 }

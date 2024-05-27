@@ -81,4 +81,11 @@ public class RegistriesModifier {
 
         registriesModified = false;
     }
+
+    public DefaultAttributeContainer getOriginalDefaults(EntityType<? extends LivingEntity> type) {
+        if (!registriesModified || !originalEntityModifiers.containsKey(type)) {
+            return DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY.get(type);
+        }
+        return originalEntityModifiers.get(type);
+    }
 }

@@ -1,10 +1,14 @@
 package net.rizecookey.combatedit.mixins.compatibility;
 
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.rizecookey.combatedit.CombatEdit;
+import net.rizecookey.combatedit.extension.AttributeContainerExtension;
 import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtension;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,7 +24,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 @Mixin(AttributeContainer.class)
-public abstract class AttributeContainerMixin {
+public abstract class AttributeContainerMixin implements AttributeContainerExtension {
     @Shadow @Final private Map<RegistryEntry<EntityAttribute>, EntityAttributeInstance> custom;
     @Shadow @Final private DefaultAttributeContainer fallback;
 
@@ -52,5 +56,58 @@ public abstract class AttributeContainerMixin {
                     .toList());
             cir.cancel();
         }
+    }
+
+    @Unique
+    private static CombatEdit combatEdit() {
+        return CombatEdit.getInstance();
+    }
+
+    @Override
+    public void combatEdit$patchWithNewDefaults(EntityType<? extends LivingEntity> type) {
+        DefaultAttributeContainer originalDefaults = combatEdit().getModifier().getOriginalDefaults(type);
+        custom.forEach((attribute, instance) -> {
+            if (!this.fallback.has(attribute) || !originalDefaults.has(attribute)) {
+                return;
+            }
+
+            double oldDefault = originalDefaults.getBaseValue(attribute);
+            double newDefault = fallback.getBaseValue(attribute);
+
+            if (instance.getBaseValue() == oldDefault) {
+                instance.setBaseValue(newDefault);
+            }
+        });
+    }
+
+    @Override
+    public AttributeContainer combatEdit$getWithOriginalDefaults(EntityType<? extends LivingEntity> type) {
+        DefaultAttributeContainer originalDefaults = combatEdit().getModifier().getOriginalDefaults(type);
+        AttributeContainer copy = new AttributeContainer(fallback);
+        copy.setFrom(thisInstance());
+        custom.forEach((attribute, instance) -> {
+            if (!fallback.has(attribute) || !originalDefaults.has(attribute)) {
+                return;
+            }
+
+            EntityAttributeInstance copyInstance = copy.getCustomInstance(attribute);
+            if (copyInstance == null) {
+                return;
+            }
+
+            double newDefault = fallback.getBaseValue(attribute);
+            double oldDefault = originalDefaults.getBaseValue(attribute);
+            if (instance.getBaseValue() == newDefault) {
+                copyInstance.setBaseValue(oldDefault);
+            }
+
+        });
+
+        return copy;
+    }
+
+    @Unique
+    private AttributeContainer thisInstance() {
+        return (AttributeContainer) (Object) this;
     }
 }
