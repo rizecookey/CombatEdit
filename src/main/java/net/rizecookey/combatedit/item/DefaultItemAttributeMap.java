@@ -8,17 +8,16 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.HoeItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.MiningToolItem;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.ShovelItem;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolItem;
-import net.minecraft.item.TridentItem;
-import net.minecraft.util.Identifier;
+import net.minecraft.registry.Registries;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class DefaultItemAttributeModifiers implements ItemAttributeModifierProvider {
+public class DefaultItemAttributeMap extends ItemAttributeMap {
     private static final Map<Class<? extends ToolItem>, Double> BASE_DAMAGE_TABLE = Map.of(
             SwordItem.class, 4.0,
             AxeItem.class, 3.0,
@@ -27,14 +26,25 @@ public class DefaultItemAttributeModifiers implements ItemAttributeModifierProvi
             HoeItem.class, 2.0
     );
 
-    @Override
-    public AttributeModifiersComponent getModifiers(Identifier id, Item item) {
-        if (!(item instanceof SwordItem) && !(item instanceof MiningToolItem)) {
-            return stripAttackSpeedModifiers(item);
+    private DefaultItemAttributeMap(Map<Item, AttributeModifiersComponent> attributeMap) {
+        super(attributeMap);
+    }
+
+    public static DefaultItemAttributeMap create() {
+        Map<Item, AttributeModifiersComponent> map = new HashMap<>();
+        for (Item item : Registries.ITEM) {
+            var clazzOverride = BASE_DAMAGE_TABLE.keySet().stream()
+                    .filter(clazz -> clazz.isAssignableFrom(item.getClass())).findFirst();
+            AttributeModifiersComponent modifiersComponent;
+            if (clazzOverride.isEmpty() && !AttributeModifiersComponent.DEFAULT.equals((modifiersComponent = item.getComponents().getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT)))) {
+                map.put(item, stripAttackSpeedModifiers(modifiersComponent));
+                continue;
+            }
+
+            map.put(item, withDamageOnly(BASE_DAMAGE_TABLE.get(clazzOverride.orElseThrow())));
         }
 
-        ToolItem toolItem = (ToolItem) item;
-        return withDamageOnly(toolItem.getMaterial().getAttackDamage() + BASE_DAMAGE_TABLE.getOrDefault(item.getClass(), 0.0));
+        return new DefaultItemAttributeMap(map);
     }
 
     private static AttributeModifiersComponent withDamageOnly(double damage) {
@@ -48,8 +58,7 @@ public class DefaultItemAttributeModifiers implements ItemAttributeModifierProvi
                 .build();
     }
 
-    private static AttributeModifiersComponent stripAttackSpeedModifiers(Item item) {
-        AttributeModifiersComponent original = item.getComponents().getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
+    private static AttributeModifiersComponent stripAttackSpeedModifiers(AttributeModifiersComponent original) {
         if (original.modifiers().stream().noneMatch(modifier -> modifier.attribute().equals(EntityAttributes.GENERIC_ATTACK_SPEED))) {
             return original;
         }
@@ -64,12 +73,5 @@ public class DefaultItemAttributeModifiers implements ItemAttributeModifierProvi
         }
 
         return newModifiers.build();
-    }
-
-    @Override
-    public boolean shouldModifyItem(Identifier id, Item item) {
-        return item instanceof MiningToolItem || item instanceof SwordItem || item instanceof TridentItem
-                || item.getComponents().getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT).modifiers()
-                .stream().anyMatch(modifier -> modifier.attribute().equals(EntityAttributes.GENERIC_ATTACK_SPEED));
     }
 }

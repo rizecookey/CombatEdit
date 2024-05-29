@@ -1,0 +1,356 @@
+{
+  "entity_attributes": [
+    {
+      "entity_id": "minecraft:player",
+      "base_values": [
+        {
+          "attribute": "minecraft:generic.attack_speed",
+          "base_value": 20.0
+        }
+      ]
+    }
+  ],
+  "item_attributes": [
+    {
+      "item_id": "minecraft:trident",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:8.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:wooden_sword",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:4.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:wooden_shovel",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:1.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:wooden_pickaxe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:2.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:wooden_axe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:3.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:wooden_hoe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:2.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:stone_sword",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:5.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:stone_shovel",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:2.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:stone_pickaxe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:3.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:stone_axe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:4.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:stone_hoe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:3.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:golden_sword",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:4.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:golden_shovel",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:1.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:golden_pickaxe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:2.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:golden_axe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:3.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:golden_hoe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:2.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:iron_sword",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:6.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:iron_shovel",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:3.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:iron_pickaxe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:4.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:iron_axe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:5.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:iron_hoe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:4.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:diamond_sword",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:7.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:diamond_shovel",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:4.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:diamond_pickaxe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:5.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:diamond_axe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:6.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:diamond_hoe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:5.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:netherite_sword",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:8.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:netherite_shovel",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:5.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:netherite_pickaxe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:6.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:netherite_axe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:7.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    },
+    {
+      "item_id": "minecraft:netherite_hoe",
+      "modifiers": [
+        {
+          "attribute": "minecraft:generic.attack_damage",
+          "modifier": "{Amount:6.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
+          "slot": "mainhand"
+        }
+      ],
+      "override_default": true
+    }
+  ]
+}

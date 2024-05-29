@@ -7,5 +7,5 @@ import net.minecraft.util.Identifier;
 
 public interface EntityAttributeModifierProvider {
     boolean shouldModifyEntity(Identifier id, EntityType<? extends LivingEntity> type);
-    DefaultAttributeContainer getModifiers(Identifier id, EntityType<? extends LivingEntity> type);
+    DefaultAttributeContainer getModifiers(Identifier id, EntityType<? extends LivingEntity> type, DefaultAttributeContainer originalDefaults);
 }

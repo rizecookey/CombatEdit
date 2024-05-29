@@ -1,4 +1,4 @@
-package net.rizecookey.combatedit.configuration;
+package net.rizecookey.combatedit;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.component.type.AttributeModifiersComponent;
@@ -12,25 +12,30 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtension;
 import net.rizecookey.combatedit.extension.ItemExtension;
-import net.rizecookey.combatedit.entity.EntityAttributeModifierProvider;
-import net.rizecookey.combatedit.item.ItemAttributeModifierProvider;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class RegistriesModifier {
+    private final CombatEdit combatEdit;
     private boolean registriesModified = false;
     private final Map<Pair<Identifier, Item>, AttributeModifiersComponent> originalItemModifiers = new HashMap<>();
     private Map<EntityType<? extends LivingEntity>, DefaultAttributeContainer> originalEntityModifiers;
 
-    public void makeModifications(ItemAttributeModifierProvider itemModifiers, EntityAttributeModifierProvider entityModifiers) {
-        modifyItemAttributes(itemModifiers);
-        modifyEntityAttributes(entityModifiers);
+    public RegistriesModifier(CombatEdit combatEdit) {
+        this.combatEdit = combatEdit;
+    }
+
+    public void makeModifications() {
+        combatEdit.reloadProviders();
+        modifyItemAttributes();
+        modifyEntityAttributes();
 
         registriesModified = true;
     }
 
-    private void modifyItemAttributes(ItemAttributeModifierProvider provider) {
+    private void modifyItemAttributes() {
+        var provider = combatEdit.getCurrentItemModifierProvider();
         for (Item item : Registries.ITEM) {
             Identifier id = Registries.ITEM.getId(item);
 
@@ -41,12 +46,13 @@ public class RegistriesModifier {
             AttributeModifiersComponent originalModifiers = ((ItemExtension) item).combatEdit$getAttributeModifiers();
             originalItemModifiers.put(new Pair<>(id, item), originalModifiers);
 
-            AttributeModifiersComponent attributeModifiers = provider.getModifiers(id, item);
+            AttributeModifiersComponent attributeModifiers = provider.getModifiers(id, item, ((ItemExtension) item).combatEdit$getAttributeModifiers());
             ((ItemExtension) item).combatEdit$setAttributeModifiers(attributeModifiers);
         }
     }
 
-    private void modifyEntityAttributes(EntityAttributeModifierProvider provider) {
+    private void modifyEntityAttributes() {
+        var provider = combatEdit.getCurrentEntityModifierProvider();
         originalEntityModifiers = DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY;
 
         ImmutableMap.Builder<EntityType<? extends LivingEntity>, DefaultAttributeContainer> builder = ImmutableMap.builder();
@@ -58,7 +64,7 @@ public class RegistriesModifier {
                 continue;
             }
 
-            DefaultAttributeContainer modifiers = provider.getModifiers(id, type);
+            DefaultAttributeContainer modifiers = provider.getModifiers(id, type, DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY.get(type));
             ((DefaultAttributeContainerExtension) modifiers).combatEdit$setSendAllAttributes(true);
             builder.put(type, modifiers);
         }

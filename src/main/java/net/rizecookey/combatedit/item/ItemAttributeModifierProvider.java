@@ -5,6 +5,6 @@ import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 
 public interface ItemAttributeModifierProvider {
-    AttributeModifiersComponent getModifiers(Identifier id, Item item);
+    AttributeModifiersComponent getModifiers(Identifier id, Item item, AttributeModifiersComponent originalDefaults);
     boolean shouldModifyItem(Identifier id, Item item);
 }

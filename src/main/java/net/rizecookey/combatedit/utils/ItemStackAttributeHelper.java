@@ -21,7 +21,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.configuration.Configuration;
-import net.rizecookey.combatedit.item.ItemAttributeModifierProvider;
 
 import java.util.UUID;
 
@@ -44,7 +43,7 @@ public class ItemStackAttributeHelper {
     }
 
     public AttributeModifiersComponent getDisplayModifiers(ItemStack itemStack) {
-        ItemAttributeModifierProvider itemModifiers = config().itemModifierConfiguration();
+        var itemModifiers = combatEdit.getCurrentItemModifierProvider();
         Item item = itemStack.getItem();
         Identifier id = Registries.ITEM.getId(item);
         if (!itemModifiers.shouldModifyItem(id, item)) {
@@ -79,7 +78,7 @@ public class ItemStackAttributeHelper {
     }
 
     public ItemStack getDisplayModified(ItemStack itemStack) {
-        ItemAttributeModifierProvider itemModifiers = config().itemModifierConfiguration();
+        var itemModifiers = combatEdit.getCurrentItemModifierProvider();
         Item item = itemStack.getItem();
         Identifier id = Registries.ITEM.getId(item);
         if (!itemModifiers.shouldModifyItem(id, item)) {

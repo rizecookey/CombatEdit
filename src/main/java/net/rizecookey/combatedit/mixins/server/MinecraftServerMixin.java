@@ -23,7 +23,7 @@ public class MinecraftServerMixin {
         combatEdit = CombatEdit.getInstance();
 
         LOGGER.info("Modifying item and entity attributes...");
-        combatEdit.getModifier().makeModifications(combatEdit.getConfig().itemModifierConfiguration(), combatEdit.getConfig().entityModifierConfiguration());
+        combatEdit.getModifier().makeModifications();
         LOGGER.info("Done modifying attributes.");
     }
 
