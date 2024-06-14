@@ -1,0 +1,12 @@
+{
+  "title.combatedit.config": "CombatEdit configuration",
+  "category.combatedit.entity": "Entity configuration",
+  "option.combatedit.entity.entity_attributes": "Default entity attributes",
+  "option.combatedit.entity.entity_attributes.entry": "Entity entry",
+  "option.combatedit.entity.entity_attributes.entity": "Entity",
+  "option.combatedit.entity.entity_attributes.attribute_entry": "Attribute base values",
+  "option.combatedit.entity.entity_attributes.attribute_entry.entry": "Attribute base value",
+  "option.combatedit.entity.entity_attributes.attribute_entry.attribute": "Attribute",
+  "option.combatedit.entity.entity_attributes.attribute_entry.base_value": "Base value",
+  "option.combatedit.entity.entity_attributes.override_defaults": "Override default attributes"
+}

@@ -9,15 +9,18 @@
     "RizeCookey"
   ],
   "contact": {
-    "sources": "https://github.com/rizecookey/CombatEdit"
+    "sources": "https://github.com/rizecookey/CombatEdit",
+    "homepage": "https://github.com/rizecookey/CombatEdit/blob/master/README.md",
+    "issues": "https://github.com/rizecookey/CombatEdit/issues"
   },
 
   "icon": "assets/combatedit/icon.png",
 
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "net.rizecookey.combatedit.CombatEdit"
+    "main": [ "net.rizecookey.combatedit.CombatEdit" ],
+    "modmenu": [
+      "net.rizecookey.combatedit.client.configscreen.ModMenuApiImpl"
     ]
   },
   "mixins": [
