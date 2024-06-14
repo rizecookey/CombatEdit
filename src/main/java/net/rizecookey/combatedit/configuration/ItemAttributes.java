@@ -6,6 +6,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ItemAttributes {
     private Identifier itemId;
@@ -41,4 +42,18 @@ public class ItemAttributes {
     }
 
     public record ModifierEntry(Identifier attribute, NbtCompound modifier, AttributeModifierSlot slot) {}
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(itemId, modifiers, overrideDefault);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ItemAttributes attr)) {
+            return false;
+        }
+
+        return itemId.equals(attr.itemId) && modifiers.equals(attr.modifiers) && overrideDefault == attr.overrideDefault;
+    }
 }

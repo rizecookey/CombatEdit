@@ -4,6 +4,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class EntityAttributes {
     private Identifier entityId;
@@ -39,4 +40,18 @@ public class EntityAttributes {
     }
 
     public record AttributeBaseValue(Identifier attribute, double baseValue) {}
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof EntityAttributes attr)) {
+            return false;
+        }
+
+        return getEntityId().equals(attr.getEntityId()) && isOverrideDefault() == attr.isOverrideDefault() && getBaseValues().equals(attr.getBaseValues());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getEntityId(), getBaseValues(), isOverrideDefault());
+    }
 }
