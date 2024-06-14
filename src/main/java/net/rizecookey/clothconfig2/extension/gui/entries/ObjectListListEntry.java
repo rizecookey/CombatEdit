@@ -46,6 +46,7 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
 
     public static class ObjectListCell<T> extends AbstractListCell<T, ObjectListCell<T>, ObjectListListEntry<T>> {
         private final ObjectListEntry<T> inner;
+        private boolean selected = false;
 
         public ObjectListCell(@Nullable T value, ObjectListListEntry<T> listListEntry, ObjectListEntry<T> inner) {
             super(value, listListEntry);
@@ -73,7 +74,7 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
             inner.setParent(((DynamicEntryListWidget<AbstractConfigEntry<T>>) (Object) listListEntry.getParent()));
             inner.setScreen(listListEntry.getConfigScreen());
             inner.render(drawContext, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isSelected, delta);
-            if (isSelected) {
+            if (this.selected) {
                 drawContext.drawBorder(x - 16, y - 1, entryWidth + 17, entryHeight - 2, Color.ofRGB(127, 127, 127).getColor());
             }
         }
@@ -101,6 +102,7 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
         @Override
         public void updateSelected(boolean isSelected) {
             inner.updateSelected(isSelected);
+            this.selected = isSelected;
         }
 
         @Override
