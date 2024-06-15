@@ -7,17 +7,18 @@ import net.fabricmc.api.ModInitializer;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.entity.attribute.DefaultAttributeRegistry;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.Configuration;
+import net.rizecookey.combatedit.configuration.InvalidConfigurationException;
 import net.rizecookey.combatedit.entity.EntityAttributeMap;
 import net.rizecookey.combatedit.entity.EntityAttributeModifierProvider;
 import net.rizecookey.combatedit.item.ItemAttributeMap;
 import net.rizecookey.combatedit.item.ItemAttributeModifierProvider;
 import net.rizecookey.combatedit.utils.ItemStackAttributeHelper;
 import net.rizecookey.combatedit.utils.serializers.AttributeModifierSlotSerializer;
+import net.rizecookey.combatedit.utils.serializers.EntityAttributeModifier$OperationSerializer;
 import net.rizecookey.combatedit.utils.serializers.IdentifierSerializer;
-import net.rizecookey.combatedit.utils.serializers.NbtCompoundSerializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,8 +33,8 @@ public class CombatEdit implements ModInitializer {
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .setPrettyPrinting()
             .registerTypeAdapter(Identifier.class, new IdentifierSerializer())
-            .registerTypeAdapter(NbtCompound.class, new NbtCompoundSerializer())
             .registerTypeAdapter(AttributeModifierSlot.class, new AttributeModifierSlotSerializer())
+            .registerTypeAdapter(EntityAttributeModifier.Operation.class, new EntityAttributeModifier$OperationSerializer())
             .create();
 
     private RegistriesModifier modifier;
@@ -48,6 +49,13 @@ public class CombatEdit implements ModInitializer {
 
         LOGGER.info("Loading config...");
         config = loadConfig();
+        try {
+            config.validate(); // TODO possibly needs to be delayed, because mods could register items later?
+        } catch (InvalidConfigurationException e) {
+            LOGGER.error("CombatEdit detected errors in the configuration, shutting down.");
+            throw new RuntimeException("CombatEdit configuration is invalid", e);
+        }
+
         modifier = new RegistriesModifier(this);
         attributeHelper = new ItemStackAttributeHelper(this);
 

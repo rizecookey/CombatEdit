@@ -16,8 +16,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:8.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 8.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -27,8 +30,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:4.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 4.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -38,8 +44,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:1.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 1.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -49,8 +58,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:2.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 2.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -60,8 +72,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:3.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 3.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -71,8 +86,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:2.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 2.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -82,8 +100,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:5.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 5.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -93,8 +114,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:2.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 2.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -104,8 +128,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:3.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 3.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -115,8 +142,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:4.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 4.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -126,8 +156,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:3.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 3.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -137,8 +170,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:4.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 4.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -148,8 +184,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:1.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 1.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -159,8 +198,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:2.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 2.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -170,8 +212,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:3.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 3.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -181,8 +226,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:2.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 2.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -192,8 +240,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:6.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 6.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -203,8 +254,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:3.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 3.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -214,8 +268,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:4.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 4.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -225,8 +282,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:5.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 5.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -236,8 +296,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:4.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 4.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -247,8 +310,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:7.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 7.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -258,8 +324,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:4.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 4.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -269,8 +338,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:5.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 5.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -280,8 +352,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:6.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 6.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -291,8 +366,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:5.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 5.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -302,8 +380,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:8.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 8.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -313,8 +394,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:5.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 5.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -324,8 +408,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:6.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 6.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -335,8 +422,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:7.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 7.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true
@@ -346,8 +436,11 @@
       "modifiers": [
         {
           "attribute": "minecraft:generic.attack_damage",
-          "modifier": "{Amount:6.0d,Name:\"Tool modifier\",Operation:0,UUID:[I;-885041709,1683771192,-1533567981,-1556236849]}",
-          "slot": "mainhand"
+          "slot": "mainhand",
+          "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+          "name": "Tool modifier",
+          "value": 6.0,
+          "operation": "add_value"
         }
       ],
       "override_default": true

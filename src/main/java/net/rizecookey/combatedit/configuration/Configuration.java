@@ -22,6 +22,16 @@ public class Configuration {
         return entityAttributes;
     }
 
+    public void validate() throws InvalidConfigurationException {
+        for (var itemAttributes : itemAttributes) {
+            itemAttributes.validate();
+        }
+
+        for (var entityAttributes : entityAttributes) {
+            entityAttributes.validate();
+        }
+    }
+
     public static Configuration createDefault() {
         return new Configuration(List.of(), List.of());
     }

@@ -63,12 +63,7 @@ public class ItemAttributeMap implements ItemAttributeModifierProvider {
             }
 
             var attribute = Registries.ATTRIBUTE.getEntry(entry.attribute()).orElseThrow();
-            var modifier = EntityAttributeModifier.fromNbt(entry.modifier());
-            if (modifier == null) {
-                LOGGER.warn("Modifier {} failed to parse, skipping", entry.modifier().asString());
-                continue;
-            }
-            modifier = patchUUIDReference(modifier);
+            var modifier = patchUUIDReference(new EntityAttributeModifier(entry.uuid() != null ? entry.uuid() : UUID.randomUUID(), entry.name(), entry.value(), entry.operation()));
 
             builder.add(attribute, modifier, entry.slot());
         }

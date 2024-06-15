@@ -1,5 +1,6 @@
 package net.rizecookey.combatedit.configuration;
 
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -39,7 +40,35 @@ public class EntityAttributes {
         this.overrideDefault = overrideDefault;
     }
 
-    public record AttributeBaseValue(Identifier attribute, double baseValue) {}
+    public void validate() throws InvalidConfigurationException {
+        if (entityId == null || !Registries.ENTITY_TYPE.containsId(entityId)) {
+            throw new InvalidConfigurationException("No entity with id %s found".formatted(entityId));
+        }
+
+        if (baseValues == null) {
+            baseValues = new ArrayList<>();
+        }
+
+        for (var baseValue : baseValues) {
+            baseValue.validate();
+        }
+    }
+
+    public static EntityAttributes getDefault() {
+        return new EntityAttributes(new Identifier("minecraft:creeper"), List.of(), false);
+    }
+
+    public record AttributeBaseValue(Identifier attribute, double baseValue) {
+        public static AttributeBaseValue getDefault() {
+            return new AttributeBaseValue(new Identifier("minecraft:generic.attack_damage"), 1);
+        }
+
+        public void validate() throws InvalidConfigurationException {
+            if (attribute() == null || !Registries.ATTRIBUTE.containsId(attribute())) {
+                throw new InvalidConfigurationException("No attribute with id %s found".formatted(attribute()));
+            }
+        }
+    }
 
     @Override
     public boolean equals(Object obj) {
