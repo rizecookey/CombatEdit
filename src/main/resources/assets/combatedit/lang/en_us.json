@@ -1,5 +1,8 @@
 {
   "title.combatedit.config": "CombatEdit configuration",
+  "option.combatedit.warn.ingame": "Changes here will not apply until you re-enter the world.",
+  "option.combatedit.warn.local_only": "This configuration only applies to singleplayer worlds.",
+
   "category.combatedit.entity": "Entity configuration",
   "option.combatedit.entity.entity_attributes": "Default entity attributes",
   "option.combatedit.entity.entity_attributes.entry": "Entity entry",
@@ -8,5 +11,19 @@
   "option.combatedit.entity.entity_attributes.attribute_entry.entry": "Attribute base value",
   "option.combatedit.entity.entity_attributes.attribute_entry.attribute": "Attribute",
   "option.combatedit.entity.entity_attributes.attribute_entry.base_value": "Base value",
-  "option.combatedit.entity.entity_attributes.override_defaults": "Override default attributes"
+  "option.combatedit.entity.entity_attributes.override_defaults": "Override default attributes",
+
+  "category.combatedit.item": "Item configuration",
+  "option.combatedit.item.item_attributes": "Default item attributes",
+  "option.combatedit.item.item_attributes.entry": "Item entry",
+  "option.combatedit.item.item_attributes.item": "Item",
+  "option.combatedit.item.item_attributes.modifier_entry": "Attribute modifiers",
+  "option.combatedit.item.item_attributes.modifier_entry.entry": "Modifier",
+  "option.combatedit.item.item_attributes.modifier_entry.attribute": "Attribute",
+  "option.combatedit.item.item_attributes.modifier_entry.uuid": "Modifier UUID",
+  "option.combatedit.item.item_attributes.modifier_entry.name": "Modifier name",
+  "option.combatedit.item.item_attributes.modifier_entry.value": "Modifier value",
+  "option.combatedit.item.item_attributes.modifier_entry.operation": "Modifier operation",
+  "option.combatedit.item.item_attributes.modifier_entry.slot": "Slot",
+  "option.combatedit.item.item_attributes.override_defaults": "Override default modifiers"
 }
