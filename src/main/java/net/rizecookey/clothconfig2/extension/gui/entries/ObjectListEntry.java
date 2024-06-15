@@ -14,8 +14,9 @@ import java.util.Optional;
 public class ObjectListEntry<T> extends MultiElementListEntry<T> {
     private final ObjectAdapter<T> adapter;
 
-    public ObjectListEntry(Text fieldName, List<AbstractConfigListEntry<?>> fieldEntries, ObjectAdapter<T> adapter) {
+    public ObjectListEntry(Text fieldName, List<AbstractConfigListEntry<?>> fieldEntries, ObjectAdapter<T> adapter, boolean defaultExpanded) {
         super(fieldName, null, fieldEntries, true);
+        this.setExpanded(defaultExpanded);
         this.adapter = adapter;
     }
 

@@ -15,6 +15,7 @@ import java.util.List;
 public class ObjectFieldBuilder<T> extends AbstractFieldBuilder<T, ObjectListEntry<T>, ObjectFieldBuilder<T>> {
     private final List<AbstractConfigListEntry<?>> innerEntries;
     private final ObjectAdapter<T> adapter;
+    private boolean expanded;
 
     public ObjectFieldBuilder(Text fieldNameKey, List<AbstractConfigListEntry<?>> innerEntries, ObjectAdapter<T> adapter, Text resetButtonKey) {
         super(resetButtonKey, fieldNameKey);
@@ -25,8 +26,17 @@ public class ObjectFieldBuilder<T> extends AbstractFieldBuilder<T, ObjectListEnt
         this.adapter = adapter;
     }
 
+    public boolean isExpanded() {
+        return expanded;
+    }
+
+    public ObjectFieldBuilder<T> setExpanded(boolean expanded) {
+        this.expanded = expanded;
+        return this;
+    }
+
     @Override
     public @NotNull ObjectListEntry<T> build() {
-        return new ObjectListEntry<>(getFieldNameKey(), innerEntries, adapter);
+        return new ObjectListEntry<>(getFieldNameKey(), innerEntries, adapter, expanded);
     }
 }
