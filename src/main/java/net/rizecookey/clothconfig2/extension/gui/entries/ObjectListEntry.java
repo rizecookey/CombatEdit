@@ -29,4 +29,17 @@ public class ObjectListEntry<T> extends MultiElementListEntry<T> {
     public Optional<T> getDefaultValue() {
         return adapter.getDefaultValue();
     }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public int getMorePossibleHeight() {
+        if (getReferenceProviderEntries() == null) {
+            return -1;
+        }
+
+        return getReferenceProviderEntries().stream()
+                .mapToInt(entry -> entry.provideReferenceEntry().getMorePossibleHeight())
+                .filter(value -> value >= 0)
+                .sum();
+    }
 }

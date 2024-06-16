@@ -10,6 +10,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.ScreenRect;
+import net.minecraft.client.gui.navigation.GuiNavigation;
+import net.minecraft.client.gui.navigation.GuiNavigationPath;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
@@ -65,7 +68,8 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
 
         @Override
         public int getCellHeight() {
-            return inner.getItemHeight();
+            var morePossibleHeight = inner.getMorePossibleHeight();
+            return inner.getItemHeight() + (morePossibleHeight >= 0 ? morePossibleHeight : 0);
         }
 
         @SuppressWarnings("unchecked")
@@ -77,6 +81,79 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
             if (this.selected) {
                 drawContext.drawBorder(x - 16, y - 1, entryWidth + 17, entryHeight - 2, Color.ofRGB(127, 127, 127).getColor());
             }
+
+            inner.lateRender(drawContext, mouseX, mouseY, delta);
+        }
+
+        @Nullable
+        @Override
+        public Element getFocused() {
+            return inner.getFocused();
+        }
+
+        @Override
+        public void setFocused(@Nullable Element focused) {
+            inner.setFocused(focused);
+        }
+
+        @Override
+        public Optional<Element> hoveredElement(double mouseX, double mouseY) {
+            return inner.hoveredElement(mouseX, mouseY);
+        }
+
+        @Override
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            return inner.mouseClicked(mouseX, mouseY, button);
+        }
+
+        @Override
+        public boolean mouseReleased(double mouseX, double mouseY, int button) {
+            return inner.mouseReleased(mouseX, mouseY, button);
+        }
+
+        @Override
+        public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+            return inner.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        }
+
+        @Override
+        public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+            return inner.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+        }
+
+        @Override
+        public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+            return inner.keyReleased(keyCode, scanCode, modifiers);
+        }
+
+        @Override
+        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+            return inner.keyPressed(keyCode, scanCode, modifiers);
+        }
+
+        @Override
+        public boolean charTyped(char chr, int modifiers) {
+            return inner.charTyped(chr, modifiers);
+        }
+
+        @Override
+        public void setFocused(boolean focused) {
+            inner.setFocused(focused);
+        }
+
+        @Override
+        public boolean isFocused() {
+            return inner.isFocused();
+        }
+
+        @Override
+        public void mouseMoved(double mouseX, double mouseY) {
+            inner.mouseMoved(mouseX, mouseY);
+        }
+
+        @Override
+        public boolean isMouseOver(double mouseX, double mouseY) {
+            return inner.isMouseOver(mouseX, mouseY);
         }
 
         @Override
@@ -122,6 +199,33 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
             super.onDelete();
             listListEntry.referencableEntries.remove(inner);
             listListEntry.requestReferenceRebuilding();
+        }
+
+        @Nullable
+        @Override
+        public GuiNavigationPath getFocusedPath() {
+            return inner.getFocusedPath();
+        }
+
+        @Nullable
+        @Override
+        public GuiNavigationPath getNavigationPath(GuiNavigation navigation) {
+            return inner.getNavigationPath(navigation);
+        }
+
+        @Override
+        public ScreenRect getNavigationFocus() {
+            return inner.getNavigationFocus();
+        }
+
+        @Override
+        public boolean isNarratable() {
+            return inner.isNarratable();
+        }
+
+        @Override
+        public int getNavigationOrder() {
+            return inner.getNavigationOrder();
         }
     }
 }
