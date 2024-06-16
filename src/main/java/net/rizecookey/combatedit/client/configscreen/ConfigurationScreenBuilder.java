@@ -135,10 +135,10 @@ public class ConfigurationScreenBuilder {
         var copy = new ItemAttributes(attributes.getItemId(), List.copyOf(attributes.getModifiers()), attributes.isOverrideDefault());
 
         var itemEntry = ENTRY_BUILDER.startDropdownMenu(Text.translatable("option.combatedit.item.item_attributes.item"),
-                        DropdownMenuBuilder.TopCellElementBuilder.ofItemObject(Registries.ITEM.get(attributes.getItemId())),
-                        DropdownMenuBuilder.CellCreatorBuilder.ofItemObject())
-                .setDefaultValue(Items.APPLE)
-                .setSelections(Registries.ITEM.stream().collect(Collectors.toSet()))
+                        DropdownMenuBuilder.TopCellElementBuilder.ofItemIdentifier(Registries.ITEM.get(attributes.getItemId())),
+                        DropdownMenuBuilder.CellCreatorBuilder.ofItemIdentifier())
+                .setDefaultValue(Registries.ITEM.getId(Items.APPLE))
+                .setSelections(Registries.ITEM.getIds())
                 .build();
         var modifiersEntry = ENTRY_BUILDER.startObjectList(Text.translatable("option.combatedit.item.item_attributes.modifier_entry"),
                         List.copyOf(attributes.getModifiers()),
@@ -161,7 +161,7 @@ public class ConfigurationScreenBuilder {
                 ),
                 ObjectAdapter.create(
                         () -> {
-                            copy.setItemId(Registries.ITEM.getId(itemEntry.getValue()));
+                            copy.setItemId(itemEntry.getValue());
                             copy.getModifiers().clear();
                             copy.getModifiers().addAll(modifiersEntry.getValue());
                             copy.setOverrideDefault(overrideDefaultToggle.getValue());
