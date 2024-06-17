@@ -7,26 +7,22 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 import net.rizecookey.clothconfig2.extension.api.ExtendedConfigEntryBuilder;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectAdapter;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectListEntry;
+import net.rizecookey.clothconfig2.extension.impl.builders.ExtendedDropdownMenus;
 import net.rizecookey.combatedit.configuration.Configuration;
 import net.rizecookey.combatedit.configuration.EntityAttributes;
 import net.rizecookey.combatedit.configuration.ItemAttributes;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 // TODO more entry validation needed
-// TODO add dropdowns for some entries
 public class ConfigurationScreenBuilder {
     private static final ExtendedConfigEntryBuilder ENTRY_BUILDER = ExtendedConfigEntryBuilder.create();
 
@@ -79,8 +75,10 @@ public class ConfigurationScreenBuilder {
     private static ObjectListEntry<EntityAttributes> createEntry(EntityAttributes attributes, int entryIndex) {
         var copy = new EntityAttributes(attributes.getEntityId(), List.copyOf(attributes.getBaseValues()), attributes.isOverrideDefault());
 
-        var entityTypeEntry = ENTRY_BUILDER.startTextField(Text.translatable("option.combatedit.entity.entity_attributes.entity"), attributes.getEntityId().toString())
-                .setSaveConsumer(string -> attributes.setEntityId(new Identifier(string)))
+        var entityTypeEntry = ENTRY_BUILDER.startDropdownMenu(Text.translatable("option.combatedit.entity.entity_attributes.entity"),
+                        ExtendedDropdownMenus.TopCellElementBuilder.ofRegistryIdentifier(Registries.ENTITY_TYPE, Registries.ENTITY_TYPE.get(attributes.getEntityId())),
+                        ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(Registries.ENTITY_TYPE))
+                .setSelections(Registries.ENTITY_TYPE.getIds())
                 .build();
         var attributeValueMap = ENTRY_BUILDER.startObjectList(Text.translatable("option.combatedit.entity.entity_attributes.attribute_entry"), List.copyOf(attributes.getBaseValues()),
                         (value, list) -> createEntry(value != null ? value : EntityAttributes.AttributeBaseValue.getDefault()))
@@ -102,7 +100,7 @@ public class ConfigurationScreenBuilder {
                 ),
                 ObjectAdapter.create(
                         () -> {
-                            copy.setEntityId(new Identifier(entityTypeEntry.getValue()));
+                            copy.setEntityId(entityTypeEntry.getValue());
                             copy.getBaseValues().clear();
                             copy.getBaseValues().addAll(attributeValueMap.getValue());
                             copy.setOverrideDefault(overrideDefaultToggle.getValue());
@@ -114,8 +112,11 @@ public class ConfigurationScreenBuilder {
     }
 
     private static ObjectListEntry<EntityAttributes.AttributeBaseValue> createEntry(EntityAttributes.AttributeBaseValue baseValue) {
-        var attributeEntry = ENTRY_BUILDER.startStrField(Text.translatable("option.combatedit.entity.entity_attributes.attribute_entry.attribute"), baseValue.attribute().toString())
-                .build();
+        var attributeEntry = ENTRY_BUILDER.startDropdownMenu(
+                Text.translatable("option.combatedit.entity.entity_attributes.attribute_entry.attribute"),
+                ExtendedDropdownMenus.TopCellElementBuilder.ofRegistryIdentifier(Registries.ATTRIBUTE, Registries.ATTRIBUTE.get(baseValue.attribute())),
+                ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(Registries.ATTRIBUTE)
+        ).setSelections(Registries.ATTRIBUTE.getIds()).build();
         var baseValueEntry = ENTRY_BUILDER.startDoubleField(Text.translatable("option.combatedit.entity.entity_attributes.attribute_entry.base_value"), baseValue.baseValue())
                 .build();
         return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.entity.entity_attributes.attribute_entry.entry"),
@@ -124,7 +125,7 @@ public class ConfigurationScreenBuilder {
                         baseValueEntry
                 ),
                 ObjectAdapter.create(
-                        () -> new EntityAttributes.AttributeBaseValue(new Identifier(attributeEntry.getValue()), baseValueEntry.getValue()),
+                        () -> new EntityAttributes.AttributeBaseValue(attributeEntry.getValue(), baseValueEntry.getValue()),
                         () -> Optional.of(EntityAttributes.AttributeBaseValue.getDefault())
                 ))
                 .setExpanded(true)
@@ -136,8 +137,7 @@ public class ConfigurationScreenBuilder {
 
         var itemEntry = ENTRY_BUILDER.startDropdownMenu(Text.translatable("option.combatedit.item.item_attributes.item"),
                         DropdownMenuBuilder.TopCellElementBuilder.ofItemIdentifier(Registries.ITEM.get(attributes.getItemId())),
-                        DropdownMenuBuilder.CellCreatorBuilder.ofItemIdentifier())
-                .setDefaultValue(Registries.ITEM.getId(Items.APPLE))
+                        ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(Registries.ITEM))
                 .setSelections(Registries.ITEM.getIds())
                 .build();
         var modifiersEntry = ENTRY_BUILDER.startObjectList(Text.translatable("option.combatedit.item.item_attributes.modifier_entry"),
@@ -175,18 +175,27 @@ public class ConfigurationScreenBuilder {
     }
 
     private static ObjectListEntry<ItemAttributes.ModifierEntry> createEntry(ItemAttributes.ModifierEntry modifierEntry) {
-        var attributeEntry = ENTRY_BUILDER.startStrField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.attribute"), modifierEntry.attribute().toString())
-                .build();
+        var attributeEntry = ENTRY_BUILDER.startDropdownMenu(
+                Text.translatable("option.combatedit.item.item_attributes.modifier_entry.attribute"),
+                ExtendedDropdownMenus.TopCellElementBuilder.ofRegistryIdentifier(Registries.ATTRIBUTE, Registries.ATTRIBUTE.get(modifierEntry.attribute())),
+                ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(Registries.ATTRIBUTE)
+        ).setSelections(Registries.ATTRIBUTE.getIds()).build();
         var uuidEntry = ENTRY_BUILDER.startStrField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.uuid"), modifierEntry.uuid() != null ? modifierEntry.uuid().toString() : "")
                 .build();
         var nameEntry = ENTRY_BUILDER.startStrField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.name"), modifierEntry.name() != null ? modifierEntry.name() : "")
                 .build();
         var valueEntry = ENTRY_BUILDER.startDoubleField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.value"), modifierEntry.value())
                 .build();
-        var operationEntry = ENTRY_BUILDER.startStrField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.operation"), modifierEntry.operation().asString())
-                .build();
-        var slotEntry = ENTRY_BUILDER.startStrField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.slot"), modifierEntry.slot().asString())
-                .build();
+        var operationEntry = ENTRY_BUILDER.startDropdownMenu(
+                Text.translatable("option.combatedit.item.item_attributes.modifier_entry.operation"),
+                ExtendedDropdownMenus.TopCellElementBuilder.ofStringIdentifiable(EntityAttributeModifier.Operation.class, modifierEntry.operation()),
+                ExtendedDropdownMenus.CellCreatorBuilder.ofStringIdentifiableAutoWidth(EntityAttributeModifier.Operation.class)
+        ).setSelections(List.of(EntityAttributeModifier.Operation.values())).build();
+        var slotEntry = ENTRY_BUILDER.startDropdownMenu(
+                Text.translatable("option.combatedit.item.item_attributes.modifier_entry.slot"),
+                ExtendedDropdownMenus.TopCellElementBuilder.ofStringIdentifiable(AttributeModifierSlot.class, modifierEntry.slot()),
+                ExtendedDropdownMenus.CellCreatorBuilder.ofStringIdentifiableAutoWidth(AttributeModifierSlot.class)
+        ).setSelections(List.of(AttributeModifierSlot.values())).build();
 
         return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry"),
                 List.of(
@@ -198,18 +207,12 @@ public class ConfigurationScreenBuilder {
                         slotEntry
                 ),
                 ObjectAdapter.create(
-                        () -> new ItemAttributes.ModifierEntry(new Identifier(attributeEntry.getValue()),
+                        () -> new ItemAttributes.ModifierEntry(attributeEntry.getValue(),
                                 !uuidEntry.getValue().isEmpty() ? UUID.fromString(uuidEntry.getValue()) : UUID.randomUUID(),
                                 nameEntry.getValue(),
                                 valueEntry.getValue(),
-                                Arrays.stream(EntityAttributeModifier.Operation.values())
-                                        .filter(operation -> operation.asString().equals(operationEntry.getValue()))
-                                        .findFirst()
-                                        .get(),
-                                Arrays.stream(AttributeModifierSlot.values())
-                                        .filter(attribute -> attribute.asString().equals(slotEntry.getValue()))
-                                        .findFirst()
-                                        .get()),
+                                operationEntry.getValue(),
+                                slotEntry.getValue()),
                         () -> Optional.of(ItemAttributes.ModifierEntry.getDefault())))
                 .setExpanded(true)
                 .build();
