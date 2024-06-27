@@ -169,6 +169,6 @@ public class ExtendedConfigEntryBuilderImpl implements ExtendedConfigEntryBuilde
 
     @Override
     public <T> DropdownMenuBuilder<T> startDropdownMenu(Text text, DropdownBoxEntry.SelectionTopCellElement<T> selectionTopCellElement, DropdownBoxEntry.SelectionCellCreator<T> selectionCellCreator) {
-        return fallback.startDropdownMenu(text, selectionTopCellElement, selectionCellCreator);
+        return new DynamicDropdownMenuBuilder<>(getResetButtonKey(), text, selectionTopCellElement, selectionCellCreator);
     }
 }

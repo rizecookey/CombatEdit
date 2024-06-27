@@ -11,7 +11,6 @@ import net.minecraft.util.StringIdentifiable;
 import java.util.Arrays;
 import java.util.function.Function;
 
-// TODO menus with selections that have too long names overflow to the right...
 public class ExtendedDropdownMenus {
     public static int getMaxNeededWidth(Registry<?> registry) {
         var textRenderer = MinecraftClient.getInstance().textRenderer;
