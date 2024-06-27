@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.InvalidIdentifierException;
 import net.minecraft.util.StringIdentifiable;
 
 import java.util.Arrays;
@@ -31,7 +32,12 @@ public class ExtendedDropdownMenus {
     public static class TopCellElementBuilder {
         private static <T> Function<String, Identifier> registryCheckedStringToIdentifier(Registry<T> registry) {
             return string -> {
-                Identifier identifier = new Identifier(string);
+                Identifier identifier;
+                try {
+                    identifier = new Identifier(string);
+                } catch (InvalidIdentifierException e) {
+                    identifier = null;
+                }
                 return registry.containsId(identifier) ? identifier : null;
             };
         }
