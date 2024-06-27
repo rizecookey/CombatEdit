@@ -28,5 +28,10 @@
   "option.combatedit.item.item_attributes.modifier_entry.slot": "Slot",
   "option.combatedit.item.item_attributes.override_defaults": "Override default modifiers",
 
-  "error.combatedit.invalid_uuid": "Invalid UUID, enter a correct UUID or leave empty"
+  "error.combatedit.invalid_uuid": "Invalid UUID, enter a correct UUID or leave empty",
+  "error.combatedit.invalid_config.title": "CombatEdit failed to load config",
+  "error.combatedit.invalid_config.description": "CombatEdit failed to load your configuration! You can either correct errors in the configuration or reset it to the defaults.\n\nError message: %s\nCheck the logs for more details.",
+
+  "button.combatedit.exit": "Close Minecraft",
+  "button.combatedit.reset_config": "Reset configuration"
 }

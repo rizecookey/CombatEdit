@@ -10,7 +10,6 @@ import net.minecraft.entity.attribute.DefaultAttributeRegistry;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.Configuration;
-import net.rizecookey.combatedit.configuration.InvalidConfigurationException;
 import net.rizecookey.combatedit.entity.EntityAttributeMap;
 import net.rizecookey.combatedit.entity.EntityAttributeModifierProvider;
 import net.rizecookey.combatedit.item.ItemAttributeMap;
@@ -49,12 +48,6 @@ public class CombatEdit implements ModInitializer {
 
         LOGGER.info("Loading config...");
         config = loadConfig();
-        try {
-            config.validate(); // TODO possibly needs to be delayed, because mods could register items later?
-        } catch (InvalidConfigurationException e) {
-            LOGGER.error("CombatEdit detected errors in the configuration, shutting down.");
-            throw new RuntimeException("CombatEdit configuration is invalid", e);
-        }
 
         modifier = new RegistriesModifier(this);
         attributeHelper = new ItemStackAttributeHelper(this);
@@ -64,18 +57,31 @@ public class CombatEdit implements ModInitializer {
 
     // TODO load config from mod config dir etc...
     private Configuration loadConfig() {
+        return loadDefaultConfig(); /* TODO */
+    }
+
+    private Configuration loadDefaultConfig() {
         try (InputStream in = getClass().getResourceAsStream("/config.json")) {
             if (in == null) {
                 throw new IOException("Resource was not bundled correctly");
             }
             return GSON.fromJson(new InputStreamReader(in), Configuration.class);
         } catch (IOException e) {
-            throw new RuntimeException("Could not load config", e);
+            throw new RuntimeException("Could not load default config", e);
         }
     }
 
     public Configuration getConfig() {
         return config;
+    }
+
+    public void resetConfig() {
+        this.config = loadDefaultConfig();
+        this.saveConfig();
+    }
+
+    public void saveConfig() {
+        /* TODO */
     }
 
     public ItemStackAttributeHelper getAttributeHelper() {

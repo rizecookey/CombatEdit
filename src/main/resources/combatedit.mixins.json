@@ -28,6 +28,7 @@
     "compatibility.s2c.InventoryS2CMixin"
   ],
   "client": [
+    "client.MinecraftClientMixin",
     "compatibility.IntegratedPlayerManagerMixin"
   ]
 }
