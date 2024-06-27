@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-// TODO more entry validation needed
 public class ConfigurationScreenBuilder {
     private static final ExtendedConfigEntryBuilder ENTRY_BUILDER = ExtendedConfigEntryBuilder.create();
 
@@ -181,6 +180,18 @@ public class ConfigurationScreenBuilder {
                 ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(Registries.ATTRIBUTE)
         ).setSelections(Registries.ATTRIBUTE.getIds()).build();
         var uuidEntry = ENTRY_BUILDER.startStrField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.uuid"), modifierEntry.uuid() != null ? modifierEntry.uuid().toString() : "")
+                .setErrorSupplier(value -> {
+                    if (value.isEmpty()) {
+                        return Optional.empty();
+                    }
+                    try {
+                        UUID.fromString(value);
+                    } catch (IllegalArgumentException e) {
+                        return Optional.of(Text.translatable("error.combatedit.invalid_uuid"));
+                    }
+                    return Optional.empty();
+                })
+                .setTooltip(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.uuid.tooltip"))
                 .build();
         var nameEntry = ENTRY_BUILDER.startStrField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.name"), modifierEntry.name() != null ? modifierEntry.name() : "")
                 .build();

@@ -21,9 +21,12 @@
   "option.combatedit.item.item_attributes.modifier_entry.entry": "Modifier",
   "option.combatedit.item.item_attributes.modifier_entry.attribute": "Attribute",
   "option.combatedit.item.item_attributes.modifier_entry.uuid": "Modifier UUID",
+  "option.combatedit.item.item_attributes.modifier_entry.uuid.tooltip": "Can be left empty to generate a random UUID.",
   "option.combatedit.item.item_attributes.modifier_entry.name": "Modifier name",
   "option.combatedit.item.item_attributes.modifier_entry.value": "Modifier value",
   "option.combatedit.item.item_attributes.modifier_entry.operation": "Modifier operation",
   "option.combatedit.item.item_attributes.modifier_entry.slot": "Slot",
-  "option.combatedit.item.item_attributes.override_defaults": "Override default modifiers"
+  "option.combatedit.item.item_attributes.override_defaults": "Override default modifiers",
+
+  "error.combatedit.invalid_uuid": "Invalid UUID, enter a correct UUID or leave empty"
 }
