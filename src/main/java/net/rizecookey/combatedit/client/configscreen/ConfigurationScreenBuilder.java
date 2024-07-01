@@ -18,6 +18,8 @@ import net.rizecookey.combatedit.configuration.Configuration;
 import net.rizecookey.combatedit.configuration.EntityAttributes;
 import net.rizecookey.combatedit.configuration.ItemAttributes;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,11 +27,17 @@ import java.util.UUID;
 public class ConfigurationScreenBuilder {
     private static final ExtendedConfigEntryBuilder ENTRY_BUILDER = ExtendedConfigEntryBuilder.create();
 
-    public static Screen buildScreen(Configuration config, Screen parentScreen) {
+    public static Screen buildScreen(Configuration config, Path savePath, Screen parentScreen) {
         var builder = ConfigBuilder.create()
                 .setParentScreen(parentScreen)
                 .setTitle(Text.translatable("title.combatedit.config"))
-                .setSavingRunnable(() -> { /* TODO */ });
+                .setSavingRunnable(() -> {
+                    try {
+                        config.save(savePath);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e); // TODO Maybe show notification?
+                    }
+                });
 
         createEntityCategory(config.getEntityAttributes(), builder);
         createItemCategory(config.getItemAttributes(), builder);

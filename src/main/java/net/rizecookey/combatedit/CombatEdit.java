@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.entity.attribute.DefaultAttributeRegistry;
@@ -22,11 +23,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class CombatEdit implements ModInitializer {
     private static CombatEdit INSTANCE;
+    public static final Path DEFAULT_CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("combatedit/config.json");
     public static final Logger LOGGER = LogManager.getLogger(CombatEdit.class);
     public static final Gson GSON = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -46,8 +48,7 @@ public class CombatEdit implements ModInitializer {
     public void onInitialize() {
         INSTANCE = this;
 
-        LOGGER.info("Loading config...");
-        config = loadConfig();
+        loadConfig();
 
         modifier = new RegistriesModifier(this);
         attributeHelper = new ItemStackAttributeHelper(this);
@@ -55,19 +56,20 @@ public class CombatEdit implements ModInitializer {
         LOGGER.info("Successfully initialized CombatEdit.");
     }
 
-    // TODO load config from mod config dir etc...
-    private Configuration loadConfig() {
-        return loadDefaultConfig(); /* TODO */
-    }
-
-    private Configuration loadDefaultConfig() {
-        try (InputStream in = getClass().getResourceAsStream("/config.json")) {
-            if (in == null) {
-                throw new IOException("Resource was not bundled correctly");
+    private void loadConfig() {
+        LOGGER.info("Loading config...");
+        try {
+            if (!Files.exists(DEFAULT_CONFIG_PATH)) {
+                LOGGER.info("No config found, loading and saving default...");
+                this.config = loadDefaultAndSave(DEFAULT_CONFIG_PATH);
+                LOGGER.info("Done.");
+                return;
             }
-            return GSON.fromJson(new InputStreamReader(in), Configuration.class);
+
+            this.config = Configuration.load(DEFAULT_CONFIG_PATH);
+            LOGGER.info("Done.");
         } catch (IOException e) {
-            throw new RuntimeException("Could not load default config", e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -75,13 +77,17 @@ public class CombatEdit implements ModInitializer {
         return config;
     }
 
-    public void resetConfig() {
-        this.config = loadDefaultConfig();
-        this.saveConfig();
+    private Configuration loadDefaultAndSave(Path savePath) throws IOException {
+        var config = Configuration.loadDefault();
+        config.save(savePath);
+
+        return config;
     }
 
-    public void saveConfig() {
-        /* TODO */
+    public void resetConfig() throws IOException {
+        LOGGER.info("Resetting config...");
+        this.config = loadDefaultAndSave(DEFAULT_CONFIG_PATH);
+        LOGGER.info("Done.");
     }
 
     public ItemStackAttributeHelper getAttributeHelper() {

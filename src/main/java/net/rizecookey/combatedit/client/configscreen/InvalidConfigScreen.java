@@ -9,6 +9,8 @@ import net.minecraft.util.Formatting;
 import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.configuration.InvalidConfigurationException;
 
+import java.io.IOException;
+
 public class InvalidConfigScreen extends WarningScreen {
     private static final Text TITLE = Text.translatable("error.combatedit.invalid_config.title");
     private static final Text RESET_CONFIG = Text.translatable("button.combatedit.reset_config");
@@ -31,7 +33,11 @@ public class InvalidConfigScreen extends WarningScreen {
         DirectionalLayoutWidget horizontalButtons = DirectionalLayoutWidget.horizontal().spacing(8);
         horizontalButtons.add(ButtonWidget
                 .builder(RESET_CONFIG, button -> {
-                    CombatEdit.getInstance().resetConfig();
+                    try {
+                        CombatEdit.getInstance().resetConfig();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e); // TODO maybe add notification
+                    }
                     onClose.run();
                 })
                 .build());
