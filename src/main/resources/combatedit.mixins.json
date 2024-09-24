@@ -9,23 +9,24 @@
   "mixins": [
     "PlayerEntityMixin",
     "compatibility.AttributeContainerMixin",
+    "compatibility.ClientConnectionMixin",
     "compatibility.DefaultAttributeContainerMixin",
     "compatibility.EntityMixin",
     "compatibility.EntityTypeMixin",
     "compatibility.LevelPropertiesMixin",
     "compatibility.LivingEntityMixin",
     "compatibility.PlayerManagerMixin",
+    "compatibility.ServerCommonNetworkHandlerMixin",
+    "compatibility.ServerPlayNetworkHandlerMixin",
     "compatibility.WorldSaveHandlerMixin",
+    "compatibility.c2s.ClickWindowC2SPacketMixin",
+    "compatibility.c2s.CreativeInventoryActionC2SPacketMixin",
+    "compatibility.s2c.ContainerSlotUpdateS2CPacketMixin",
+    "compatibility.s2c.InventoryS2CPacketMixin",
     "item.ItemMixin",
     "knockback.LivingEntityMixin",
     "knockback.PlayerEntityMixin",
     "server.MinecraftServerMixin"
-  ],
-  "server": [
-    "compatibility.c2s.ClickWindowC2SPacketMixin",
-    "compatibility.c2s.CreativeInventoryActionC2SPacketMixin",
-    "compatibility.s2c.ContainerSlotUpdateS2CPacketMixin",
-    "compatibility.s2c.InventoryS2CMixin"
   ],
   "client": [
     "client.MinecraftClientMixin",

@@ -6,23 +6,23 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.rizecookey.combatedit.CombatEdit;
+import net.rizecookey.combatedit.extension.AttributePatchReversible;
 import net.rizecookey.combatedit.utils.ItemStackAttributeHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(ClickSlotC2SPacket.class)
-public abstract class ClickWindowC2SPacketMixin {
+public abstract class ClickWindowC2SPacketMixin implements AttributePatchReversible {
     @Final @Shadow @Mutable private ItemStack stack;
 
     @Shadow @Final @Mutable private Int2ObjectMap<ItemStack> modifiedStacks;
 
-    @Inject(method = "<init>*", at = @At("TAIL"))
-    public void modifyItemStack(CallbackInfo ci) {
+    @Unique
+    @Override
+    public void combatEdit$reverseAttributePatches() {
         ItemStackAttributeHelper helper = CombatEdit.getInstance().getAttributeHelper();
 
         this.stack = helper.reverseDisplayModifiers(this.stack);
