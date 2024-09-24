@@ -28,10 +28,18 @@
   "option.combatedit.item.item_attributes.modifier_entry.slot": "Slot",
   "option.combatedit.item.item_attributes.override_defaults": "Override default modifiers",
 
+  "category.combatedit.sounds": "Attack sounds",
+
+  "category.combatedit.misc": "Miscellaneous",
+  "option.combatedit.misc.enable_1_8_knockback": "Enable 1.8 Knockback",
+  "option.combatedit.misc.disable_sweeping_without_enchantment": "Disable sweep attacks without enchantment",
+
   "error.combatedit.invalid_uuid": "Invalid UUID, enter a correct UUID or leave empty",
   "error.combatedit.invalid_config.title": "CombatEdit failed to load config",
   "error.combatedit.invalid_config.description": "CombatEdit failed to load your configuration! You can either correct errors in the configuration or reset it to the defaults.\n\nError message: %s\nCheck the logs for more details.",
 
   "button.combatedit.exit": "Close Minecraft",
-  "button.combatedit.reset_config": "Reset configuration"
+  "button.combatedit.reset_config": "Reset configuration",
+
+  "combatedit.sound.entity.player.attack.nodamage": "No damage attack"
 }

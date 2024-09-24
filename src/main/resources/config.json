@@ -445,5 +445,19 @@
       ],
       "override_default": true
     }
-  ]
+  ],
+  "sound_configuration": {
+    "enabled_sounds": {
+      "minecraft:entity.player.attack.nodamage": false,
+      "minecraft:entity.player.attack.knockback": false,
+      "minecraft:entity.player.attack.weak": true,
+      "minecraft:entity.player.attack.strong": true,
+      "minecraft:entity.player.attack.sweep": true,
+      "minecraft:entity.player.attack.crit": true
+    }
+  },
+  "misc_configuration": {
+    "enable_1_8_knockback": true,
+    "disable_sweeping_without_enchantment": true
+  }
 }
