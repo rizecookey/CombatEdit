@@ -43,6 +43,7 @@ public class EntityAttributeMap implements EntityAttributeModifierProvider {
         return new EntityAttributeMap(map);
     }
 
+    @SuppressWarnings("unchecked")
     private static Map.Entry<EntityType<? extends LivingEntity>, DefaultAttributeContainer> fromConfigurationEntry(EntityAttributes modifier, Function<EntityType<? extends LivingEntity>, DefaultAttributeContainer> originalDefaults) {
         if (!Registries.ENTITY_TYPE.containsId(modifier.getEntityId())) {
             LOGGER.warn("No entity with id {} found, skipping entry", modifier.getEntityId());
@@ -51,7 +52,6 @@ public class EntityAttributeMap implements EntityAttributeModifierProvider {
 
         EntityType<? extends LivingEntity> type;
         try {
-            //noinspection unchecked
             type = (EntityType<? extends LivingEntity>) Registries.ENTITY_TYPE.get(modifier.getEntityId());
         } catch (ClassCastException e) {
             LOGGER.warn("{} is not a living entity and thus does not have attributes, skipping entry", modifier.getEntityId());
