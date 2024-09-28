@@ -9,8 +9,6 @@ import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.RegistriesModifier;
 import net.rizecookey.combatedit.configuration.BaseProfile;
 import net.rizecookey.combatedit.configuration.Settings;
-import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
-import net.rizecookey.combatedit.configuration.exception.ResourceLoadFailureException;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
 import net.rizecookey.combatedit.configuration.representation.ConfigurationView;
 import net.rizecookey.combatedit.configuration.representation.EntityAttributes;
@@ -22,19 +20,14 @@ import net.rizecookey.combatedit.item.ItemAttributeMap;
 import net.rizecookey.combatedit.item.ItemAttributeModifierProvider;
 import net.rizecookey.combatedit.utils.ItemStackAttributeHelper;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
-import static net.rizecookey.combatedit.CombatEdit.GSON;
 import static net.rizecookey.combatedit.CombatEdit.LOGGER;
 
 public class ServerConfigurationProvider implements SimpleSynchronousResourceReloadListener {
-    public static final String BASE_PROFILE_PATH = "combatedit/base_profiles";
     private static ServerConfigurationProvider INSTANCE;
 
     private final CombatEdit combatEdit;
@@ -102,22 +95,12 @@ public class ServerConfigurationProvider implements SimpleSynchronousResourceRel
 
     private void reloadBaseProfiles(ResourceManager manager) {
         LOGGER.info("Loading base profiles...");
-        baseProfiles = new HashMap<>();
-        StringJoiner joiner = new StringJoiner(", ");
-        for (var entry : manager.findResources(BASE_PROFILE_PATH, path -> path.getPath().endsWith(".json")).entrySet()) {
-            var shortId = new Identifier(entry.getKey().getNamespace(), shortenPath(entry.getKey().getPath()));
-            try (var reader = new InputStreamReader(entry.getValue().getInputStream())) {
-                var baseProfile = GSON.fromJson(reader, BaseProfile.class);
-                baseProfile.validate();
-                baseProfiles.put(shortId, baseProfile);
-                joiner.add(shortId.toString());
-            } catch (IOException e) {
-                throw new ResourceLoadFailureException(e);
-            } catch (InvalidConfigurationException e) {
-                LOGGER.error("Could not load base profile {}", shortId.toString(), e);
-            }
-        }
-        LOGGER.info("Found {} base profiles: {}", baseProfiles.size(), joiner.toString());
+        baseProfiles = BaseProfile.find(manager);
+        LOGGER.info("Found {} base profiles: {}", baseProfiles.size(),
+                baseProfiles.keySet()
+                        .stream()
+                        .map(Identifier::toString)
+                        .collect(Collectors.joining(", ")));
     }
 
     private void updateConfiguration() {
@@ -149,10 +132,6 @@ public class ServerConfigurationProvider implements SimpleSynchronousResourceRel
 
         oldItemAttributes = List.copyOf(configuration.getItemAttributes());
         oldEntityAttributes = List.copyOf(configuration.getEntityAttributes());
-    }
-
-    private static String shortenPath(String path) {
-        return path.substring(BASE_PROFILE_PATH.length() + 1, path.length() - ".json".length());
     }
 
     public static ServerConfigurationProvider getInstance() {
