@@ -1,10 +1,11 @@
 package net.rizecookey.combatedit.configuration.provider;
 
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.attribute.DefaultAttributeRegistry;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.profiler.Profiler;
 import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.RegistriesModifier;
 import net.rizecookey.combatedit.configuration.BaseProfile;
@@ -23,15 +24,16 @@ import net.rizecookey.combatedit.utils.ItemStackAttributeHelper;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 import static net.rizecookey.combatedit.CombatEdit.LOGGER;
 
-public class ServerConfigurationProvider implements SimpleSynchronousResourceReloadListener {
+public class ServerConfigurationProvider implements SimpleResourceReloadListener<Map<Identifier, BaseProfile>> {
     private static ServerConfigurationProvider INSTANCE;
 
     private final CombatEdit combatEdit;
-    private Map<Identifier, BaseProfile> baseProfiles;
     private Configuration configuration;
     private ItemAttributeModifierProvider currentItemModifierProvider;
     private EntityAttributeModifierProvider currentEntityModifierProvider;
@@ -55,22 +57,16 @@ public class ServerConfigurationProvider implements SimpleSynchronousResourceRel
     }
 
     @Override
-    public void reload(ResourceManager manager) {
-        reloadBaseProfiles(manager);
-        updateConfiguration();
-
-        applyConfiguration();
+    public CompletableFuture<Map<Identifier, BaseProfile>> load(ResourceManager manager, Profiler profiler, Executor executor) {
+        return CompletableFuture.supplyAsync(() -> loadBaseProfiles(manager), executor);
     }
 
-    public void unload() {
-        LOGGER.info("Reverting entity and item attribute modifications...");
-        this.registriesModifier.revertModifications();
-        LOGGER.info("Done.");
-
-        this.configuration = null;
-        this.currentEntityModifierProvider = null;
-        this.currentItemModifierProvider = null;
-        this.attributeHelper = null;
+    @Override
+    public CompletableFuture<Void> apply(Map<Identifier, BaseProfile> data, ResourceManager manager, Profiler profiler, Executor executor) {
+        return CompletableFuture.runAsync(() -> {
+            updateConfiguration(data);
+            notifyAboutHotReload();
+        }, executor);
     }
 
     public Configuration getConfiguration() {
@@ -93,17 +89,29 @@ public class ServerConfigurationProvider implements SimpleSynchronousResourceRel
         return registriesModifier;
     }
 
-    private void reloadBaseProfiles(ResourceManager manager) {
+    public void reloadModifierProviders() {
+        currentEntityModifierProvider = EntityAttributeMap.fromConfiguration(configuration.getEntityAttributes(), DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY::get);
+        currentItemModifierProvider = ItemAttributeMap.fromConfiguration(configuration.getItemAttributes(), item -> item.getComponents().get(DataComponentTypes.ATTRIBUTE_MODIFIERS));
+    }
+
+    public void unloadModifierProviders() {
+        this.currentEntityModifierProvider = null;
+        this.currentItemModifierProvider = null;
+    }
+
+    private static Map<Identifier, BaseProfile> loadBaseProfiles(ResourceManager manager) {
         LOGGER.info("Loading base profiles...");
-        baseProfiles = BaseProfile.find(manager);
-        LOGGER.info("Found {} base profiles: {}", baseProfiles.size(),
-                baseProfiles.keySet()
+        var result = BaseProfile.find(manager);
+        LOGGER.info("Found {} base profiles: {}", result.size(),
+                result.keySet()
                         .stream()
                         .map(Identifier::toString)
                         .collect(Collectors.joining(", ")));
+
+        return result;
     }
 
-    private void updateConfiguration() {
+    private void updateConfiguration(Map<Identifier, BaseProfile> baseProfiles) {
         Settings settings = combatEdit.getSettings();
         BaseProfile selectedProfile = baseProfiles.get(settings.getSelectedBaseProfile());
         if (selectedProfile == null) {
@@ -115,7 +123,7 @@ public class ServerConfigurationProvider implements SimpleSynchronousResourceRel
         configuration = new ConfigurationView(settings.getConfigurationOverrides(), selectedProfile.getConfiguration());
     }
 
-    private void applyConfiguration() {
+    private void notifyAboutHotReload() {
         if (registriesModifier.areRegistriesModified()) {
             if (!Objects.equals(oldItemAttributes, configuration.getItemAttributes()) || !Objects.equals(oldEntityAttributes, configuration.getEntityAttributes())) {
                 LOGGER.warn("Hot reloading of attribute configurations is currently not supported! Please restart the server or rejoin the world to apply new settings");
@@ -123,12 +131,6 @@ public class ServerConfigurationProvider implements SimpleSynchronousResourceRel
 
             return;
         }
-
-        LOGGER.info("Applying entity and item attribute modifications...");
-        currentEntityModifierProvider = EntityAttributeMap.fromConfiguration(configuration.getEntityAttributes(), DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY::get);
-        currentItemModifierProvider = ItemAttributeMap.fromConfiguration(configuration.getItemAttributes(), item -> item.getComponents().get(DataComponentTypes.ATTRIBUTE_MODIFIERS));
-        registriesModifier.makeModifications();
-        LOGGER.info("Done.");
 
         oldItemAttributes = List.copyOf(configuration.getItemAttributes());
         oldEntityAttributes = List.copyOf(configuration.getEntityAttributes());
