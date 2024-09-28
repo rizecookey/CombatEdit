@@ -7,7 +7,7 @@ import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.rizecookey.combatedit.CombatEdit;
+import net.rizecookey.combatedit.configuration.provider.ServerConfigurationProvider;
 import net.rizecookey.combatedit.extension.AttributeContainerExtension;
 import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtension;
 import org.spongepowered.asm.mixin.Final;
@@ -72,13 +72,13 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
     }
 
     @Unique
-    private static CombatEdit combatEdit() {
-        return CombatEdit.getInstance();
+    private static ServerConfigurationProvider configurationProvider() {
+        return ServerConfigurationProvider.getInstance();
     }
 
     @Override
     public void combatEdit$patchWithNewDefaults(EntityType<? extends LivingEntity> type) {
-        DefaultAttributeContainer originalDefaults = combatEdit().getModifier().getOriginalDefaults(type);
+        DefaultAttributeContainer originalDefaults = configurationProvider().getModifier().getOriginalDefaults(type);
         custom.forEach((attribute, instance) -> {
             if (!this.fallback.has(attribute) || !originalDefaults.has(attribute)) {
                 return;
@@ -95,7 +95,7 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
 
     @Override
     public AttributeContainer combatEdit$getWithOriginalDefaults(EntityType<? extends LivingEntity> type) {
-        DefaultAttributeContainer originalDefaults = combatEdit().getModifier().getOriginalDefaults(type);
+        DefaultAttributeContainer originalDefaults = configurationProvider().getModifier().getOriginalDefaults(type);
         AttributeContainer copy = new AttributeContainer(fallback);
         copy.setFrom(thisInstance());
         custom.forEach((attribute, instance) -> {

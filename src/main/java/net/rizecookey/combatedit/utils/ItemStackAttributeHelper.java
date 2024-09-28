@@ -19,8 +19,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
-import net.rizecookey.combatedit.CombatEdit;
-import net.rizecookey.combatedit.configuration.Configuration;
+import net.rizecookey.combatedit.configuration.provider.ServerConfigurationProvider;
 
 import java.util.UUID;
 
@@ -32,18 +31,14 @@ public class ItemStackAttributeHelper {
     private static final String ATTRIBUTE_TYPE_TAG = "type";
     private static final String ATTRIBUTE_MODIFIER_TAG = "modifier";
 
-    private final CombatEdit combatEdit;
+    private final ServerConfigurationProvider configurationProvider;
 
-    public ItemStackAttributeHelper(CombatEdit combatEdit) {
-        this.combatEdit = combatEdit;
-    }
-
-    private Configuration config() {
-        return combatEdit.getConfig();
+    public ItemStackAttributeHelper(ServerConfigurationProvider configurationProvider) {
+        this.configurationProvider = configurationProvider;
     }
 
     public AttributeModifiersComponent getDisplayModifiers(ItemStack itemStack) {
-        var itemModifiers = combatEdit.getCurrentItemModifierProvider();
+        var itemModifiers = configurationProvider.getCurrentItemModifierProvider();
         Item item = itemStack.getItem();
         Identifier id = Registries.ITEM.getId(item);
         if (!itemModifiers.shouldModifyItem(id, item)) {
@@ -78,7 +73,7 @@ public class ItemStackAttributeHelper {
     }
 
     public ItemStack getDisplayModified(ItemStack itemStack) {
-        var itemModifiers = combatEdit.getCurrentItemModifierProvider();
+        var itemModifiers = configurationProvider.getCurrentItemModifierProvider();
         Item item = itemStack.getItem();
         Identifier id = Registries.ITEM.getId(item);
         if (!itemModifiers.shouldModifyItem(id, item)) {

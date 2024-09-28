@@ -1,7 +1,8 @@
-package net.rizecookey.combatedit.configuration;
+package net.rizecookey.combatedit.configuration.representation;
 
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,10 @@ public class EntityAttributes {
     }
 
     public List<AttributeBaseValue> getBaseValues() {
+        if (baseValues == null) {
+            baseValues = new ArrayList<>();
+        }
+
         return baseValues;
     }
 
@@ -45,13 +50,13 @@ public class EntityAttributes {
             throw new InvalidConfigurationException("No entity with id %s found".formatted(entityId));
         }
 
-        if (baseValues == null) {
-            baseValues = new ArrayList<>();
-        }
-
-        for (var baseValue : baseValues) {
+        for (var baseValue : getBaseValues()) {
             baseValue.validate();
         }
+    }
+
+    public EntityAttributes copy() {
+        return new EntityAttributes(entityId, List.copyOf(baseValues), overrideDefault);
     }
 
     public static EntityAttributes getDefault() {

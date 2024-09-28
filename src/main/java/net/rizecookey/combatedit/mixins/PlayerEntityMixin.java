@@ -11,8 +11,8 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.rizecookey.combatedit.CombatEdit;
-import net.rizecookey.combatedit.configuration.SoundConfiguration;
+import net.rizecookey.combatedit.configuration.provider.ServerConfigurationProvider;
+import net.rizecookey.combatedit.configuration.representation.Configuration;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,7 +27,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     private PlayerEntity instance = (PlayerEntity) (Object) this;
 
     @Unique
-    private CombatEdit combatEdit;
+    private ServerConfigurationProvider configurationProvider;
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> type, World world) {
         super(type, world);
@@ -35,7 +35,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void loadCombatEditReference(World world, BlockPos pos, float yaw, GameProfile gameProfile, CallbackInfo ci) {
-        this.combatEdit = CombatEdit.getInstance();
+        configurationProvider = ServerConfigurationProvider.getInstance();
     }
 
     @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/player/PlayerEntity;DDDLnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FF)V"))
@@ -47,17 +47,18 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Unique
     private boolean shouldPlayAttackSound(SoundEvent sound) {
-        if (!SoundConfiguration.CONFIGURABLE_SOUNDS.contains(sound)) {
+        if (!Configuration.CONFIGURABLE_SOUNDS.contains(sound)) {
             return true;
         }
 
-        SoundConfiguration soundConfiguration = combatEdit.getConfig().getSoundConfiguration();
-        return soundConfiguration.getEnabledSounds().getOrDefault(sound.getId(), false);
+        Configuration configuration = configurationProvider.getConfiguration();
+        return configuration.isSoundEnabled(sound.getId()).orElse(false);
     }
 
     @ModifyVariable(method = "attack", ordinal = 3, at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z", shift = At.Shift.BEFORE))
     public boolean checkIfSweepEnchant(boolean bl4) {
-        if (EnchantmentHelper.getEquipmentLevel(Enchantments.SWEEPING_EDGE, instance) == 0 && combatEdit.getConfig().getMiscConfiguration().isSweepingWithoutEnchantmentDisabled()) {
+        Configuration.MiscOptions miscOptions = configurationProvider.getConfiguration().getMiscOptions();
+        if (EnchantmentHelper.getEquipmentLevel(Enchantments.SWEEPING_EDGE, instance) == 0 && miscOptions.isSweepingWithoutEnchantmentDisabled().orElse(false)) {
             bl4 = false;
         }
         return bl4;

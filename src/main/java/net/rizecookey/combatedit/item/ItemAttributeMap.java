@@ -5,12 +5,11 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.rizecookey.combatedit.configuration.ItemAttributes;
+import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -35,11 +34,20 @@ public class ItemAttributeMap implements ItemAttributeModifierProvider {
 
     public static ItemAttributeMap fromConfiguration(List<ItemAttributes> itemAttributes, Function<Item, AttributeModifiersComponent> originalDefaults) {
         Map<Item, AttributeModifiersComponent> map = new HashMap<>();
+        Function<Item, AttributeModifiersComponent> defaultProvider = item -> {
+            if (map.containsKey(item)) {
+                return map.get(item);
+            } else {
+                return originalDefaults.apply(item);
+            }
+        };
 
-        itemAttributes.stream()
-                .map(attribute -> fromConfigurationEntry(attribute, originalDefaults))
-                .filter(Objects::nonNull)
-                .forEach(result -> map.put(result.getKey(), result.getValue()));
+        for (var attribute : itemAttributes) {
+            var result = fromConfigurationEntry(attribute, defaultProvider);
+            if (result != null) {
+                map.put(result.getKey(), result.getValue());
+            }
+        }
 
         return new ItemAttributeMap(map);
     }

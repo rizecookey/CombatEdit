@@ -2,7 +2,7 @@ package net.rizecookey.combatedit.mixins.compatibility.c2s;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
-import net.rizecookey.combatedit.CombatEdit;
+import net.rizecookey.combatedit.configuration.provider.ServerConfigurationProvider;
 import net.rizecookey.combatedit.extension.AttributePatchReversible;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,6 +15,6 @@ public abstract class CreativeInventoryActionC2SPacketMixin implements Attribute
 
     @Override
     public void combatEdit$reverseAttributePatches() {
-        this.stack = CombatEdit.getInstance().getAttributeHelper().reverseDisplayModifiers(this.stack);
+        this.stack = ServerConfigurationProvider.getInstance().getAttributeHelper().reverseDisplayModifiers(this.stack);
     }
 }

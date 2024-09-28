@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+import net.rizecookey.combatedit.configuration.provider.ServerConfigurationProvider;
 import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtension;
 import net.rizecookey.combatedit.extension.ItemExtension;
 
@@ -17,17 +18,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RegistriesModifier {
-    private final CombatEdit combatEdit;
+    private final ServerConfigurationProvider configurationProvider;
     private boolean registriesModified = false;
     private final Map<Pair<Identifier, Item>, AttributeModifiersComponent> originalItemModifiers = new HashMap<>();
     private Map<EntityType<? extends LivingEntity>, DefaultAttributeContainer> originalEntityModifiers;
 
-    public RegistriesModifier(CombatEdit combatEdit) {
-        this.combatEdit = combatEdit;
+    public RegistriesModifier(ServerConfigurationProvider configurationProvider) {
+        this.configurationProvider = configurationProvider;
+    }
+
+    public boolean areRegistriesModified() {
+        return registriesModified;
     }
 
     public void makeModifications() {
-        combatEdit.reloadProviders();
         modifyItemAttributes();
         modifyEntityAttributes();
 
@@ -35,7 +39,7 @@ public class RegistriesModifier {
     }
 
     private void modifyItemAttributes() {
-        var provider = combatEdit.getCurrentItemModifierProvider();
+        var provider = configurationProvider.getCurrentItemModifierProvider();
         for (Item item : Registries.ITEM) {
             Identifier id = Registries.ITEM.getId(item);
 
@@ -52,7 +56,7 @@ public class RegistriesModifier {
     }
 
     private void modifyEntityAttributes() {
-        var provider = combatEdit.getCurrentEntityModifierProvider();
+        var provider = configurationProvider.getCurrentEntityModifierProvider();
         originalEntityModifiers = DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY;
 
         ImmutableMap.Builder<EntityType<? extends LivingEntity>, DefaultAttributeContainer> builder = ImmutableMap.builder();

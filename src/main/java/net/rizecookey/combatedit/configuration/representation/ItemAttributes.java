@@ -1,10 +1,11 @@
-package net.rizecookey.combatedit.configuration;
+package net.rizecookey.combatedit.configuration.representation;
 
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,9 @@ public class ItemAttributes {
     }
 
     public List<ModifierEntry> getModifiers() {
+        if (modifiers == null) {
+            modifiers = new ArrayList<>();
+        }
         return modifiers;
     }
 
@@ -49,13 +53,13 @@ public class ItemAttributes {
             throw new InvalidConfigurationException("No item with id %s found".formatted(itemId));
         }
 
-        if (modifiers == null) {
-            modifiers = new ArrayList<>();
-        }
-
-        for (var modifier : modifiers) {
+        for (var modifier : getModifiers()) {
             modifier.validate();
         }
+    }
+
+    public ItemAttributes copy() {
+        return new ItemAttributes(itemId, List.copyOf(modifiers), overrideDefault);
     }
 
     public static ItemAttributes getDefault() {

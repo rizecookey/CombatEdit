@@ -27,6 +27,13 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
+	Set.of(
+	        "fabric-api-base",
+			"fabric-resource-loader-v0"
+	).forEach {
+		include modImplementation(fabricApi.module(it, project.fabric_version))
+	}
+
 	include modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}")
 	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
 }

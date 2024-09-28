@@ -5,13 +5,12 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.rizecookey.combatedit.configuration.EntityAttributes;
+import net.rizecookey.combatedit.configuration.representation.EntityAttributes;
 import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtension;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 
 import static net.rizecookey.combatedit.CombatEdit.LOGGER;
@@ -35,10 +34,20 @@ public class EntityAttributeMap implements EntityAttributeModifierProvider {
 
     public static EntityAttributeMap fromConfiguration(List<EntityAttributes> entityAttributes, Function<EntityType<? extends LivingEntity>, DefaultAttributeContainer> originalDefaults) {
         Map<EntityType<? extends LivingEntity>, DefaultAttributeContainer> map = new HashMap<>();
-        entityAttributes.stream()
-                .map(modifier -> fromConfigurationEntry(modifier, originalDefaults))
-                .filter(Objects::nonNull)
-                .forEach(result -> map.put(result.getKey(), result.getValue()));
+        Function<EntityType<? extends LivingEntity>, DefaultAttributeContainer> defaultProvider = type -> {
+            if (map.containsKey(type)) {
+                return map.get(type);
+            } else {
+                return originalDefaults.apply(type);
+            }
+        };
+
+        for (EntityAttributes entityAttribute : entityAttributes) {
+            var result = fromConfigurationEntry(entityAttribute, defaultProvider);
+            if (result != null) {
+                map.put(result.getKey(), result.getValue());
+            }
+        }
 
         return new EntityAttributeMap(map);
     }

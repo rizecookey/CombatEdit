@@ -7,7 +7,7 @@ import net.minecraft.client.gui.widget.LayoutWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.rizecookey.combatedit.CombatEdit;
-import net.rizecookey.combatedit.configuration.InvalidConfigurationException;
+import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 
 import java.io.IOException;
 
@@ -34,7 +34,7 @@ public class InvalidConfigScreen extends WarningScreen {
         horizontalButtons.add(ButtonWidget
                 .builder(RESET_CONFIG, button -> {
                     try {
-                        CombatEdit.getInstance().resetConfig();
+                        CombatEdit.getInstance().resetSettings();
                     } catch (IOException e) {
                         throw new RuntimeException(e); // TODO maybe add notification
                     }

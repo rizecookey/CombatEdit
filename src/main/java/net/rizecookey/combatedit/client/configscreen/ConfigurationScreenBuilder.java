@@ -2,6 +2,7 @@ package net.rizecookey.combatedit.client.configscreen;
 
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
+import me.shedaniel.clothconfig2.gui.entries.EnumListEntry;
 import me.shedaniel.clothconfig2.impl.builders.DropdownMenuBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -11,44 +12,44 @@ import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.Language;
 import net.rizecookey.clothconfig2.extension.api.ExtendedConfigEntryBuilder;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectAdapter;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectListEntry;
 import net.rizecookey.clothconfig2.extension.impl.builders.ExtendedDropdownMenus;
-import net.rizecookey.combatedit.configuration.Configuration;
-import net.rizecookey.combatedit.configuration.EntityAttributes;
-import net.rizecookey.combatedit.configuration.ItemAttributes;
-import net.rizecookey.combatedit.configuration.MiscConfiguration;
-import net.rizecookey.combatedit.configuration.SoundConfiguration;
+import net.rizecookey.combatedit.configuration.Settings;
+import net.rizecookey.combatedit.configuration.representation.Configuration;
+import net.rizecookey.combatedit.configuration.representation.EntityAttributes;
+import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
+import net.rizecookey.combatedit.configuration.representation.MutableConfiguration;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ConfigurationScreenBuilder {
     private static final ExtendedConfigEntryBuilder ENTRY_BUILDER = ExtendedConfigEntryBuilder.create();
 
-    public static Screen buildScreen(Configuration config, Path savePath, Screen parentScreen) {
+    public static Screen buildScreen(Settings settings, Path savePath, Screen parentScreen) {
         var builder = ConfigBuilder.create()
                 .setParentScreen(parentScreen)
                 .setTitle(Text.translatable("title.combatedit.config"))
                 .setSavingRunnable(() -> {
                     try {
-                        config.save(savePath);
+                        settings.save(savePath);
                     } catch (IOException e) {
                         throw new RuntimeException(e); // TODO Maybe show notification?
                     }
                 });
 
+        var config = settings.getConfigurationOverrides();
         createEntityCategory(config.getEntityAttributes(), builder);
         createItemCategory(config.getItemAttributes(), builder);
-        createSoundCategory(config.getSoundConfiguration(), builder);
-        createMiscCategory(config.getMiscConfiguration(), builder);
+        createSoundCategory(config, builder);
+        createMiscCategory(config.getMiscOptions(), builder);
 
         return builder.build();
     }
@@ -99,27 +100,30 @@ public class ConfigurationScreenBuilder {
                 .build());
     }
 
-    private static void createSoundCategory(SoundConfiguration soundConfiguration, ConfigBuilder builder) {
-        Map<Identifier, Boolean> enabledSounds = soundConfiguration.getEnabledSounds();
+    private static EnumListEntry<?> optionalBooleanEntry(Text fieldName, Boolean initialValue, Consumer<Boolean> saveConsumer) {
+        return ENTRY_BUILDER.startEnumSelector(fieldName, TriStateOption.class, TriStateOption.fromBoolean(initialValue))
+                .setSaveConsumer(value -> saveConsumer.accept(value.asBoolean()))
+                .setEnumNameProvider(anEnum -> ((TriStateOption) anEnum).getText())
+                .build();
+    }
+
+    private static void createSoundCategory(MutableConfiguration configuration, ConfigBuilder builder) {
         var category = builder.getOrCreateCategory(Text.translatable("category.combatedit.sounds"));
         addLocalWarning(category);
-        for (var sound : SoundConfiguration.CONFIGURABLE_SOUNDS) {
+        for (var sound : Configuration.CONFIGURABLE_SOUNDS) {
             String translationKey = determineSoundTranslationKey(sound);
-            category.addEntry(ENTRY_BUILDER.startBooleanToggle(Text.translatable(translationKey), enabledSounds.getOrDefault(sound.getId(), false))
-                    .setSaveConsumer(value -> soundConfiguration.getEnabledSounds().put(sound.getId(), value))
-                    .build());
+            category.addEntry(optionalBooleanEntry(Text.translatable(translationKey), configuration.isSoundEnabled(sound.getId()).orElse(null),
+                    value -> configuration.setSoundEnabled(sound.getId(), value)));
         }
     }
 
-    private static void createMiscCategory(MiscConfiguration miscConfiguration, ConfigBuilder builder) {
+    private static void createMiscCategory(MutableConfiguration.MiscOptions miscOptions, ConfigBuilder builder) {
         var category = builder.getOrCreateCategory(Text.translatable("category.combatedit.misc"));
         addLocalWarning(category);
-        category.addEntry(ENTRY_BUILDER.startBooleanToggle(Text.translatable("option.combatedit.misc.enable_1_8_knockback"), miscConfiguration.is1_8KnockbackEnabled())
-                .setSaveConsumer(miscConfiguration::set1_8KnockbackEnabled)
-                .build());
-        category.addEntry(ENTRY_BUILDER.startBooleanToggle(Text.translatable("option.combatedit.misc.disable_sweeping_without_enchantment"), miscConfiguration.isSweepingWithoutEnchantmentDisabled())
-                .setSaveConsumer(miscConfiguration::setSweepingWithoutEnchantmentDisabled)
-                .build());
+        category.addEntry(optionalBooleanEntry(Text.translatable("option.combatedit.misc.enable_1_8_knockback"), miscOptions.is1_8KnockbackEnabled().orElse(null),
+                miscOptions::set1_8KnockbackEnabled));
+        category.addEntry(optionalBooleanEntry(Text.translatable("option.combatedit.misc.disable_sweeping_without_enchantment"), miscOptions.isSweepingWithoutEnchantmentDisabled().orElse(null),
+                miscOptions::setSweepingWithoutEnchantmentDisabled));
     }
 
     private static String determineSoundTranslationKey(SoundEvent sound) {
@@ -133,7 +137,7 @@ public class ConfigurationScreenBuilder {
     }
 
     private static ObjectListEntry<EntityAttributes> createEntry(EntityAttributes attributes, int entryIndex) {
-        var copy = new EntityAttributes(attributes.getEntityId(), List.copyOf(attributes.getBaseValues()), attributes.isOverrideDefault());
+        var copy = attributes.copy();
 
         var entityTypeEntry = ENTRY_BUILDER.startDropdownMenu(Text.translatable("option.combatedit.entity.entity_attributes.entity"),
                         ExtendedDropdownMenus.TopCellElementBuilder.ofRegistryIdentifier(Registries.ENTITY_TYPE, Registries.ENTITY_TYPE.get(attributes.getEntityId())),
@@ -148,22 +152,17 @@ public class ConfigurationScreenBuilder {
                 })
                 .setExpanded(true)
                 .build();
-        var overrideDefaultToggle = ENTRY_BUILDER.startBooleanToggle(Text.translatable("option.combatedit.entity.entity_attributes.override_defaults"), attributes.isOverrideDefault())
-                .setSaveConsumer(attributes::setOverrideDefault)
-                .build();
 
         return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.entity.entity_attributes.entry"),
                 List.of(
                         entityTypeEntry,
-                        attributeValueMap,
-                        overrideDefaultToggle
+                        attributeValueMap
                 ),
                 ObjectAdapter.create(
                         () -> {
                             copy.setEntityId(entityTypeEntry.getValue());
                             copy.getBaseValues().clear();
                             copy.getBaseValues().addAll(attributeValueMap.getValue());
-                            copy.setOverrideDefault(overrideDefaultToggle.getValue());
 
                             return copy;
                         },

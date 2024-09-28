@@ -2,6 +2,15 @@
   "title.combatedit.config": "CombatEdit configuration",
   "option.combatedit.warn.ingame": "Changes here will not apply until you re-enter the world.",
   "option.combatedit.warn.local_only": "This configuration only applies to singleplayer worlds.",
+  "option.combatedit.tristate.use_default": "Use profile default",
+  "option.combatedit.tristate.true": "Yes",
+  "option.combatedit.tristate.false": "No",
+
+  "profile.combatedit.vanilla.name": "Vanilla",
+  "profile.combatedit.vanilla.description": "The default vanilla Minecraft settings",
+
+  "profile.combatedit.1_8_combat.name": "1.8 Combat",
+  "profile.combatedit.1_8_combat.description": "The settings for enabling 1.8-style combat",
 
   "category.combatedit.entity": "Entity configuration",
   "option.combatedit.entity.entity_attributes": "Default entity attributes",

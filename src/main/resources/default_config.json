@@ -1,0 +1,17 @@
+{
+  "settings_version": 1,
+  "entity_attributes": [],
+  "item_attributes": [],
+  "enabled_sounds": {
+    "minecraft:entity.player.attack.nodamage": true,
+    "minecraft:entity.player.attack.knockback": true,
+    "minecraft:entity.player.attack.weak": true,
+    "minecraft:entity.player.attack.strong": true,
+    "minecraft:entity.player.attack.sweep": true,
+    "minecraft:entity.player.attack.crit": true
+  },
+  "misc_options": {
+    "enable_1_8_knockback": false,
+    "disable_sweeping_without_enchantment": false
+  }
+}
