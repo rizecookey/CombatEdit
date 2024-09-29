@@ -13,7 +13,7 @@
   "profile.combatedit.1_8_combat.description": "The settings for enabling 1.8-style combat",
 
   "category.combatedit.entity": "Entity configuration",
-  "option.combatedit.entity.entity_attributes": "Default entity attributes",
+  "option.combatedit.entity.entity_attributes": "Entity attribute overrides",
   "option.combatedit.entity.entity_attributes.entry": "Entity entry",
   "option.combatedit.entity.entity_attributes.entity": "Entity",
   "option.combatedit.entity.entity_attributes.attribute_entry": "Attribute base values",
@@ -23,7 +23,7 @@
   "option.combatedit.entity.entity_attributes.override_defaults": "Override default attributes",
 
   "category.combatedit.item": "Item configuration",
-  "option.combatedit.item.item_attributes": "Default item attributes",
+  "option.combatedit.item.item_attributes": "Item attribute modifiers",
   "option.combatedit.item.item_attributes.entry": "Item entry",
   "option.combatedit.item.item_attributes.item": "Item",
   "option.combatedit.item.item_attributes.modifier_entry": "Attribute modifiers",
