@@ -37,7 +37,7 @@ public class ServerConfigurationProvider implements SimpleResourceReloadListener
     private Configuration configuration;
     private ItemAttributeModifierProvider currentItemModifierProvider;
     private EntityAttributeModifierProvider currentEntityModifierProvider;
-    private ItemStackAttributeHelper attributeHelper;
+    private final ItemStackAttributeHelper attributeHelper;
     private final RegistriesModifier registriesModifier;
 
     private List<EntityAttributes> oldEntityAttributes;
@@ -116,11 +116,12 @@ public class ServerConfigurationProvider implements SimpleResourceReloadListener
         BaseProfile selectedProfile = baseProfiles.get(settings.getSelectedBaseProfile());
         if (selectedProfile == null) {
             LOGGER.error("No base profile with id {} found! Using default configuration.", settings.getSelectedBaseProfile());
-            configuration = MutableConfiguration.loadDefault();
+            configuration = new ConfigurationView(settings.getConfigurationOverrides(), MutableConfiguration.loadDefault());
             return;
         }
 
         configuration = new ConfigurationView(settings.getConfigurationOverrides(), selectedProfile.getConfiguration());
+        LOGGER.info("Configuration updated.");
     }
 
     private void notifyAboutHotReload() {

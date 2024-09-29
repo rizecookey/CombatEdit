@@ -12,11 +12,14 @@ import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.InvalidIdentifierException;
 import net.minecraft.util.Language;
 import net.rizecookey.clothconfig2.extension.api.ExtendedConfigEntryBuilder;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectAdapter;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectListEntry;
 import net.rizecookey.clothconfig2.extension.impl.builders.ExtendedDropdownMenus;
+import net.rizecookey.combatedit.configuration.BaseProfile;
 import net.rizecookey.combatedit.configuration.Settings;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
 import net.rizecookey.combatedit.configuration.representation.EntityAttributes;
@@ -25,6 +28,8 @@ import net.rizecookey.combatedit.configuration.representation.MutableConfigurati
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,6 +51,7 @@ public class ConfigurationScreenBuilder {
                 });
 
         var config = settings.getConfigurationOverrides();
+        createProfileCategory(settings, builder);
         createEntityCategory(config.getEntityAttributes(), builder);
         createItemCategory(config.getItemAttributes(), builder);
         createSoundCategory(config, builder);
@@ -74,6 +80,58 @@ public class ConfigurationScreenBuilder {
         category.addEntry(ENTRY_BUILDER.startTextDescription(Text
                 .translatable("option.combatedit.warn.ingame")
                 .styled(style -> style.withColor(Formatting.RED))).build());
+    }
+
+    private static void createProfileCategory(Settings settings, ConfigBuilder builder) {
+        var category = builder.getOrCreateCategory(Text.translatable("category.combatedit.profile"));
+        addLocalWarning(category);
+        addIngameWarning(category);
+
+        List<BaseProfile.Info> baseProfiles = new ArrayList<>(Arrays.stream(BaseProfile.IntegratedProfiles.values())
+                .map(BaseProfile.IntegratedProfiles::getInfo)
+                .toList());
+        var customProfile = new BaseProfile.Info(null,
+                Text.translatable("option.combatedit.profile.base_profile.custom.name"),
+                Text.translatable("option.combatedit.profile.base_profile.custom.description"));
+        baseProfiles.add(customProfile);
+
+        BaseProfile.Info currentSelected = baseProfiles.stream()
+                .filter(data -> settings.getSelectedBaseProfile().equals(data.id()))
+                .findFirst()
+                .orElse(customProfile);
+
+        var profileSelector = ENTRY_BUILDER.startSelector(Text.translatable("option.combatedit.profile.base_profile"), baseProfiles.toArray(new BaseProfile.Info[0]), currentSelected)
+                .setNameProvider(BaseProfile.Info::name)
+                .setTooltipSupplier(info -> Optional.of(new Text[] { info.description() }))
+                .setSaveConsumer(value -> {
+                    if (value.id() != null) {
+                        settings.setSelectedBaseProfile(value.id());
+                    }
+                })
+                .build();
+        category.addEntry(profileSelector);
+        category.addEntry(ENTRY_BUILDER.startTextField(Text.translatable("option.combatedit.profile.custom_base_profile"), settings.getSelectedBaseProfile().toString())
+                .setDisplayRequirement(() -> profileSelector.getValue().id() == null)
+                .setSaveConsumer(value -> {
+                    if (profileSelector.getValue().id() == null) {
+                        settings.setSelectedBaseProfile(new Identifier(value));
+                    }
+                })
+                .setErrorSupplier(value -> {
+                    try {
+                        new Identifier(value);
+                    } catch (InvalidIdentifierException e) {
+                        return Optional.of(Text.translatable("error.combatedit.invalid_identifier"));
+                    }
+
+                    return Optional.empty();
+                })
+                .build());
+        category.addEntry(ENTRY_BUILDER.startTextDescription(Text
+                        .translatable("option.combatedit.profile.custom_base_profile.notice")
+                        .styled(style -> style.withColor(Formatting.RED)))
+                .setDisplayRequirement(() -> profileSelector.getValue().id() == null)
+                .build());
     }
 
     private static void createEntityCategory(List<EntityAttributes> entityAttributes, ConfigBuilder builder) {

@@ -12,6 +12,13 @@
   "profile.combatedit.1_8_combat.name": "1.8 Combat",
   "profile.combatedit.1_8_combat.description": "The settings for enabling 1.8-style combat",
 
+  "category.combatedit.profile": "Profiles",
+  "option.combatedit.profile.base_profile": "Base profile",
+  "option.combatedit.profile.base_profile.custom.name": "Custom",
+  "option.combatedit.profile.base_profile.custom.description": "Chooses a custom base profile.",
+  "option.combatedit.profile.custom_base_profile": "Custom base profile identifier",
+  "option.combatedit.profile.custom_base_profile.notice": "Please note that this option is for using a data pack-provided base profile. If you simply want to make changes to another base profile, select that profile and add modifiers in the Entity and Item configuration tabs.",
+
   "category.combatedit.entity": "Entity configuration",
   "option.combatedit.entity.entity_attributes": "Entity attribute overrides",
   "option.combatedit.entity.entity_attributes.entry": "Entity entry",
@@ -43,6 +50,7 @@
   "option.combatedit.misc.enable_1_8_knockback": "Enable 1.8 Knockback",
   "option.combatedit.misc.disable_sweeping_without_enchantment": "Disable sweep attacks without enchantment",
 
+  "error.combatedit.invalid_identifier": "Not a valid identifier",
   "error.combatedit.invalid_uuid": "Invalid UUID, enter a correct UUID or leave empty",
   "error.combatedit.invalid_config.title": "CombatEdit failed to load config",
   "error.combatedit.invalid_config.description": "CombatEdit failed to load your configuration! You can either correct errors in the configuration or reset it to the defaults.\n\nError message: %s\nCheck the logs for more details.",

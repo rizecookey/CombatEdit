@@ -105,4 +105,21 @@ public class BaseProfile {
         return Objects.equals(name, profile.name) && Objects.equals(description, profile.description)
                 && Objects.equals(getConfiguration(), profile.getConfiguration());
     }
+
+    public record Info(Identifier id, Text name, Text description) {}
+
+    public enum IntegratedProfiles {
+        VANILLA(new Info(new Identifier("combatedit", "vanilla"), Text.translatable("profile.combatedit.vanilla.name"), Text.translatable("profile.combatedit.vanilla.description"))),
+        OLD_1_8_COMBAT(new Info(new Identifier("combatedit", "1_8_combat"), Text.translatable("profile.combatedit.1_8_combat.name"), Text.translatable("profile.combatedit.1_8_combat.description")));
+
+        private final Info info;
+
+        IntegratedProfiles(Info info) {
+            this.info = info;
+        }
+
+        public Info getInfo() {
+            return info;
+        }
+    }
 }
