@@ -2,6 +2,7 @@
   "name": { "translate":  "profile.combatedit.1_8_combat.name" },
   "description": { "translate":  "profile.combatedit.1_8_combat.description" },
   "configuration": {
+    "configuration_version": 1,
     "entity_attributes": [
       {
         "entity_id": "minecraft:player",

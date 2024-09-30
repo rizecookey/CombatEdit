@@ -19,12 +19,16 @@ import java.util.Optional;
 import static net.rizecookey.combatedit.CombatEdit.GSON;
 
 public class MutableConfiguration implements Configuration {
+    public static final int CURRENT_VERSION = 1;
+
+    private int configurationVersion;
     private List<ItemAttributes> itemAttributes;
     private List<EntityAttributes> entityAttributes;
     private Map<Identifier, Boolean> enabledSounds;
     private MiscOptions miscOptions;
 
-    public MutableConfiguration(List<ItemAttributes> itemAttributes, List<EntityAttributes> entityAttributes, Map<Identifier, Boolean> enabledSounds, MiscOptions miscOptions) {
+    public MutableConfiguration(int configurationVersion, List<ItemAttributes> itemAttributes, List<EntityAttributes> entityAttributes, Map<Identifier, Boolean> enabledSounds, MiscOptions miscOptions) {
+        this.configurationVersion = configurationVersion;
         this.itemAttributes = new ArrayList<>(itemAttributes);
         this.entityAttributes = new ArrayList<>(entityAttributes);
         this.enabledSounds = enabledSounds;
@@ -32,6 +36,14 @@ public class MutableConfiguration implements Configuration {
     }
 
     public MutableConfiguration() {}
+
+    public int getConfigurationVersion() {
+        if (configurationVersion == 0) {
+            configurationVersion = 1;
+        }
+
+        return configurationVersion;
+    }
 
     @Override
     public List<ItemAttributes> getItemAttributes() {
@@ -77,6 +89,7 @@ public class MutableConfiguration implements Configuration {
 
     public MutableConfiguration copy() {
         return new MutableConfiguration(
+                CURRENT_VERSION,
                 itemAttributes.stream().map(ItemAttributes::copy).toList(),
                 entityAttributes.stream().map(EntityAttributes::copy).toList(),
                 Map.copyOf(enabledSounds),
@@ -85,6 +98,10 @@ public class MutableConfiguration implements Configuration {
     }
 
     public void validate() throws InvalidConfigurationException {
+        if (configurationVersion > CURRENT_VERSION) {
+            throw new InvalidConfigurationException("Configuration claims to be of a higher version than the current one");
+        }
+
         for (var attr : getItemAttributes()) {
             attr.validate();
         }
@@ -92,6 +109,14 @@ public class MutableConfiguration implements Configuration {
         for (var attr : getEntityAttributes()) {
             attr.validate();
         }
+    }
+
+    public static JsonObject migrateToNewerVersion(JsonObject old, int version) {
+        JsonObject copy = old.deepCopy();
+        if (version < 1) {
+            copy.addProperty("configuration_version", 1);
+        }
+        return copy;
     }
 
     private static JsonObject loadDefaultJson() throws IOException {

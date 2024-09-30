@@ -16,7 +16,9 @@ import java.nio.file.Path;
 import static net.rizecookey.combatedit.CombatEdit.GSON;
 
 public class Settings {
-    private int settingsVersion = 1;
+    public static final int CURRENT_VERSION = 1;
+
+    private int settingsVersion;
     private Identifier selectedBaseProfile;
     private MutableConfiguration configurationOverrides;
 
@@ -29,6 +31,9 @@ public class Settings {
     protected Settings() {}
 
     public int getSettingsVersion() {
+        if (settingsVersion == 0) {
+            settingsVersion = 1;
+        }
         return settingsVersion;
     }
 
@@ -57,6 +62,10 @@ public class Settings {
     }
 
     public void validate() throws InvalidConfigurationException {
+        if (settingsVersion > CURRENT_VERSION) {
+            throw new InvalidConfigurationException("Configuration claims to be of a higher version than the current one");
+        }
+
         if (getSelectedBaseProfile() == null) {
             throw new InvalidConfigurationException("No selected profile specified");
         }
@@ -76,8 +85,19 @@ public class Settings {
 
     public static Settings load(Path path) throws IOException {
         try (BufferedReader reader = Files.newBufferedReader(path)) {
-            return GSON.fromJson(reader, Settings.class);
+            JsonObject object = GSON.fromJson(reader, JsonObject.class);
+
+            var settingsVersion = object.get("settings_version");
+            if (settingsVersion != null && settingsVersion.isJsonPrimitive() && settingsVersion.getAsInt() < CURRENT_VERSION) {
+                object = migrateToNewerVersion(object, settingsVersion.getAsInt());
+            }
+
+            return GSON.fromJson(object, Settings.class);
         }
+    }
+
+    private static JsonObject migrateToNewerVersion(JsonObject oldSettings, int version) {
+        return oldSettings.deepCopy();
     }
 
     private static JsonObject loadDefaultJson() throws IOException {

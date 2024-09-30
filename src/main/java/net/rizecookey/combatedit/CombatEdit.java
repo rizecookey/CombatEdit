@@ -16,6 +16,7 @@ import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManag
 import net.rizecookey.combatedit.utils.serializers.AttributeModifierSlotSerializer;
 import net.rizecookey.combatedit.utils.serializers.EntityAttributeModifier$OperationSerializer;
 import net.rizecookey.combatedit.utils.serializers.IdentifierSerializer;
+import net.rizecookey.combatedit.utils.serializers.MutableConfigurationTypeAdapterFactory;
 import net.rizecookey.combatedit.utils.serializers.TextSerializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +32,7 @@ public class CombatEdit implements ModInitializer {
     public static final Gson GSON = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .setPrettyPrinting()
+            .registerTypeAdapterFactory(new MutableConfigurationTypeAdapterFactory())
             .registerTypeAdapter(Identifier.class, new IdentifierSerializer())
             .registerTypeAdapter(AttributeModifierSlot.class, new AttributeModifierSlotSerializer())
             .registerTypeAdapter(EntityAttributeModifier.Operation.class, new EntityAttributeModifier$OperationSerializer())
