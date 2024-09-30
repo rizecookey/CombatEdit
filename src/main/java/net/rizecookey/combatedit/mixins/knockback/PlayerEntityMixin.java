@@ -6,7 +6,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.rizecookey.combatedit.configuration.provider.ServerConfigurationProvider;
+import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,11 +19,11 @@ import java.util.Objects;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin {
     @Unique
-    private ServerConfigurationProvider configurationProvider;
+    private ServerConfigurationManager configurationProvider;
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void injectCombatEditReference(World world, BlockPos pos, float yaw, GameProfile gameProfile, CallbackInfo ci) {
-        configurationProvider = ServerConfigurationProvider.getInstance();
+        configurationProvider = ServerConfigurationManager.getInstance();
     }
 
     @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;takeKnockback(DDD)V"))

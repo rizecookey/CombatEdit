@@ -5,7 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
-import net.rizecookey.combatedit.configuration.provider.ServerConfigurationProvider;
+import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManager;
 import net.rizecookey.combatedit.extension.AttributePatchReversible;
 import net.rizecookey.combatedit.utils.ItemStackAttributeHelper;
 import org.spongepowered.asm.mixin.Final;
@@ -23,7 +23,7 @@ public abstract class ClickWindowC2SPacketMixin implements AttributePatchReversi
     @Unique
     @Override
     public void combatEdit$reverseAttributePatches() {
-        ItemStackAttributeHelper helper = ServerConfigurationProvider.getInstance().getAttributeHelper();
+        ItemStackAttributeHelper helper = ServerConfigurationManager.getInstance().getAttributeHelper();
 
         this.stack = helper.reverseDisplayModifiers(this.stack);
         Int2ObjectMap<ItemStack> newMap = new Int2ObjectOpenHashMap<>();

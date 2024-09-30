@@ -1,7 +1,7 @@
 accessWidener v2 named
 
-# make components modifiable (for modifying attribute modifiers after creation)
-mutable field net/minecraft/item/Item components Lnet/minecraft/component/ComponentMap;
+# allow properly extending default attribute containers
+extendable method net/minecraft/entity/attribute/DefaultAttributeContainer <init> (Ljava/util/Map;)V
 
 # make default entity attributes modifiable and accessible
 accessible field net/minecraft/entity/attribute/DefaultAttributeRegistry DEFAULT_ATTRIBUTE_REGISTRY Ljava/util/Map;

@@ -7,7 +7,7 @@ import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.rizecookey.combatedit.configuration.provider.ServerConfigurationProvider;
+import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManager;
 import net.rizecookey.combatedit.extension.AttributeContainerExtension;
 import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtension;
 import org.spongepowered.asm.mixin.Final;
@@ -72,22 +72,22 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
     }
 
     @Unique
-    private static ServerConfigurationProvider configurationProvider() {
-        return ServerConfigurationProvider.getInstance();
+    private static ServerConfigurationManager configurationProvider() {
+        return ServerConfigurationManager.getInstance();
     }
 
     @Override
-    public void combatEdit$patchWithNewDefaults(EntityType<? extends LivingEntity> type) {
-        DefaultAttributeContainer originalDefaults = configurationProvider().getModifier().getOriginalDefaults(type);
+    public void combatEdit$patchWithNewDefaults(EntityType<? extends LivingEntity> type, DefaultAttributeContainer previousDefaults) {
         custom.forEach((attribute, instance) -> {
-            if (!this.fallback.has(attribute) || !originalDefaults.has(attribute)) {
+            if (!this.fallback.has(attribute) || !previousDefaults.has(attribute)) {
                 return;
             }
 
-            double oldDefault = originalDefaults.getBaseValue(attribute);
+            double oldDefault = previousDefaults.getBaseValue(attribute);
             double newDefault = fallback.getBaseValue(attribute);
 
             if (instance.getBaseValue() == oldDefault) {
+                combatEdit$sendAllAttributes = true;
                 instance.setBaseValue(newDefault);
             }
         });

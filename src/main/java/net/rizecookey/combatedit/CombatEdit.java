@@ -12,7 +12,7 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.Settings;
-import net.rizecookey.combatedit.configuration.provider.ServerConfigurationProvider;
+import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManager;
 import net.rizecookey.combatedit.utils.serializers.AttributeModifierSlotSerializer;
 import net.rizecookey.combatedit.utils.serializers.EntityAttributeModifier$OperationSerializer;
 import net.rizecookey.combatedit.utils.serializers.IdentifierSerializer;
@@ -37,49 +37,38 @@ public class CombatEdit implements ModInitializer {
             .registerTypeAdapter(Text.class, new TextSerializer())
             .create();
 
-    private ServerConfigurationProvider serverConfigurationProvider;
-    private Settings settings;
+    private ServerConfigurationManager serverConfigurationManager;
 
     @Override
     public void onInitialize() {
         INSTANCE = this;
 
-        loadSettings();
         registerServerConfigurationProvider();
 
         LOGGER.info("Successfully initialized CombatEdit.");
     }
 
-    public void loadSettings() {
-        LOGGER.info("Loading settings...");
+    public Settings loadSettings() {
+        Settings settings;
         try {
             if (!Files.exists(DEFAULT_SETTINGS_PATH)) {
                 LOGGER.info("No settings file found, loading and saving default...");
-                setSettings(loadDefaultAndSave(DEFAULT_SETTINGS_PATH));
+                settings = loadDefaultAndSave(DEFAULT_SETTINGS_PATH);
                 LOGGER.info("Done.");
-                return;
+                return settings;
             }
 
-            setSettings(Settings.load(DEFAULT_SETTINGS_PATH));
-            LOGGER.info("Done.");
+            settings = Settings.load(DEFAULT_SETTINGS_PATH);
+            return settings;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     private void registerServerConfigurationProvider() {
-        this.serverConfigurationProvider = new ServerConfigurationProvider(this);
-        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(serverConfigurationProvider);
+        this.serverConfigurationManager = new ServerConfigurationManager(this);
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(serverConfigurationManager);
     }
-
-    public Settings getSettings() {
-        return settings;
-    }
-
-    private void setSettings(Settings settings) {
-        this.settings = settings;
-    }
-
     private Settings loadDefaultAndSave(Path savePath) throws IOException {
         var settings = Settings.loadDefault();
         settings.save(savePath);
@@ -87,14 +76,16 @@ public class CombatEdit implements ModInitializer {
         return settings;
     }
 
-    public void resetSettings() throws IOException {
+    public Settings resetSettings() throws IOException {
         LOGGER.info("Resetting settings...");
-        setSettings(loadDefaultAndSave(DEFAULT_SETTINGS_PATH));
+        var settings = loadDefaultAndSave(DEFAULT_SETTINGS_PATH);
         LOGGER.info("Done.");
+
+        return settings;
     }
 
-    public ServerConfigurationProvider getServerConfigurationProvider() {
-        return serverConfigurationProvider;
+    public ServerConfigurationManager getServerConfigurationProvider() {
+        return serverConfigurationManager;
     }
 
     public static CombatEdit getInstance() {

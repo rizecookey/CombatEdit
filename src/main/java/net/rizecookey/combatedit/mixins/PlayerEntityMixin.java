@@ -11,7 +11,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.rizecookey.combatedit.configuration.provider.ServerConfigurationProvider;
+import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManager;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -27,7 +27,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     private PlayerEntity instance = (PlayerEntity) (Object) this;
 
     @Unique
-    private ServerConfigurationProvider configurationProvider;
+    private ServerConfigurationManager configurationProvider;
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> type, World world) {
         super(type, world);
@@ -35,7 +35,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void loadCombatEditReference(World world, BlockPos pos, float yaw, GameProfile gameProfile, CallbackInfo ci) {
-        configurationProvider = ServerConfigurationProvider.getInstance();
+        configurationProvider = ServerConfigurationManager.getInstance();
     }
 
     @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/player/PlayerEntity;DDDLnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FF)V"))

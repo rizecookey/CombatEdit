@@ -9,12 +9,11 @@ public interface ItemExtension {
     ComponentMap combatEdit$getComponents();
 
     default void combatEdit$setAttributeModifiers(AttributeModifiersComponent component) {
-        combatEdit$setComponents(ComponentMap.of(
-                combatEdit$getComponents(),
-                ComponentMap.builder()
-                        .add(DataComponentTypes.ATTRIBUTE_MODIFIERS, component)
-                        .build()
-        ));
+        combatEdit$setComponents(ComponentMap.builder()
+                .addAll(combatEdit$getComponents())
+                .add(DataComponentTypes.ATTRIBUTE_MODIFIERS, component)
+                .build()
+        );
     }
 
     default AttributeModifiersComponent combatEdit$getAttributeModifiers() {

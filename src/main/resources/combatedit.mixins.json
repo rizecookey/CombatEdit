@@ -11,6 +11,7 @@
     "compatibility.AttributeContainerMixin",
     "compatibility.ClientConnectionMixin",
     "compatibility.DefaultAttributeContainerMixin",
+    "compatibility.DefaultAttributeRegistryMixin",
     "compatibility.EntityMixin",
     "compatibility.EntityTypeMixin",
     "compatibility.LevelPropertiesMixin",

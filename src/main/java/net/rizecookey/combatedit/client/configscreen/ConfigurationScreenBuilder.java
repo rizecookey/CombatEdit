@@ -19,8 +19,10 @@ import net.rizecookey.clothconfig2.extension.api.ExtendedConfigEntryBuilder;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectAdapter;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectListEntry;
 import net.rizecookey.clothconfig2.extension.impl.builders.ExtendedDropdownMenus;
+import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.configuration.BaseProfile;
 import net.rizecookey.combatedit.configuration.Settings;
+import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
 import net.rizecookey.combatedit.configuration.representation.EntityAttributes;
 import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
@@ -38,7 +40,15 @@ import java.util.function.Consumer;
 public class ConfigurationScreenBuilder {
     private static final ExtendedConfigEntryBuilder ENTRY_BUILDER = ExtendedConfigEntryBuilder.create();
 
-    public static Screen buildScreen(Settings settings, Path savePath, Screen parentScreen) {
+    public static Screen buildScreen(CombatEdit combatEdit, Path savePath, Screen parentScreen) {
+        Settings settings;
+        try {
+            settings = combatEdit.loadSettings();
+            settings.validate();
+        } catch (InvalidConfigurationException e) {
+            return new InvalidConfigScreen(e, () -> MinecraftClient.getInstance().setScreen(buildScreen(combatEdit, savePath, parentScreen)));
+        }
+
         var builder = ConfigBuilder.create()
                 .setParentScreen(parentScreen)
                 .setTitle(Text.translatable("title.combatedit.config"))
@@ -47,6 +57,13 @@ public class ConfigurationScreenBuilder {
                         settings.save(savePath);
                     } catch (IOException e) {
                         throw new RuntimeException(e); // TODO Maybe show notification?
+                    }
+
+                    var client = MinecraftClient.getInstance();
+                    if (client.getNetworkHandler() != null && client.getNetworkHandler().getConnection().isLocal()) {
+                        var server = MinecraftClient.getInstance().getServer();
+                        assert server != null;
+                        server.reloadResources(server.getDataPackManager().getEnabledIds());
                     }
                 });
 

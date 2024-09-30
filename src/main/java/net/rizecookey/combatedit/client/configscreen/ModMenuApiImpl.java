@@ -7,6 +7,6 @@ import net.rizecookey.combatedit.CombatEdit;
 public class ModMenuApiImpl implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parentScreen -> ConfigurationScreenBuilder.buildScreen(CombatEdit.getInstance().getSettings(), CombatEdit.DEFAULT_SETTINGS_PATH, parentScreen);
+        return parentScreen -> ConfigurationScreenBuilder.buildScreen(CombatEdit.getInstance(), CombatEdit.DEFAULT_SETTINGS_PATH, parentScreen);
     }
 }

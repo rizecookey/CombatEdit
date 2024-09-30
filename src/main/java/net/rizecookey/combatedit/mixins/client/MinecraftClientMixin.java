@@ -18,9 +18,9 @@ public abstract class MinecraftClientMixin {
     @Inject(method = "createInitScreens", at = @At("TAIL"))
     private void validateConfig(List<Function<Runnable, Screen>> list, CallbackInfo ci) {
         try {
-            CombatEdit.getInstance().getSettings().validate();
+            CombatEdit.getInstance().loadSettings().validate();
         } catch (InvalidConfigurationException e) {
-            CombatEdit.LOGGER.error("CombatEdit detected errors in the configuration!", e);
+            CombatEdit.LOGGER.error("CombatEdit detected errors in the settings file!", e);
             list.add(onClose -> new InvalidConfigScreen(e, onClose));
         }
     }

@@ -1,6 +1,6 @@
 {
   "title.combatedit.config": "CombatEdit configuration",
-  "option.combatedit.warn.ingame": "Changes here will not apply until you re-enter the world.",
+  "option.combatedit.warn.ingame": "Changing these settings while in a world is experimental and could cause unexpected behaviour.",
   "option.combatedit.warn.local_only": "This configuration only applies to singleplayer worlds.",
   "option.combatedit.tristate.use_default": "Use profile default",
   "option.combatedit.tristate.true": "Yes",
