@@ -13,14 +13,14 @@ import net.minecraft.util.Pair;
 import net.minecraft.util.TypeFilter;
 import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManager;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
-import net.rizecookey.combatedit.entity.EntityAttributeMap;
-import net.rizecookey.combatedit.entity.EntityAttributeModifierProvider;
+import net.rizecookey.combatedit.entity_modification.EntityAttributeMap;
+import net.rizecookey.combatedit.entity_modification.EntityAttributeModifierProvider;
 import net.rizecookey.combatedit.extension.AttributeContainerExtension;
 import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtension;
 import net.rizecookey.combatedit.extension.ItemExtension;
 import net.rizecookey.combatedit.extension.MutableDefaultAttributeContainer;
-import net.rizecookey.combatedit.item.ItemAttributeMap;
-import net.rizecookey.combatedit.item.ItemAttributeModifierProvider;
+import net.rizecookey.combatedit.item_modification.ItemAttributeMap;
+import net.rizecookey.combatedit.item_modification.ItemAttributeModifierProvider;
 
 import java.util.HashMap;
 import java.util.Map;

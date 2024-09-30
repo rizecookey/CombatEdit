@@ -1,4 +1,4 @@
-package net.rizecookey.combatedit.mixins.compatibility;
+package net.rizecookey.combatedit.mixins.entity_modification;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;

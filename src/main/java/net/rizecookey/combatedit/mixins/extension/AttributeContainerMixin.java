@@ -1,4 +1,4 @@
-package net.rizecookey.combatedit.mixins.compatibility;
+package net.rizecookey.combatedit.mixins.extension;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;

@@ -1,4 +1,4 @@
-package net.rizecookey.combatedit.mixins.compatibility;
+package net.rizecookey.combatedit.mixins.extension;
 
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;

@@ -1,4 +1,4 @@
-package net.rizecookey.combatedit.mixins.item;
+package net.rizecookey.combatedit.mixins.extension;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.component.ComponentMap;

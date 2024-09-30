@@ -7,30 +7,33 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "PlayerEntityMixin",
-    "compatibility.AttributeContainerMixin",
     "compatibility.ClientConnectionMixin",
-    "compatibility.DefaultAttributeContainerMixin",
-    "compatibility.DefaultAttributeRegistryMixin",
     "compatibility.EntityMixin",
     "compatibility.EntityTypeMixin",
     "compatibility.LevelPropertiesMixin",
     "compatibility.LivingEntityMixin",
     "compatibility.PlayerManagerMixin",
-    "compatibility.ServerCommonNetworkHandlerMixin",
     "compatibility.ServerPlayNetworkHandlerMixin",
     "compatibility.WorldSaveHandlerMixin",
     "compatibility.c2s.ClickWindowC2SPacketMixin",
     "compatibility.c2s.CreativeInventoryActionC2SPacketMixin",
     "compatibility.s2c.ContainerSlotUpdateS2CPacketMixin",
     "compatibility.s2c.InventoryS2CPacketMixin",
-    "item.ItemMixin",
+    "entity_modification.DefaultAttributeRegistryMixin",
+    "extension.AttributeContainerMixin",
+    "extension.DefaultAttributeContainerMixin",
+    "extension.LivingEntityMixin",
+    "extension.ServerCommonNetworkHandlerMixin",
+    "extension.ItemMixin",
+    "item_modification.LivingEntityMixin",
     "knockback.LivingEntityMixin",
     "knockback.PlayerEntityMixin",
-    "server.MinecraftServerMixin"
+    "misc.PlayerEntityMixin",
+    "server.MinecraftServerMixin",
+    "sound.PlayerEntityMixin"
   ],
   "client": [
     "client.MinecraftClientMixin",
-    "compatibility.IntegratedPlayerManagerMixin"
+    "client.compatibility.IntegratedPlayerManagerMixin"
   ]
 }
