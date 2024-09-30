@@ -447,6 +447,20 @@
           }
         ],
         "override_default": true
+      },
+      {
+        "item_id": "minecraft:mace",
+        "modifiers": [
+          {
+            "attribute": "minecraft:generic.attack_damage",
+            "slot": "mainhand",
+            "uuid": "cb3f55d3-645c-4f38-a497-9c13a33db5cf",
+            "name": "Tool modifier",
+            "value": 5.0,
+            "operation": "add_value"
+          }
+        ],
+        "override_default": true
       }
     ],
     "enabled_sounds": {
