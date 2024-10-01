@@ -21,7 +21,8 @@
     "main": [ "net.rizecookey.combatedit.CombatEdit" ],
     "modmenu": [
       "net.rizecookey.combatedit.client.configscreen.ModMenuApiImpl"
-    ]
+    ],
+    "combatedit": [ "net.rizecookey.combatedit.custom_extensions.OldCombatModCompatibilityExtension" ]
   },
   "mixins": [
     "combatedit.mixins.json"

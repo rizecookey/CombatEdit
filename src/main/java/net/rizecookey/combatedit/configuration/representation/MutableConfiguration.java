@@ -27,10 +27,10 @@ public class MutableConfiguration implements Configuration {
     private Map<Identifier, Boolean> enabledSounds;
     private MiscOptions miscOptions;
 
-    public MutableConfiguration(int configurationVersion, List<ItemAttributes> itemAttributes, List<EntityAttributes> entityAttributes, Map<Identifier, Boolean> enabledSounds, MiscOptions miscOptions) {
-        this.configurationVersion = configurationVersion;
-        this.itemAttributes = new ArrayList<>(itemAttributes);
-        this.entityAttributes = new ArrayList<>(entityAttributes);
+    public MutableConfiguration(List<ItemAttributes> itemAttributes, List<EntityAttributes> entityAttributes, Map<Identifier, Boolean> enabledSounds, MiscOptions miscOptions) {
+        this.configurationVersion = CURRENT_VERSION;
+        this.itemAttributes = itemAttributes != null ? new ArrayList<>(itemAttributes) : new ArrayList<>();
+        this.entityAttributes = entityAttributes != null ? new ArrayList<>(entityAttributes) : new ArrayList<>();
         this.enabledSounds = enabledSounds;
         this.miscOptions = miscOptions;
     }
@@ -89,7 +89,6 @@ public class MutableConfiguration implements Configuration {
 
     public MutableConfiguration copy() {
         return new MutableConfiguration(
-                CURRENT_VERSION,
                 itemAttributes.stream().map(ItemAttributes::copy).toList(),
                 entityAttributes.stream().map(EntityAttributes::copy).toList(),
                 Map.copyOf(enabledSounds),

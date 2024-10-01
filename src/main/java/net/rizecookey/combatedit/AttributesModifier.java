@@ -9,7 +9,6 @@ import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 import net.minecraft.util.TypeFilter;
 import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManager;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
@@ -35,7 +34,7 @@ public class AttributesModifier {
     private EntityAttributeModifierProvider previousEntityModifierProvider;
 
     private boolean registriesModified = false;
-    private final Map<Pair<Identifier, Item>, AttributeModifiersComponent> originalItemModifiers = new HashMap<>();
+    private final Map<Item, AttributeModifiersComponent> originalItemModifiers = new HashMap<>();
     private Map<EntityType<? extends LivingEntity>, DefaultAttributeContainer> originalEntityModifiers;
 
     public AttributesModifier(ServerConfigurationManager configurationProvider) {
@@ -77,17 +76,16 @@ public class AttributesModifier {
     private void modifyItemAttributes() {
         for (Item item : Registries.ITEM) {
             Identifier id = Registries.ITEM.getId(item);
-            var idItemPair = new Pair<>(id, item);
             ItemExtension itemExt = (ItemExtension) item;
 
             if (!areRegistriesModified()) {
                 var originalModifiers = itemExt.combatEdit$getAttributeModifiers();
-                originalItemModifiers.put(idItemPair, originalModifiers);
+                originalItemModifiers.put(item, originalModifiers);
             }
 
             if (!currentItemModifierProvider.shouldModifyItem(id, item)) {
                 if (previousItemModifierProvider != null && previousItemModifierProvider.shouldModifyItem(id, item)) {
-                    itemExt.combatEdit$setAttributeModifiers(originalItemModifiers.get(idItemPair));
+                    itemExt.combatEdit$setAttributeModifiers(originalItemModifiers.get(item));
                 }
                 continue;
             }
@@ -140,8 +138,8 @@ public class AttributesModifier {
             return;
         }
 
-        for (Pair<Identifier, Item> pair : originalItemModifiers.keySet()) {
-            ((ItemExtension) pair.getRight()).combatEdit$setAttributeModifiers(originalItemModifiers.get(pair));
+        for (Item item : originalItemModifiers.keySet()) {
+            ((ItemExtension) item).combatEdit$setAttributeModifiers(originalItemModifiers.get(item));
         }
         originalItemModifiers.clear();
 
@@ -168,6 +166,6 @@ public class AttributesModifier {
             return ((ItemExtension) item).combatEdit$getAttributeModifiers();
         }
 
-        return originalItemModifiers.getOrDefault(new Pair<>(Registries.ITEM.getId(item), item), AttributeModifiersComponent.DEFAULT);
+        return originalItemModifiers.getOrDefault(item, AttributeModifiersComponent.DEFAULT);
     }
 }

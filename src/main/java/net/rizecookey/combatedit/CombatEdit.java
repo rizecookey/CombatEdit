@@ -11,6 +11,9 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.rizecookey.combatedit.api.CombatEditApi;
+import net.rizecookey.combatedit.api.CombatEditInitListener;
+import net.rizecookey.combatedit.api.extension.ProfileExtensionProvider;
 import net.rizecookey.combatedit.configuration.Settings;
 import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManager;
 import net.rizecookey.combatedit.utils.serializers.AttributeModifierSlotSerializer;
@@ -25,7 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class CombatEdit implements ModInitializer {
+public class CombatEdit implements ModInitializer, CombatEditApi {
     private static CombatEdit INSTANCE;
     public static final Path DEFAULT_SETTINGS_PATH = FabricLoader.getInstance().getConfigDir().resolve("combatedit/settings.json");
     public static final Logger LOGGER = LogManager.getLogger(CombatEdit.class);
@@ -46,6 +49,7 @@ public class CombatEdit implements ModInitializer {
         INSTANCE = this;
 
         registerServerConfigurationProvider();
+        FabricLoader.getInstance().invokeEntrypoints("combatedit", CombatEditInitListener.class, listener -> listener.onCombatEditInit(this));
 
         LOGGER.info("Successfully initialized CombatEdit.");
     }
@@ -92,5 +96,10 @@ public class CombatEdit implements ModInitializer {
 
     public static CombatEdit getInstance() {
         return INSTANCE;
+    }
+
+    @Override
+    public void registerProfileExtension(Identifier profileId, ProfileExtensionProvider extensionProvider) {
+        serverConfigurationManager.registerProfileExtension(profileId, extensionProvider);
     }
 }
