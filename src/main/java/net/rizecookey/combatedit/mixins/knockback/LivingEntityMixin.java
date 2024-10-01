@@ -1,6 +1,7 @@
 package net.rizecookey.combatedit.mixins.knockback;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Vec3d;
@@ -14,9 +15,13 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin {
+public abstract class LivingEntityMixin extends Entity {
     @Unique
     private ServerConfigurationManager configurationProvider;
+
+    public LivingEntityMixin(EntityType<?> type, World world) {
+        super(type, world);
+    }
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void initCombatEditReference(EntityType<? extends LivingEntity> entityType, World world, CallbackInfo ci) {
@@ -25,7 +30,7 @@ public abstract class LivingEntityMixin {
 
     @ModifyArg(method = "takeKnockback", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(DDD)V"), index = 1)
     public double changeKnockbackY(double y, @Local(ordinal = 0, argsOnly = true) double strength, @Local(ordinal = 0) Vec3d vec3d) {
-        if (!configurationProvider.getConfiguration().getMiscOptions().is1_8KnockbackEnabled().orElse(false)) {
+        if (getWorld().isClient() || !configurationProvider.getConfiguration().getMiscOptions().is1_8KnockbackEnabled().orElse(false)) {
             return y;
         }
 
