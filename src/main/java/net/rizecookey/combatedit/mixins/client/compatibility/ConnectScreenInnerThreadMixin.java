@@ -1,6 +1,6 @@
 package net.rizecookey.combatedit.mixins.client.compatibility;
 
-import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManager;
+import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ConnectScreenInnerThreadMixin {
     @Inject(method = "run", at = @At("HEAD"))
     private void ensureRegistriesAreUnmodified(CallbackInfo ci) {
-        var configurationManager = ServerConfigurationManager.getInstance();
+        var configurationManager = ConfigurationManager.getInstance();
         var modifier = configurationManager.getModifier();
         if (modifier.areRegistriesModified()) {
             configurationManager.revertModifications();

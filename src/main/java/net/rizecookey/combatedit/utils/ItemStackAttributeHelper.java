@@ -19,7 +19,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
-import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManager;
+import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 
 import java.util.UUID;
 
@@ -31,9 +31,9 @@ public class ItemStackAttributeHelper {
     private static final String ATTRIBUTE_TYPE_TAG = "type";
     private static final String ATTRIBUTE_MODIFIER_TAG = "modifier";
 
-    private final ServerConfigurationManager configurationProvider;
+    private final ConfigurationManager configurationProvider;
 
-    public ItemStackAttributeHelper(ServerConfigurationManager configurationProvider) {
+    public ItemStackAttributeHelper(ConfigurationManager configurationProvider) {
         this.configurationProvider = configurationProvider;
     }
 

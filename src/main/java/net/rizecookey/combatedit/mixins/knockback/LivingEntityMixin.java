@@ -6,7 +6,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManager;
+import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
     @Unique
-    private ServerConfigurationManager configurationProvider;
+    private ConfigurationManager configurationProvider;
 
     public LivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
@@ -25,7 +25,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void initCombatEditReference(EntityType<? extends LivingEntity> entityType, World world, CallbackInfo ci) {
-        configurationProvider = ServerConfigurationManager.getInstance();
+        configurationProvider = ConfigurationManager.getInstance();
     }
 
     @ModifyArg(method = "takeKnockback", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(DDD)V"), index = 1)

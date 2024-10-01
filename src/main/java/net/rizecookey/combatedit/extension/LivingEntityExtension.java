@@ -1,7 +1,7 @@
 package net.rizecookey.combatedit.extension;
 
-import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManager;
+import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 
 public interface LivingEntityExtension {
-    ServerConfigurationManager combatEdit$configurationManager();
+    ConfigurationManager combatEdit$configurationManager();
 }

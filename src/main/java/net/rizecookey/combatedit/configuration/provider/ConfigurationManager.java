@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
 
 import static net.rizecookey.combatedit.CombatEdit.LOGGER;
 
-public class ServerConfigurationManager implements SimpleResourceReloadListener<ServerConfigurationManager.LoadResult> {
-    private static ServerConfigurationManager INSTANCE;
+public class ConfigurationManager implements SimpleResourceReloadListener<ConfigurationManager.LoadResult> {
+    private static ConfigurationManager INSTANCE;
 
     private final CombatEdit combatEdit;
     private MinecraftServer currentServer;
@@ -47,7 +47,7 @@ public class ServerConfigurationManager implements SimpleResourceReloadListener<
     private List<ItemAttributes> oldItemAttributes;
     private long lastAttributeReload = Long.MIN_VALUE;
 
-    public ServerConfigurationManager(CombatEdit combatEdit) {
+    public ConfigurationManager(CombatEdit combatEdit) {
         this.combatEdit = combatEdit;
         this.attributesModifier = new AttributesModifier(this);
         this.attributeHelper = new ItemStackAttributeHelper(this);
@@ -220,7 +220,7 @@ public class ServerConfigurationManager implements SimpleResourceReloadListener<
         this.registeredProfileExtensions.computeIfAbsent(profileId, key -> new ArrayList<>()).add(extensionProvider);
     }
 
-    public static ServerConfigurationManager getInstance() {
+    public static ConfigurationManager getInstance() {
         return INSTANCE;
     }
 }

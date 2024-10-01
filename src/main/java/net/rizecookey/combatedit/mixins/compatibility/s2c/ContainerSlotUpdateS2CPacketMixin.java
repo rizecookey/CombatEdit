@@ -2,7 +2,7 @@ package net.rizecookey.combatedit.mixins.compatibility.s2c;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
-import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManager;
+import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.extension.AttributePatchable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,6 +15,6 @@ public abstract class ContainerSlotUpdateS2CPacketMixin implements AttributePatc
 
     @Override
     public void combatEdit$patchAttributes() {
-        this.stack = ServerConfigurationManager.getInstance().getAttributeHelper().getDisplayModified(this.stack);
+        this.stack = ConfigurationManager.getInstance().getAttributeHelper().getDisplayModified(this.stack);
     }
 }

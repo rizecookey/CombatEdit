@@ -7,7 +7,7 @@ import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManager;
+import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.extension.AttributeContainerExtension;
 import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtension;
 import org.spongepowered.asm.mixin.Final;
@@ -72,8 +72,8 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
     }
 
     @Unique
-    private static ServerConfigurationManager configurationProvider() {
-        return ServerConfigurationManager.getInstance();
+    private static ConfigurationManager configurationProvider() {
+        return ConfigurationManager.getInstance();
     }
 
     @Override

@@ -10,7 +10,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
-import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManager;
+import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
 import net.rizecookey.combatedit.entity_modification.EntityAttributeMap;
 import net.rizecookey.combatedit.entity_modification.EntityAttributeModifierProvider;
@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class AttributesModifier {
-    private final ServerConfigurationManager configurationProvider;
+    private final ConfigurationManager configurationProvider;
     private ItemAttributeModifierProvider currentItemModifierProvider;
     private EntityAttributeModifierProvider currentEntityModifierProvider;
 
@@ -37,7 +37,7 @@ public class AttributesModifier {
     private final Map<Item, AttributeModifiersComponent> originalItemModifiers = new HashMap<>();
     private Map<EntityType<? extends LivingEntity>, DefaultAttributeContainer> originalEntityModifiers;
 
-    public AttributesModifier(ServerConfigurationManager configurationProvider) {
+    public AttributesModifier(ConfigurationManager configurationProvider) {
         this.configurationProvider = configurationProvider;
     }
 

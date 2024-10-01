@@ -15,7 +15,7 @@ import net.rizecookey.combatedit.api.CombatEditApi;
 import net.rizecookey.combatedit.api.CombatEditInitListener;
 import net.rizecookey.combatedit.api.extension.ProfileExtensionProvider;
 import net.rizecookey.combatedit.configuration.Settings;
-import net.rizecookey.combatedit.configuration.provider.ServerConfigurationManager;
+import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.utils.serializers.AttributeModifierSlotSerializer;
 import net.rizecookey.combatedit.utils.serializers.EntityAttributeModifier$OperationSerializer;
 import net.rizecookey.combatedit.utils.serializers.IdentifierSerializer;
@@ -42,7 +42,7 @@ public class CombatEdit implements ModInitializer, CombatEditApi {
             .registerTypeAdapter(Text.class, new TextSerializer())
             .create();
 
-    private ServerConfigurationManager serverConfigurationManager;
+    private ConfigurationManager configurationManager;
 
     @Override
     public void onInitialize() {
@@ -72,8 +72,8 @@ public class CombatEdit implements ModInitializer, CombatEditApi {
     }
 
     private void registerServerConfigurationProvider() {
-        this.serverConfigurationManager = new ServerConfigurationManager(this);
-        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(serverConfigurationManager);
+        this.configurationManager = new ConfigurationManager(this);
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(configurationManager);
     }
     private Settings loadDefaultAndSave(Path savePath) throws IOException {
         var settings = Settings.loadDefault();
@@ -90,8 +90,8 @@ public class CombatEdit implements ModInitializer, CombatEditApi {
         return settings;
     }
 
-    public ServerConfigurationManager getServerConfigurationProvider() {
-        return serverConfigurationManager;
+    public ConfigurationManager getConfigurationManager() {
+        return configurationManager;
     }
 
     public static CombatEdit getInstance() {
@@ -100,6 +100,6 @@ public class CombatEdit implements ModInitializer, CombatEditApi {
 
     @Override
     public void registerProfileExtension(Identifier profileId, ProfileExtensionProvider extensionProvider) {
-        serverConfigurationManager.registerProfileExtension(profileId, extensionProvider);
+        configurationManager.registerProfileExtension(profileId, extensionProvider);
     }
 }
