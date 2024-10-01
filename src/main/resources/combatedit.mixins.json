@@ -12,6 +12,7 @@
     "compatibility.EntityTypeMixin",
     "compatibility.LevelPropertiesMixin",
     "compatibility.LivingEntityMixin",
+    "compatibility.PlayerEntityMixin",
     "compatibility.PlayerManagerMixin",
     "compatibility.ServerPlayNetworkHandlerMixin",
     "compatibility.WorldSaveHandlerMixin",
