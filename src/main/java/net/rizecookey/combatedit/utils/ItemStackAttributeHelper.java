@@ -17,8 +17,6 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.random.Random;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 
 import java.util.UUID;
@@ -55,7 +53,7 @@ public class ItemStackAttributeHelper {
 
         AttributeModifiersComponent.Builder builder = AttributeModifiersComponent.builder();
         for (AttributeModifiersComponent.Entry entry : modifiers.modifiers()) {
-            UUID uuid = isForbiddenUUID(entry.modifier().uuid()) ? MathHelper.randomUuid(Random.createLocal()) : entry.modifier().uuid();
+            UUID uuid = getSafeUUID(entry.modifier().uuid());
             if (shouldAddSharpnessModifier && entry.attribute().equals(EntityAttributes.GENERIC_ATTACK_DAMAGE) && entry.slot().equals(AttributeModifierSlot.MAINHAND) && entry.modifier().operation().equals(EntityAttributeModifier.Operation.ADD_VALUE)) {
                 // add sharpness damage display modifier onto this modifier (vanilla doesn't add sharpness to the display on its own)
                 shouldAddSharpnessModifier = false;
@@ -114,8 +112,15 @@ public class ItemStackAttributeHelper {
         return reversed;
     }
 
-    private static boolean isForbiddenUUID(UUID uuid) {
-        return uuid.equals(Item.ATTACK_DAMAGE_MODIFIER_ID) || uuid.equals(Item.ATTACK_SPEED_MODIFIER_ID);
+    private static UUID getSafeUUID(UUID uuid) {
+        if (uuid.equals(Item.ATTACK_DAMAGE_MODIFIER_ID)) {
+            return ReservedUuids.ATTACK_DAMAGE_MODIFIER_ID_ALT;
+        }
+        if (uuid.equals(Item.ATTACK_SPEED_MODIFIER_ID)) {
+            return ReservedUuids.ATTACK_SPEED_MODIFIER_ID_ALT;
+        }
+
+        return uuid;
     }
 
     private static NbtList toNbtList(AttributeModifiersComponent component) {
