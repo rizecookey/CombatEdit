@@ -1,4 +1,4 @@
-package net.rizecookey.combatedit.entity_modification;
+package net.rizecookey.combatedit.modification.entity;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;

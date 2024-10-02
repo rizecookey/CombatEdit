@@ -6,18 +6,17 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.profiler.Profiler;
-import net.rizecookey.combatedit.AttributesModifier;
 import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.api.extension.ProfileExtensionProvider;
 import net.rizecookey.combatedit.configuration.BaseProfile;
 import net.rizecookey.combatedit.configuration.ProfileExtension;
 import net.rizecookey.combatedit.configuration.Settings;
-import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
 import net.rizecookey.combatedit.configuration.representation.ConfigurationView;
 import net.rizecookey.combatedit.configuration.representation.EntityAttributes;
 import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
 import net.rizecookey.combatedit.configuration.representation.MutableConfiguration;
+import net.rizecookey.combatedit.modification.AttributesModifier;
 import net.rizecookey.combatedit.utils.ItemStackAttributeHelper;
 
 import java.util.ArrayList;
@@ -75,6 +74,7 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
                     throw new IllegalStateException("Default base profile does not exist");
                 }
             }
+            LOGGER.info("Selected base profile: {}", selectedProfile.toString());
 
             return new Pair<>(baseProfiles.get(selectedProfile), loadProfileExtensions(manager, selectedProfile));
         }, executor);
@@ -134,20 +134,10 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
     }
 
     private static Settings loadSettings(CombatEdit combatEdit) {
-        LOGGER.info("Loading settings...");
-        var settings = combatEdit.loadSettings();
-        try {
-            settings.validate();
-            LOGGER.info("Loaded settings file.");
-            return settings;
-        } catch (InvalidConfigurationException e) {
-            LOGGER.error("Settings file is invalid, using defaults", e);
-            return Settings.loadDefault();
-        }
+        return combatEdit.getCurrentSettings();
     }
 
     private static Map<Identifier, BaseProfile> loadBaseProfiles(ResourceManager manager) {
-        LOGGER.info("Loading base profiles...");
         var result = BaseProfile.find(manager);
         LOGGER.info("Found {} base profiles: {}", result.size(),
                 result.keySet()
@@ -159,7 +149,6 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
     }
 
     private static List<ProfileExtension> loadProfileExtensions(ResourceManager manager, Identifier baseProfileSelected) {
-        LOGGER.info("Loading profile extensions...");
         var result = ProfileExtension.findForProfile(manager, baseProfileSelected);
         LOGGER.info("Found {} base profile extensions for {}", result.size(), baseProfileSelected.toString());
 

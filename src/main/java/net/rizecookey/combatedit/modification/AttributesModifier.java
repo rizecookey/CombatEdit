@@ -1,4 +1,4 @@
-package net.rizecookey.combatedit;
+package net.rizecookey.combatedit.modification;
 
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
@@ -14,15 +14,15 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
-import net.rizecookey.combatedit.entity_modification.EntityAttributeMap;
-import net.rizecookey.combatedit.entity_modification.EntityAttributeModifierProvider;
 import net.rizecookey.combatedit.extension.AttributeContainerExtension;
 import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtensions;
 import net.rizecookey.combatedit.extension.DynamicComponentMap;
 import net.rizecookey.combatedit.extension.DynamicDefaultAttributeContainer;
 import net.rizecookey.combatedit.extension.ItemExtension;
-import net.rizecookey.combatedit.item_modification.ItemAttributeMap;
-import net.rizecookey.combatedit.item_modification.ItemAttributeModifierProvider;
+import net.rizecookey.combatedit.modification.entity.EntityAttributeMap;
+import net.rizecookey.combatedit.modification.entity.EntityAttributeModifierProvider;
+import net.rizecookey.combatedit.modification.item.ItemAttributeMap;
+import net.rizecookey.combatedit.modification.item.ItemAttributeModifierProvider;
 
 import java.util.Objects;
 

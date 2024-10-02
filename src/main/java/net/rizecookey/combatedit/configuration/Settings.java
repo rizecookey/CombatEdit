@@ -1,6 +1,8 @@
 package net.rizecookey.combatedit.configuration;
 
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonWriter;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
@@ -83,7 +85,11 @@ public class Settings {
         }
     }
 
-    public static Settings load(Path path) throws IOException {
+    public Settings copy() {
+        return new Settings(settingsVersion, selectedBaseProfile, configurationOverrides.copy());
+    }
+
+    public static Settings load(Path path) throws IOException, InvalidConfigurationException {
         try (BufferedReader reader = Files.newBufferedReader(path)) {
             JsonObject object = GSON.fromJson(reader, JsonObject.class);
 
@@ -93,6 +99,10 @@ public class Settings {
             }
 
             return GSON.fromJson(object, Settings.class);
+        } catch (JsonIOException e) {
+            throw new IOException(e);
+        } catch (JsonSyntaxException e) {
+            throw new InvalidConfigurationException(e);
         }
     }
 

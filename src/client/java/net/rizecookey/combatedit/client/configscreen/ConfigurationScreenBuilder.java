@@ -19,17 +19,15 @@ import net.rizecookey.clothconfig2.extension.api.ExtendedConfigEntryBuilder;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectAdapter;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectListEntry;
 import net.rizecookey.clothconfig2.extension.impl.builders.ExtendedDropdownMenus;
-import net.rizecookey.combatedit.CombatEdit;
+import net.rizecookey.combatedit.client.CombatEditClient;
 import net.rizecookey.combatedit.configuration.BaseProfile;
 import net.rizecookey.combatedit.configuration.Settings;
-import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
 import net.rizecookey.combatedit.configuration.representation.EntityAttributes;
 import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
 import net.rizecookey.combatedit.configuration.representation.MutableConfiguration;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,29 +35,27 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static net.rizecookey.combatedit.client.CombatEditClient.LOGGER;
+
 public class ConfigurationScreenBuilder {
     private static final ExtendedConfigEntryBuilder ENTRY_BUILDER = ExtendedConfigEntryBuilder.create();
 
-    public static Screen buildScreen(CombatEdit combatEdit, Path savePath, Screen parentScreen) {
-        Settings settings;
-        try {
-            settings = combatEdit.loadSettings();
-            settings.validate();
-        } catch (InvalidConfigurationException e) {
-            return new InvalidConfigScreen(e, () -> MinecraftClient.getInstance().setScreen(buildScreen(combatEdit, savePath, parentScreen)));
-        }
+    public static Screen buildScreen(CombatEditClient combatEditClient, Screen parentScreen) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        Settings settings = combatEditClient.getCurrentSettings().copy();
 
         var builder = ConfigBuilder.create()
                 .setParentScreen(parentScreen)
                 .setTitle(Text.translatable("title.combatedit.config"))
                 .setSavingRunnable(() -> {
                     try {
-                        settings.save(savePath);
+                        combatEditClient.saveSettings(settings);
                     } catch (IOException e) {
-                        throw new RuntimeException(e); // TODO Maybe show notification?
+                        LOGGER.error("Failed to save the settings file", e);
+                        CombatEditClient.sendErrorNotification(client, "settings_save_error");
+                        return;
                     }
 
-                    var client = MinecraftClient.getInstance();
                     if (client.getNetworkHandler() != null && client.getNetworkHandler().getConnection().isLocal()) {
                         var server = MinecraftClient.getInstance().getServer();
                         assert server != null;

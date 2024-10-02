@@ -55,6 +55,11 @@
   "error.combatedit.invalid_config.title": "CombatEdit failed to load config",
   "error.combatedit.invalid_config.description": "CombatEdit failed to load your configuration! You can either correct errors in the configuration or reset it to the defaults.\n\nError message: %s\nCheck the logs for more details.",
 
+  "notification.combatedit.settings_load_error.title": "CombatEdit: Settings load failed",
+  "notification.combatedit.settings_load_error.description": "Failed to load settings file. Please try restarting the game. See the logs for more information.",
+  "notification.combatedit.settings_save_error.title": "CombatEdit: Settings save failed",
+  "notification.combatedit.settings_save_error.description": "Failed to save to settings file. Your modifications were not saved. See the logs for more information.",
+
   "button.combatedit.exit": "Close Minecraft",
   "button.combatedit.reset_config": "Reset configuration",
 

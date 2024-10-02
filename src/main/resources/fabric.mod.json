@@ -18,20 +18,27 @@
 
   "environment": "*",
   "entrypoints": {
-    "main": [ "net.rizecookey.combatedit.CombatEdit" ],
-    "modmenu": [
-      "net.rizecookey.combatedit.client.configscreen.ModMenuApiImpl"
+    "server": [
+      "net.rizecookey.combatedit.CombatEditServerInitializer"
     ],
+    "client": [
+      "net.rizecookey.combatedit.client.CombatEditClientInitializer"
+    ],
+    "modmenu": [ "net.rizecookey.combatedit.client.configscreen.ModMenuApiImpl" ],
     "combatedit": [ "net.rizecookey.combatedit.custom_extensions.OldCombatModCompatibilityExtension" ]
   },
   "mixins": [
-    "combatedit.mixins.json"
+    "combatedit.mixins.json",
+    {
+      "config": "combatedit.client.mixins.json",
+      "environment": "client"
+    }
   ],
 
   "accessWidener": "combatedit.accesswidener",
 
   "depends": {
-    "fabricloader": ">=0.12.0",
+    "fabricloader": ">=0.15.0",
     "minecraft": ">=1.20.6 <1.21",
     "java": ">=21"
   }

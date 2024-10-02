@@ -1,6 +1,5 @@
 {
   "required": true,
-  "minVersion": "0.8",
   "package": "net.rizecookey.combatedit.mixins",
   "compatibilityLevel": "JAVA_21",
   "injectors": {
@@ -20,20 +19,16 @@
     "compatibility.c2s.CreativeInventoryActionC2SPacketMixin",
     "compatibility.s2c.ContainerSlotUpdateS2CPacketMixin",
     "compatibility.s2c.InventoryS2CPacketMixin",
-    "entity_modification.DefaultAttributeRegistryMixin",
     "extension.AttributeContainerMixin",
     "extension.DefaultAttributeContainerMixin",
     "extension.ItemMixin",
     "extension.LivingEntityMixin",
     "extension.ServerCommonNetworkHandlerMixin",
-    "item_modification.LivingEntityMixin",
     "knockback.LivingEntityMixin",
     "knockback.PlayerEntityMixin",
     "misc.PlayerEntityMixin",
+    "modification.entity.DefaultAttributeRegistryMixin",
+    "modification.item.LivingEntityMixin",
     "sound.PlayerEntityMixin"
-  ],
-  "client": [
-    "client.MinecraftClientMixin",
-    "client.compatibility.IntegratedPlayerManagerMixin"
   ]
 }

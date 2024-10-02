@@ -1,4 +1,4 @@
-package net.rizecookey.combatedit.item_modification;
+package net.rizecookey.combatedit.modification.item;
 
 import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.item.Item;

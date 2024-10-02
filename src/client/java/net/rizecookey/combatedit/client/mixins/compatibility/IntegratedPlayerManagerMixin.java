@@ -1,4 +1,4 @@
-package net.rizecookey.combatedit.mixins.client.compatibility;
+package net.rizecookey.combatedit.client.mixins.compatibility;
 
 import net.minecraft.server.integrated.IntegratedPlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;

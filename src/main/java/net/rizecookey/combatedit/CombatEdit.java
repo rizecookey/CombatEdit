@@ -3,7 +3,6 @@ package net.rizecookey.combatedit;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
@@ -17,6 +16,7 @@ import net.rizecookey.combatedit.api.CombatEditApi;
 import net.rizecookey.combatedit.api.CombatEditInitListener;
 import net.rizecookey.combatedit.api.extension.ProfileExtensionProvider;
 import net.rizecookey.combatedit.configuration.Settings;
+import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.extension.DynamicComponentMap;
 import net.rizecookey.combatedit.extension.DynamicDefaultAttributeContainer;
@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class CombatEdit implements ModInitializer, CombatEditApi {
+public class CombatEdit implements CombatEditApi {
     private static CombatEdit INSTANCE;
     public static final Path DEFAULT_SETTINGS_PATH = FabricLoader.getInstance().getConfigDir().resolve("combatedit/settings.json");
     public static final Logger LOGGER = LogManager.getLogger(CombatEdit.class);
@@ -48,15 +48,23 @@ public class CombatEdit implements ModInitializer, CombatEditApi {
             .create();
 
     private boolean modificationsEnabled;
-    private ConfigurationManager configurationManager;
+    private Settings settings;
+    private final ConfigurationManager configurationManager;
     private @Nullable MinecraftServer currentServer;
 
-    @Override
-    public void onInitialize() {
+    public CombatEdit() {
         INSTANCE = this;
 
         this.modificationsEnabled = false;
         this.configurationManager = new ConfigurationManager(this);
+
+        try {
+            loadSettings();
+        } catch (IOException e) {
+            onSettingsLoadError(e);
+        } catch (InvalidConfigurationException e) {
+            onSettingsLoadError(e);
+        }
 
         registerListeners();
         FabricLoader.getInstance().invokeEntrypoints("combatedit", CombatEditInitListener.class, listener -> listener.onCombatEditInit(this));
@@ -64,36 +72,55 @@ public class CombatEdit implements ModInitializer, CombatEditApi {
         LOGGER.info("Successfully initialized CombatEdit.");
     }
 
-    public Settings loadSettings() {
-        Settings settings;
-        try {
-            if (!Files.exists(DEFAULT_SETTINGS_PATH)) {
-                LOGGER.info("No settings file found, loading and saving default...");
-                settings = loadDefaultAndSave(DEFAULT_SETTINGS_PATH);
-                LOGGER.info("Done.");
-                return settings;
-            }
+    public Settings getCurrentSettings() {
+        return settings;
+    }
 
-            settings = Settings.load(DEFAULT_SETTINGS_PATH);
-            return settings;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    protected void setCurrentSettings(Settings settings) {
+        this.settings = settings;
+    }
+
+    public void loadSettings() throws IOException, InvalidConfigurationException {
+        if (!Files.exists(DEFAULT_SETTINGS_PATH)) {
+            LOGGER.info("No settings file found, loading and saving default.");
+            loadDefaultSettingsAndSave();
+        } else {
+            setCurrentSettings(Settings.load(DEFAULT_SETTINGS_PATH));
         }
+        getCurrentSettings().validate();
+        LOGGER.info("Settings loaded.");
     }
 
-    private Settings loadDefaultAndSave(Path savePath) throws IOException {
-        var settings = Settings.loadDefault();
-        settings.save(savePath);
-
-        return settings;
+    public void saveSettings(Settings settings) throws IOException {
+        settings.save(DEFAULT_SETTINGS_PATH);
+        setCurrentSettings(settings);
+        LOGGER.info("Settings saved.");
     }
 
-    public Settings resetSettings() throws IOException {
-        LOGGER.info("Resetting settings...");
-        var settings = loadDefaultAndSave(DEFAULT_SETTINGS_PATH);
-        LOGGER.info("Done.");
+    private void useDefaultSettings() {
+        setCurrentSettings(Settings.loadDefault());
+    }
 
-        return settings;
+    private void loadDefaultSettingsAndSave() throws IOException {
+        useDefaultSettings();
+        saveSettings(getCurrentSettings());
+    }
+
+    public void resetSettings() throws IOException {
+        loadDefaultSettingsAndSave();
+        LOGGER.info("Reset settings.");
+    }
+
+    protected void onSettingsLoadError(InvalidConfigurationException exception) {
+        LOGGER.error("Settings validation failed", exception);
+        LOGGER.warn("Using default settings.");
+        settings = Settings.loadDefault();
+    }
+
+    protected void onSettingsLoadError(IOException exception) {
+        LOGGER.error("Failed to load the settings file", exception);
+        LOGGER.warn("Using default settings.");
+        settings = Settings.loadDefault();
     }
 
     public ConfigurationManager getConfigurationManager() {
