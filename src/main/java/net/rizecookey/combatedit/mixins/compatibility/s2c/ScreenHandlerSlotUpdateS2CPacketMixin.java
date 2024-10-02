@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ScreenHandlerSlotUpdateS2CPacket.class)
-public abstract class ContainerSlotUpdateS2CPacketMixin implements AttributePatchable {
+public abstract class ScreenHandlerSlotUpdateS2CPacketMixin implements AttributePatchable {
     @Shadow @Final @Mutable private ItemStack stack;
 
     @Override

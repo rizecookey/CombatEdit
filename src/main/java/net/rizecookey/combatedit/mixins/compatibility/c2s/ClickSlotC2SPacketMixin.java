@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(ClickSlotC2SPacket.class)
-public abstract class ClickWindowC2SPacketMixin implements AttributePatchReversible {
+public abstract class ClickSlotC2SPacketMixin implements AttributePatchReversible {
     @Final @Shadow @Mutable private ItemStack stack;
 
     @Shadow @Final @Mutable private Int2ObjectMap<ItemStack> modifiedStacks;
