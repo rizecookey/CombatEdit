@@ -68,7 +68,7 @@ public class BaseProfile {
         var baseProfiles = new HashMap<Identifier, BaseProfile>();
         for (var entry : manager.findResources(BASE_PROFILE_PATH, id -> id.getPath().endsWith(BASE_PROFILE_ENDING)).entrySet()) {
             var shortId = getShortId(entry.getKey());
-            try (var reader = new InputStreamReader(entry.getValue().getInputStream())) {
+            try (var reader = entry.getValue().getReader()) {
                 var baseProfile = GSON.fromJson(reader, BaseProfile.class);
                 baseProfile.validate();
                 baseProfiles.put(shortId, baseProfile);
