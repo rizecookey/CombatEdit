@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 import net.minecraft.util.profiler.Profiler;
 import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.api.extension.ProfileExtensionProvider;
@@ -18,6 +17,7 @@ import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
 import net.rizecookey.combatedit.configuration.representation.MutableConfiguration;
 import net.rizecookey.combatedit.modification.AttributesModifier;
 import net.rizecookey.combatedit.utils.ItemStackAttributeHelper;
+import net.rizecookey.combatedit.utils.Pair;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -79,7 +79,7 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
             return new Pair<>(baseProfiles.get(selectedProfile), loadProfileExtensions(manager, selectedProfile));
         }, executor);
 
-        return profileLoader.thenCombineAsync(settingsLoader, (profile, settings) -> new LoadResult(settings, profile.getLeft(), profile.getRight()), executor).exceptionallyAsync(e -> {
+        return profileLoader.thenCombineAsync(settingsLoader, (profile, settings) -> new LoadResult(settings, profile.first(), profile.second()), executor).exceptionallyAsync(e -> {
             LOGGER.error("Failed to load CombatEdit configuration resources", e);
             return null;
         }, executor);
