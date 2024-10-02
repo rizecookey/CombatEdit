@@ -4,11 +4,13 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.api.CombatEditApi;
@@ -16,6 +18,8 @@ import net.rizecookey.combatedit.api.CombatEditInitListener;
 import net.rizecookey.combatedit.api.extension.ProfileExtensionProvider;
 import net.rizecookey.combatedit.configuration.Settings;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
+import net.rizecookey.combatedit.extension.DynamicComponentMap;
+import net.rizecookey.combatedit.extension.DynamicDefaultAttributeContainer;
 import net.rizecookey.combatedit.utils.serializers.AttributeModifierSlotSerializer;
 import net.rizecookey.combatedit.utils.serializers.EntityAttributeModifier$OperationSerializer;
 import net.rizecookey.combatedit.utils.serializers.IdentifierSerializer;
@@ -23,6 +27,7 @@ import net.rizecookey.combatedit.utils.serializers.MutableConfigurationTypeAdapt
 import net.rizecookey.combatedit.utils.serializers.TextSerializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,13 +47,18 @@ public class CombatEdit implements ModInitializer, CombatEditApi {
             .registerTypeAdapter(Text.class, new TextSerializer())
             .create();
 
+    private boolean modificationsEnabled;
     private ConfigurationManager configurationManager;
+    private @Nullable MinecraftServer currentServer;
 
     @Override
     public void onInitialize() {
         INSTANCE = this;
 
-        registerServerConfigurationProvider();
+        this.modificationsEnabled = false;
+        this.configurationManager = new ConfigurationManager(this);
+
+        registerListeners();
         FabricLoader.getInstance().invokeEntrypoints("combatedit", CombatEditInitListener.class, listener -> listener.onCombatEditInit(this));
 
         LOGGER.info("Successfully initialized CombatEdit.");
@@ -71,10 +81,6 @@ public class CombatEdit implements ModInitializer, CombatEditApi {
         }
     }
 
-    private void registerServerConfigurationProvider() {
-        this.configurationManager = new ConfigurationManager(this);
-        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(configurationManager);
-    }
     private Settings loadDefaultAndSave(Path savePath) throws IOException {
         var settings = Settings.loadDefault();
         settings.save(savePath);
@@ -92,6 +98,36 @@ public class CombatEdit implements ModInitializer, CombatEditApi {
 
     public ConfigurationManager getConfigurationManager() {
         return configurationManager;
+    }
+
+    public @Nullable MinecraftServer getCurrentServer() {
+        return currentServer;
+    }
+
+    public void registerListeners() {
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(configurationManager);
+
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> {
+            this.currentServer = server;
+            setModificationsEnabled(true);
+            LOGGER.info("Turned on modifications.");
+        });
+
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
+            setModificationsEnabled(false);
+            this.currentServer = null;
+            LOGGER.info("Turned off modifications.");
+        });
+    }
+
+    public boolean areModificationsEnabled() {
+        return modificationsEnabled;
+    }
+
+    public void setModificationsEnabled(boolean enabled) {
+        modificationsEnabled = enabled;
+        DynamicComponentMap.setUseExchangeable(enabled);
+        DynamicDefaultAttributeContainer.setUseExchangeable(enabled);
     }
 
     public static CombatEdit getInstance() {

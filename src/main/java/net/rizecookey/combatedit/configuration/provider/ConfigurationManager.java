@@ -36,7 +36,6 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
     private static ConfigurationManager INSTANCE;
 
     private final CombatEdit combatEdit;
-    private MinecraftServer currentServer;
 
     private Configuration configuration;
     private final ItemStackAttributeHelper attributeHelper;
@@ -102,12 +101,10 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
                     )));
 
             updateConfiguration(new LoadResult(data.settings(), data.baseProfile(), withCustom));
-
-            boolean previouslyModified = attributesModifier.areRegistriesModified();
             boolean attributeConfigChanged = !Objects.equals(oldItemAttributes, configuration.getItemAttributes()) || !Objects.equals(oldEntityAttributes, configuration.getEntityAttributes());
 
-            if (attributeConfigChanged || !previouslyModified) {
-                remakeModifications();
+            if (attributeConfigChanged) {
+                adjustModifications();
             }
         }, executor).exceptionallyAsync(e -> {
             LOGGER.error("Failed to apply the configuration", e);
@@ -129,15 +126,11 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
     }
 
     public MinecraftServer getCurrentServer() {
-        return currentServer;
+        return combatEdit.getCurrentServer();
     }
 
     public long getLastAttributeReload() {
         return lastAttributeReload;
-    }
-
-    public void setCurrentServer(MinecraftServer currentServer) {
-        this.currentServer = currentServer;
     }
 
     private static Settings loadSettings(CombatEdit combatEdit) {
@@ -173,11 +166,6 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
         return result;
     }
 
-    public void revertModifications() {
-        attributesModifier.revertModifications();
-        LOGGER.info("Reverted modifications.");
-    }
-
     private void updateConfiguration(LoadResult data) {
         if (data == null) {
             configuration = MutableConfiguration.loadDefault();
@@ -196,24 +184,13 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
         LOGGER.info("Configuration updated.");
     }
 
-    private void remakeModifications() {
+    private void adjustModifications() {
         attributesModifier.makeModifications();
-        updateAttributesToClients();
 
         oldItemAttributes = List.copyOf(configuration.getItemAttributes());
         oldEntityAttributes = List.copyOf(configuration.getEntityAttributes());
         lastAttributeReload = System.currentTimeMillis();
-        LOGGER.info("Applied attribute modifications.");
-    }
-
-    private void updateAttributesToClients() {
-        if (currentServer == null) {
-            return;
-        }
-
-        for (var player : currentServer.getPlayerManager().getPlayerList()) {
-            player.currentScreenHandler.updateToClient();
-        }
+        LOGGER.info("Adjusted attribute modifications.");
     }
 
     public void registerProfileExtension(Identifier profileId, ProfileExtensionProvider extensionProvider) {

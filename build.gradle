@@ -29,7 +29,8 @@ dependencies {
 
 	Set.of(
 	        "fabric-api-base",
-			"fabric-resource-loader-v0"
+			"fabric-resource-loader-v0",
+			"fabric-lifecycle-events-v1"
 	).forEach {
 		include modImplementation(fabricApi.module(it, project.fabric_version))
 	}

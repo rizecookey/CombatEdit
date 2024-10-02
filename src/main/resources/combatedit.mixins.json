@@ -30,12 +30,10 @@
     "knockback.LivingEntityMixin",
     "knockback.PlayerEntityMixin",
     "misc.PlayerEntityMixin",
-    "server.MinecraftServerMixin",
     "sound.PlayerEntityMixin"
   ],
   "client": [
     "client.MinecraftClientMixin",
-    "client.compatibility.ConnectScreenInnerThreadMixin",
     "client.compatibility.IntegratedPlayerManagerMixin"
   ]
 }

@@ -1,5 +1,7 @@
 package net.rizecookey.combatedit;
 
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -15,48 +17,29 @@ import net.rizecookey.combatedit.configuration.representation.Configuration;
 import net.rizecookey.combatedit.entity_modification.EntityAttributeMap;
 import net.rizecookey.combatedit.entity_modification.EntityAttributeModifierProvider;
 import net.rizecookey.combatedit.extension.AttributeContainerExtension;
-import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtension;
+import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtensions;
+import net.rizecookey.combatedit.extension.DynamicComponentMap;
+import net.rizecookey.combatedit.extension.DynamicDefaultAttributeContainer;
 import net.rizecookey.combatedit.extension.ItemExtension;
-import net.rizecookey.combatedit.extension.MutableDefaultAttributeContainer;
 import net.rizecookey.combatedit.item_modification.ItemAttributeMap;
 import net.rizecookey.combatedit.item_modification.ItemAttributeModifierProvider;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 public class AttributesModifier {
     private final ConfigurationManager configurationProvider;
     private ItemAttributeModifierProvider currentItemModifierProvider;
     private EntityAttributeModifierProvider currentEntityModifierProvider;
 
-    private ItemAttributeModifierProvider previousItemModifierProvider;
-    private EntityAttributeModifierProvider previousEntityModifierProvider;
-
-    private boolean registriesModified = false;
-    private final Map<Item, AttributeModifiersComponent> originalItemModifiers = new HashMap<>();
-    private Map<EntityType<? extends LivingEntity>, DefaultAttributeContainer> originalEntityModifiers;
-
     public AttributesModifier(ConfigurationManager configurationProvider) {
         this.configurationProvider = configurationProvider;
     }
 
-    public boolean areRegistriesModified() {
-        return registriesModified;
-    }
-
     public void makeModifications() {
-        previousEntityModifierProvider = currentEntityModifierProvider;
-        previousItemModifierProvider = currentItemModifierProvider;
-
         reloadModifierProviders();
         modifyItemAttributes();
         modifyEntityAttributes();
-
-        previousEntityModifierProvider = null;
-        previousItemModifierProvider = null;
-
-        registriesModified = true;
+        updateAttributesToClients();
     }
 
     public ItemAttributeModifierProvider getCurrentItemModifierProvider() {
@@ -76,48 +59,35 @@ public class AttributesModifier {
     private void modifyItemAttributes() {
         for (Item item : Registries.ITEM) {
             Identifier id = Registries.ITEM.getId(item);
-            ItemExtension itemExt = (ItemExtension) item;
-
-            if (!areRegistriesModified()) {
-                var originalModifiers = itemExt.combatEdit$getAttributeModifiers();
-                originalItemModifiers.put(item, originalModifiers);
-            }
+            DynamicComponentMap components = ((ItemExtension) item).combatEdit$getDynamicComponents();
 
             if (!currentItemModifierProvider.shouldModifyItem(id, item)) {
-                if (previousItemModifierProvider != null && previousItemModifierProvider.shouldModifyItem(id, item)) {
-                    itemExt.combatEdit$setAttributeModifiers(originalItemModifiers.get(item));
-                }
+                components.setExchangeable(components.getOriginal());
                 continue;
             }
 
-            var attributeModifiers = currentItemModifierProvider.getModifiers(id, item, itemExt.combatEdit$getAttributeModifiers());
-            itemExt.combatEdit$setAttributeModifiers(attributeModifiers);
+            var modifiers = currentItemModifierProvider.getModifiers(id, item, components.getOriginal().get(DataComponentTypes.ATTRIBUTE_MODIFIERS));
+            components.setExchangeable(ComponentMap.builder()
+                    .addAll(item.getComponents())
+                    .add(DataComponentTypes.ATTRIBUTE_MODIFIERS, modifiers)
+                    .build());
         }
     }
 
     private void modifyEntityAttributes() {
-        if (!areRegistriesModified()) {
-            originalEntityModifiers = DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY.entrySet()
-                    .stream()
-                    .map(entry -> Map.entry(entry.getKey(), MutableDefaultAttributeContainer.copyOf(entry.getValue())))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        }
-
         for (EntityType<? extends LivingEntity> type : DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY.keySet()) {
             Identifier id = Registries.ENTITY_TYPE.getId(type);
-            var defaultsEntry = DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY.get(type);
-            var isModifiedInCurrentConfiguration = currentEntityModifierProvider.shouldModifyEntity(id, type);
-            if (!isModifiedInCurrentConfiguration && (previousEntityModifierProvider == null || !previousEntityModifierProvider.shouldModifyEntity(id, type))) {
+            var entry = (DynamicDefaultAttributeContainer) DefaultAttributeRegistry.get(type);
+            var entryExt = (DefaultAttributeContainerExtensions) entry;
+            if (!currentEntityModifierProvider.shouldModifyEntity(id, type)) {
+                entry.setExchangeable(entry.getOriginal());
                 continue;
             }
 
-            var originalEntry = MutableDefaultAttributeContainer.copyOf(defaultsEntry);
-            DefaultAttributeContainer modifiedEntry = isModifiedInCurrentConfiguration
-                    ? currentEntityModifierProvider.getModifiers(id, type, DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY.get(type))
-                    : originalEntityModifiers.get(type);
-            ((DefaultAttributeContainerExtension) modifiedEntry).combatEdit$setSendAllAttributes(isModifiedInCurrentConfiguration);
-            ((MutableDefaultAttributeContainer) defaultsEntry).replaceValuesBy(modifiedEntry);
-            updateEntitiesAttributeContainers(type, originalEntry);
+            var previousDefaults = entry.getExchangeable();
+            entryExt.combatEdit$setSendAllAttributes(true);
+            entry.setExchangeable(currentEntityModifierProvider.getModifiers(id, type, entry.getOriginal()));
+            updateEntitiesAttributeContainers(type, previousDefaults);
         }
     }
 
@@ -133,39 +103,25 @@ public class AttributesModifier {
                 );
     }
 
-    public void revertModifications() {
-        if (!registriesModified) {
+    private void updateAttributesToClients() {
+        MinecraftServer currentServer = configurationProvider.getCurrentServer();
+        if (currentServer == null) {
             return;
         }
 
-        for (Item item : originalItemModifiers.keySet()) {
-            ((ItemExtension) item).combatEdit$setAttributeModifiers(originalItemModifiers.get(item));
+        for (var player : currentServer.getPlayerManager().getPlayerList()) {
+            player.currentScreenHandler.updateToClient();
         }
-        originalItemModifiers.clear();
 
-        for (EntityType<? extends LivingEntity> type : DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY.keySet()) {
-            var entry = DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY.get(type);
-            ((MutableDefaultAttributeContainer) entry).replaceValuesBy(originalEntityModifiers.get(type));
-        }
-        originalEntityModifiers = null;
-
-        currentEntityModifierProvider = null;
-        currentItemModifierProvider = null;
-        registriesModified = false;
+        // TODO picked up items lose their tooltip during reload?
     }
 
     public DefaultAttributeContainer getOriginalDefaults(EntityType<? extends LivingEntity> type) {
-        if (!registriesModified) {
-            return DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY.get(type);
-        }
-        return originalEntityModifiers.get(type);
+        return ((DynamicDefaultAttributeContainer) DefaultAttributeRegistry.get(type)).getOriginal();
     }
 
     public AttributeModifiersComponent getOriginalDefaults(Item item) {
-        if (!registriesModified) {
-            return ((ItemExtension) item).combatEdit$getAttributeModifiers();
-        }
-
-        return originalItemModifiers.getOrDefault(item, AttributeModifiersComponent.DEFAULT);
+        var itemExt = (ItemExtension) item;
+        return Objects.requireNonNullElse(itemExt.combatEdit$getDynamicComponents().getOriginal().get(DataComponentTypes.ATTRIBUTE_MODIFIERS), AttributeModifiersComponent.DEFAULT);
     }
 }

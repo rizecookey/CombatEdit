@@ -6,7 +6,7 @@ import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.representation.EntityAttributes;
-import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtension;
+import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtensions;
 
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +71,7 @@ public class EntityAttributeMap implements EntityAttributeModifierProvider {
         if (!modifier.isOverrideDefault()) {
             DefaultAttributeContainer defaults = originalDefaults.apply(type);
             if (defaults == null) defaults = DefaultAttributeContainer.builder().build();
-            ((DefaultAttributeContainerExtension) defaults).combatEdit$getInstances()
+            ((DefaultAttributeContainerExtensions) defaults).combatEdit$getInstances().values()
                     .forEach(instance -> builder.add(instance.getAttribute(), instance.getBaseValue()));
         }
 

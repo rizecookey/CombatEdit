@@ -3,6 +3,5 @@ accessWidener v2 named
 # allow properly extending default attribute containers
 extendable method net/minecraft/entity/attribute/DefaultAttributeContainer <init> (Ljava/util/Map;)V
 
-# make default entity attributes modifiable and accessible
+# make default entity attributes accessible
 accessible field net/minecraft/entity/attribute/DefaultAttributeRegistry DEFAULT_ATTRIBUTE_REGISTRY Ljava/util/Map;
-mutable field net/minecraft/entity/attribute/DefaultAttributeRegistry DEFAULT_ATTRIBUTE_REGISTRY Ljava/util/Map;

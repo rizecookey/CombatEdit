@@ -9,7 +9,8 @@ import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.extension.AttributeContainerExtension;
-import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtension;
+import net.rizecookey.combatedit.extension.DefaultAttributeContainerCompatibilityExtension;
+import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtensions;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -36,7 +37,7 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void setSendAllAttributes(DefaultAttributeContainer defaultAttributes, CallbackInfo ci) {
-        DefaultAttributeContainerExtension extendedContainer = (DefaultAttributeContainerExtension) defaultAttributes;
+        DefaultAttributeContainerCompatibilityExtension extendedContainer = (DefaultAttributeContainerCompatibilityExtension) defaultAttributes;
         combatEdit$sendAllAttributes = extendedContainer.combatEdit$sendAllAttributes();
     }
 
@@ -46,7 +47,7 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
             return;
         }
 
-        for (var instance : ((DefaultAttributeContainerExtension) fallback).combatEdit$getInstances()) {
+        for (var instance : ((DefaultAttributeContainerExtensions) fallback).combatEdit$getInstances().values()) {
             if (custom.containsKey(instance.getAttribute())) {
                 continue;
             }
@@ -62,7 +63,7 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
         if (combatEdit$sendAllAttributes) {
             cir.setReturnValue(Stream
                     .concat(
-                            ((DefaultAttributeContainerExtension) fallback).combatEdit$getInstances().stream()
+                            ((DefaultAttributeContainerExtensions) fallback).combatEdit$getInstances().values().stream()
                                     .filter(instance -> !custom.containsKey(instance.getAttribute())),
                             custom.values().stream())
                     .filter(instance -> instance.getAttribute().value().isTracked())
