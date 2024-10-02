@@ -112,8 +112,6 @@ public class AttributesModifier {
         for (var player : currentServer.getPlayerManager().getPlayerList()) {
             player.currentScreenHandler.updateToClient();
         }
-
-        // TODO picked up items lose their tooltip during reload?
     }
 
     public DefaultAttributeContainer getOriginalDefaults(EntityType<? extends LivingEntity> type) {
