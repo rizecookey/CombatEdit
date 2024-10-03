@@ -4,7 +4,9 @@ import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -49,6 +51,15 @@ public class ConfigurationView implements Configuration {
     }
 
     @Override
+    public Map<Identifier, Boolean> getSoundMap() {
+        Map<Identifier, Boolean> map = new HashMap<>();
+        configurations.stream()
+                .flatMap(config -> config.getSoundMap().keySet().stream())
+                .forEach(id -> map.put(id, isSoundEnabled(id).orElse(null)));
+        return map;
+    }
+
+    @Override
     public MiscOptions getMiscOptions() {
         return miscOptionsView;
     }
@@ -58,6 +69,18 @@ public class ConfigurationView implements Configuration {
         for (var config : configurations) {
             config.validate();
         }
+    }
+
+    public MutableConfiguration compileCurrentState() {
+        return new MutableConfiguration(
+                getItemAttributes(),
+                getEntityAttributes(),
+                getSoundMap(),
+                new MutableConfiguration.MiscOptions(
+                        getMiscOptions().is1_8KnockbackEnabled().orElse(null),
+                        getMiscOptions().isSweepingWithoutEnchantmentDisabled().orElse(null)
+                )
+        );
     }
 
     public static class MiscOptionsView implements MiscOptions {

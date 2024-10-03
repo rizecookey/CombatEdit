@@ -71,6 +71,15 @@ public class MutableConfiguration implements Configuration {
     }
 
     @Override
+    public Map<Identifier, Boolean> getSoundMap() {
+        if (enabledSounds == null) {
+            enabledSounds = new HashMap<>();
+        }
+
+        return enabledSounds;
+    }
+
+    @Override
     public MiscOptions getMiscOptions() {
         if (miscOptions == null) {
             miscOptions = new MiscOptions();

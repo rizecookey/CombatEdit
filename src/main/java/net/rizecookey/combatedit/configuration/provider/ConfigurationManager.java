@@ -169,7 +169,7 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
                 .toList());
         prioritizedConfigurationList.add(data.baseProfile().getConfiguration());
 
-        configuration = new ConfigurationView(prioritizedConfigurationList.toArray(new Configuration[0]));
+        configuration = new ConfigurationView(prioritizedConfigurationList.toArray(new Configuration[0])).compileCurrentState();
         LOGGER.info("Configuration updated.");
     }
 

@@ -6,6 +6,7 @@ import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface Configuration {
@@ -23,6 +24,8 @@ public interface Configuration {
     List<EntityAttributes> getEntityAttributes();
 
     Optional<Boolean> isSoundEnabled(Identifier soundIdentifier);
+
+    Map<Identifier, Boolean> getSoundMap();
 
     MiscOptions getMiscOptions();
 
