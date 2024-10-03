@@ -41,6 +41,8 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
     private final AttributesModifier attributesModifier;
     private final Map<Identifier, List<ProfileExtensionProvider>> registeredProfileExtensions;
 
+    private Map<Identifier, BaseProfile> baseProfiles;
+
     private List<EntityAttributes> oldEntityAttributes;
     private List<ItemAttributes> oldItemAttributes;
     private long lastAttributeReload = Long.MIN_VALUE;
@@ -59,7 +61,7 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
         return Identifier.of("combatedit", "server_configuration_provider");
     }
 
-    public record LoadResult(Settings settings, BaseProfile baseProfile, List<ProfileExtension> profileExtensions) {}
+    public record LoadResult(Settings settings, Map<Identifier, BaseProfile> baseProfiles, List<ProfileExtension> profileExtensions) {}
 
     @Override
     public CompletableFuture<LoadResult> load(ResourceManager manager, Profiler profiler, Executor executor) {
@@ -76,7 +78,7 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
             }
             LOGGER.info("Selected base profile: {}", selectedProfile.toString());
 
-            return new Pair<>(baseProfiles.get(selectedProfile), loadProfileExtensions(manager, selectedProfile));
+            return new Pair<>(baseProfiles, loadProfileExtensions(manager, selectedProfile));
         }, executor);
 
         return profileLoader.thenCombineAsync(settingsLoader, (profile, settings) -> new LoadResult(settings, profile.first(), profile.second()), executor).exceptionallyAsync(e -> {
@@ -92,15 +94,17 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
                 throw new IllegalStateException("Apply stage did not provide valid data");
             }
 
+            baseProfiles = data.baseProfiles();
+
             List<ProfileExtension> withCustom = new ArrayList<>(data.profileExtensions());
             registeredProfileExtensions.getOrDefault(data.settings().getSelectedBaseProfile(), new ArrayList<>())
                     .forEach(provider -> withCustom.add(provider.provideExtension(
-                            data.baseProfile(),
+                            data.baseProfiles().get(data.settings().getSelectedBaseProfile()),
                             item -> this.getModifier().getOriginalDefaults(item),
                             type -> this.getModifier().getOriginalDefaults(type)
                     )));
 
-            updateConfiguration(new LoadResult(data.settings(), data.baseProfile(), withCustom));
+            updateConfiguration(new LoadResult(data.settings(), data.baseProfiles(), withCustom));
             boolean attributeConfigChanged = !Objects.equals(oldItemAttributes, configuration.getItemAttributes()) || !Objects.equals(oldEntityAttributes, configuration.getEntityAttributes());
 
             if (attributeConfigChanged) {
@@ -127,6 +131,10 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
 
     public MinecraftServer getCurrentServer() {
         return combatEdit.getCurrentServer();
+    }
+
+    public Map<Identifier, BaseProfile> getBaseProfiles() {
+        return baseProfiles;
     }
 
     public long getLastAttributeReload() {
@@ -167,7 +175,7 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
                 .sorted(Comparator.comparingInt(ProfileExtension::getPriority).reversed())
                 .map(ProfileExtension::getConfigurationOverrides)
                 .toList());
-        prioritizedConfigurationList.add(data.baseProfile().getConfiguration());
+        prioritizedConfigurationList.add(data.baseProfiles().get(data.settings().getSelectedBaseProfile()).getConfiguration());
 
         configuration = new ConfigurationView(prioritizedConfigurationList.toArray(new Configuration[0])).compileCurrentState();
         LOGGER.info("Configuration updated.");

@@ -3,6 +3,7 @@ package net.rizecookey.combatedit;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
@@ -15,6 +16,7 @@ import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.api.CombatEditApi;
 import net.rizecookey.combatedit.api.CombatEditInitListener;
 import net.rizecookey.combatedit.api.extension.ProfileExtensionProvider;
+import net.rizecookey.combatedit.command.CombatEditCommand;
 import net.rizecookey.combatedit.configuration.Settings;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
@@ -132,6 +134,8 @@ public class CombatEdit implements CombatEditApi {
     }
 
     public void registerListeners() {
+        CommandRegistrationCallback.EVENT.register(new CombatEditCommand(this));
+
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(configurationManager);
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {

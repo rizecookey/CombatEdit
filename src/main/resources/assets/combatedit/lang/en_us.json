@@ -60,6 +60,13 @@
   "notification.combatedit.settings_save_error.title": "CombatEdit: Settings save failed",
   "notification.combatedit.settings_save_error.description": "Failed to save to settings file. Your modifications were not saved. See the logs for more information.",
 
+  "command.combatedit.profile.list": "There are %s base profile(s): %s",
+  "command.combatedit.profile.get": "The currently used base profile is %s",
+  "command.combatedit.profile.set": "Set the current base profile to %s",
+  "command.combatedit.profile.set.error.invalid_base_profile": "Could not find a base profile with ID %s",
+  "command.combatedit.profile.set.error.already_enabled": "Base profile %s is already selected",
+  "command.combatedit.profile.set.error.settings_save_failed": "Failed to save the settings file, check the server logs for more information",
+
   "button.combatedit.exit": "Close Minecraft",
   "button.combatedit.reset_config": "Reset configuration",
 
