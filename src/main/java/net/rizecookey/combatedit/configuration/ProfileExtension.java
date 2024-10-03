@@ -5,7 +5,6 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
-import net.rizecookey.combatedit.configuration.representation.ConfigurationView;
 import net.rizecookey.combatedit.configuration.representation.MutableConfiguration;
 
 import java.io.IOException;
@@ -37,8 +36,7 @@ public class ProfileExtension {
 
     public Configuration getConfigurationOverrides() {
         if (configurationOverrides == null) {
-            var config = parsedConfigurationOverrides != null ? parsedConfigurationOverrides : new MutableConfiguration();
-            configurationOverrides = new ConfigurationView(config, MutableConfiguration.loadDefault());
+            configurationOverrides = parsedConfigurationOverrides != null ? parsedConfigurationOverrides : new MutableConfiguration();
         }
 
         return configurationOverrides;
