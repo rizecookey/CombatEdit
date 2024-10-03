@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represents a list of overridden entity attribute base values for a given entity.
+ */
 public class EntityAttributes {
     private Identifier entityId;
     private List<AttributeBaseValue> baseValues;
@@ -21,6 +24,10 @@ public class EntityAttributes {
 
     protected EntityAttributes() {}
 
+    /**
+     * Returns the ID of the entity that this object overrides attribute base values for.
+     * @return the id of the entity for which values are overridden
+     */
     public Identifier getEntityId() {
         return entityId;
     }
@@ -29,6 +36,10 @@ public class EntityAttributes {
         this.entityId = entityId;
     }
 
+    /**
+     * Returns a list of pairs of attributes and base values that should be overridden for this entity.
+     * @return the list of attributes alongside base values overrides for this entity
+     */
     public List<AttributeBaseValue> getBaseValues() {
         if (baseValues == null) {
             baseValues = new ArrayList<>();
@@ -37,6 +48,11 @@ public class EntityAttributes {
         return baseValues;
     }
 
+    /**
+     * Returns whether all attributes which are not overridden here should be removed from
+     * the entity. Should not be used because it generally causes crashes as some entities
+     * might not have required attributes set as a result.
+     */
     public boolean isOverrideDefault() {
         return overrideDefault;
     }

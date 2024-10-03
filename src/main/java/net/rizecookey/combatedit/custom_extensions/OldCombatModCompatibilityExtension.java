@@ -27,6 +27,10 @@ public class OldCombatModCompatibilityExtension implements CombatEditInitListene
         combatEditApi.registerProfileExtension(new Identifier("combatedit", "1_8_combat"), this::provideExtension);
     }
 
+    /**
+     * This profile extension ensures that custom items not present in vanilla will have attack speed modifiers removed
+     * from them by default.
+     */
     public ProfileExtension provideExtension(BaseProfile baseProfile, Function<Item, AttributeModifiersComponent> originalItemDefaults, Function<EntityType<? extends LivingEntity>, DefaultAttributeContainer> originalEntityDefaults) {
         List<ItemAttributes> modifications = new ArrayList<>();
 

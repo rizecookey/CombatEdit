@@ -18,6 +18,9 @@ import java.util.Objects;
 import static net.rizecookey.combatedit.CombatEdit.GSON;
 import static net.rizecookey.combatedit.CombatEdit.LOGGER;
 
+/**
+ * Represents a loaded base profile.
+ */
 public class BaseProfile {
     public static final String BASE_PROFILE_PATH = "combatedit/base_profiles";
     public static final String BASE_PROFILE_ENDING = ".json";
@@ -35,14 +38,26 @@ public class BaseProfile {
 
     protected BaseProfile() {}
 
+    /**
+     * Returns the name of the base profile.
+     * @return the name of the base profile as a Minecraft Text component
+     */
     public Text getName() {
         return name;
     }
 
+    /**
+     * Returns the description of the base profile.
+     * @return the description of the base profile as a Minecraft Text component
+     */
     public Text getDescription() {
         return description;
     }
 
+    /**
+     * Returns the configuration of the base profile.
+     * @return the configuration of the base profile
+     */
     public Configuration getConfiguration() {
         if (configuration == null) {
             var config = parsedConfiguration != null ? parsedConfiguration : new MutableConfiguration();

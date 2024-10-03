@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class MutableConfiguration implements Configuration {
     }
 
     @Override
-    public List<ItemAttributes> getItemAttributes() {
+    public @NotNull List<ItemAttributes> getItemAttributes() {
         if (itemAttributes == null) {
             itemAttributes = new ArrayList<>();
         }
@@ -54,7 +55,7 @@ public class MutableConfiguration implements Configuration {
     }
 
     @Override
-    public List<EntityAttributes> getEntityAttributes() {
+    public @NotNull List<EntityAttributes> getEntityAttributes() {
         if (entityAttributes == null) {
             entityAttributes = new ArrayList<>();
         }
@@ -71,7 +72,7 @@ public class MutableConfiguration implements Configuration {
     }
 
     @Override
-    public Map<Identifier, Boolean> getSoundMap() {
+    public @NotNull Map<Identifier, Boolean> getSoundMap() {
         if (enabledSounds == null) {
             enabledSounds = new HashMap<>();
         }
@@ -80,7 +81,7 @@ public class MutableConfiguration implements Configuration {
     }
 
     @Override
-    public MiscOptions getMiscOptions() {
+    public @NotNull MiscOptions getMiscOptions() {
         if (miscOptions == null) {
             miscOptions = new MiscOptions();
         }

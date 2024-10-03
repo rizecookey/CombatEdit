@@ -2,6 +2,7 @@ package net.rizecookey.combatedit.configuration.representation;
 
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,14 +22,14 @@ public class ConfigurationView implements Configuration {
     }
 
     @Override
-    public List<ItemAttributes> getItemAttributes() {
+    public @NotNull List<ItemAttributes> getItemAttributes() {
         return configurations.reversed().stream()
                 .flatMap(config -> config.getItemAttributes().stream())
                 .toList();
     }
 
     @Override
-    public List<EntityAttributes> getEntityAttributes() {
+    public @NotNull List<EntityAttributes> getEntityAttributes() {
         return configurations.reversed().stream()
                 .flatMap(config -> config.getEntityAttributes().stream())
                 .toList();
@@ -51,16 +52,17 @@ public class ConfigurationView implements Configuration {
     }
 
     @Override
-    public Map<Identifier, Boolean> getSoundMap() {
+    public @NotNull Map<Identifier, Boolean> getSoundMap() {
         Map<Identifier, Boolean> map = new HashMap<>();
         configurations.stream()
                 .flatMap(config -> config.getSoundMap().keySet().stream())
+                .filter(id -> isSoundEnabled(id).isPresent())
                 .forEach(id -> map.put(id, isSoundEnabled(id).orElse(null)));
         return map;
     }
 
     @Override
-    public MiscOptions getMiscOptions() {
+    public @NotNull MiscOptions getMiscOptions() {
         return miscOptionsView;
     }
 

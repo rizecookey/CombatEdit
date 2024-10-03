@@ -15,6 +15,9 @@ import java.util.Objects;
 import static net.rizecookey.combatedit.CombatEdit.GSON;
 import static net.rizecookey.combatedit.CombatEdit.LOGGER;
 
+/**
+ * Represents a profile extension.
+ */
 public class ProfileExtension {
     public static final String PROFILE_EXTENSIONS_PATH = "combatedit/profile_extensions";
     public static final String PROFILE_EXTENSIONS_ENDING = ".json";
@@ -30,10 +33,26 @@ public class ProfileExtension {
 
     protected ProfileExtension() {}
 
+    /**
+     * Returns the priority of the profile extension. A higher priority
+     * means a given configuration from this profile extension takes
+     * precedence over configurations made by other profile extensions
+     * with a lower priority value.
+     *
+     * @return the priority of this profile extension
+     */
     public int getPriority() {
         return priority;
     }
 
+    /**
+     * Returns the configuration overrides made by this profile extension.
+     * Null values for an option generally indicate that their value
+     * should be based on whatever values the base profile or other profile
+     * extensions with a lower priority use.
+     *
+     * @return the configuration overrides made by this profile extension
+     */
     public Configuration getConfigurationOverrides() {
         if (configurationOverrides == null) {
             configurationOverrides = parsedConfigurationOverrides != null ? parsedConfigurationOverrides : new MutableConfiguration();

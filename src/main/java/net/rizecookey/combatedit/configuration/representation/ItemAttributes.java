@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Represents a list of additional item modifiers for a given item.
+ */
 public class ItemAttributes {
     private Identifier itemId;
     private List<ModifierEntry> modifiers;
@@ -25,6 +28,10 @@ public class ItemAttributes {
 
     protected ItemAttributes() {}
 
+    /**
+     * Returns the identifier of the item to be modified.
+     * @return the identifier of the item to be modified
+     */
     public Identifier getItemId() {
         return itemId;
     }
@@ -33,6 +40,10 @@ public class ItemAttributes {
         this.itemId = itemId;
     }
 
+    /**
+     * Returns all addition item modifiers to be added for the specified item.
+     * @return a list of additional item modifiers
+     */
     public List<ModifierEntry> getModifiers() {
         if (modifiers == null) {
             modifiers = new ArrayList<>();
@@ -40,6 +51,12 @@ public class ItemAttributes {
         return modifiers;
     }
 
+    /**
+     * Returns whether all previously set item modifiers for the specified item
+     * should be removed when the ones specified here are applied.
+     *
+     * @return whether default item modifiers should be overridden and removed
+     */
     public boolean isOverrideDefault() {
         return overrideDefault;
     }
