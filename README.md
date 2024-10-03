@@ -44,7 +44,7 @@ Datapack creators can provide their own base profiles (see [Datapacks](#Datapack
 Profile extensions allow adjusting the configuration of a base profile (such as adding addition item modifiers or overriding
 others set in the base profile). They are aimed at mod developers who want to provide different item or entity settings for
 base profiles (for example by changing damage values for the 1.8 Combat profile on custom items to compensate for the lack
-of any Attack Cooldown as a balancing measure). See [Mod developers](#Mod Developers) for more information.
+of any Attack Cooldown as a balancing measure). See [Mod developers](#Mod-Developers) for more information.
 
 ## Datapacks
 TODO
