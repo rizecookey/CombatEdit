@@ -18,6 +18,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
+import net.rizecookey.combatedit.extension.ItemStackExtension;
 
 public class ItemStackAttributeHelper {
     private static final String ORIGINAL_ATTRIBUTE_TAG = "combatedit:original_attribute_modifiers";
@@ -87,6 +88,7 @@ public class ItemStackAttributeHelper {
         }
 
         ItemStack modified = itemStack.copy();
+        ((ItemStackExtension) (Object) modified).combatEdit$useOriginalComponentMapAsBase();
         nbt.putBoolean(IS_PACKET_MODIFIED_TAG, true);
         AttributeModifiersComponent component = itemStack.getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
         nbt.put(ORIGINAL_ATTRIBUTE_TAG, toNbtList(component));
