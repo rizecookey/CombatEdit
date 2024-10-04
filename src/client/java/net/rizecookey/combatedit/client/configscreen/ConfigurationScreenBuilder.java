@@ -26,13 +26,13 @@ import net.rizecookey.combatedit.configuration.representation.Configuration;
 import net.rizecookey.combatedit.configuration.representation.EntityAttributes;
 import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
 import net.rizecookey.combatedit.configuration.representation.MutableConfiguration;
+import net.rizecookey.combatedit.utils.ReservedIdentifiers;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 import static net.rizecookey.combatedit.client.CombatEditClient.LOGGER;
@@ -127,12 +127,12 @@ public class ConfigurationScreenBuilder {
                 .setDisplayRequirement(() -> profileSelector.getValue().id() == null)
                 .setSaveConsumer(value -> {
                     if (profileSelector.getValue().id() == null) {
-                        settings.setSelectedBaseProfile(new Identifier(value));
+                        settings.setSelectedBaseProfile(Identifier.of(value));
                     }
                 })
                 .setErrorSupplier(value -> {
                     try {
-                        new Identifier(value);
+                        Identifier.of(value);
                     } catch (InvalidIdentifierException e) {
                         return Optional.of(Text.translatable("error.combatedit.invalid_identifier"));
                     }
@@ -310,21 +310,23 @@ public class ConfigurationScreenBuilder {
                 ExtendedDropdownMenus.TopCellElementBuilder.ofRegistryIdentifier(Registries.ATTRIBUTE, Registries.ATTRIBUTE.get(modifierEntry.attribute())),
                 ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(Registries.ATTRIBUTE)
         ).setSelections(Registries.ATTRIBUTE.getIds()).build();
-        var uuidEntry = ENTRY_BUILDER.startStrField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.uuid"), modifierEntry.uuid() != null ? modifierEntry.uuid().toString() : "")
+        var modifierIdEntry = ENTRY_BUILDER.startStrField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.modifier_id"), modifierEntry.modifierId() != null ? modifierEntry.modifierId().toString() : "")
                 .setErrorSupplier(value -> {
                     if (value.isEmpty()) {
                         return Optional.empty();
                     }
+                    Identifier id;
                     try {
-                        UUID.fromString(value);
-                    } catch (IllegalArgumentException e) {
-                        return Optional.of(Text.translatable("error.combatedit.invalid_uuid"));
+                        id = Identifier.of(value);
+                    } catch (InvalidIdentifierException e) {
+                        return Optional.of(Text.translatable("error.combatedit.invalid_identifier"));
+                    }
+                    if (id.getNamespace().equals(ReservedIdentifiers.RESERVED_NAMESPACE)) {
+                        return Optional.of(Text.translatable("error.combatedit.disallowed_namespace"));
                     }
                     return Optional.empty();
                 })
-                .setTooltip(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.uuid.tooltip"))
-                .build();
-        var nameEntry = ENTRY_BUILDER.startStrField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.name"), modifierEntry.name() != null ? modifierEntry.name() : "")
+                .setTooltip(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.modifier_id.tooltip"))
                 .build();
         var valueEntry = ENTRY_BUILDER.startDoubleField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.value"), modifierEntry.value())
                 .build();
@@ -342,16 +344,14 @@ public class ConfigurationScreenBuilder {
         return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry"),
                 List.of(
                         attributeEntry,
-                        uuidEntry,
-                        nameEntry,
+                        modifierIdEntry,
                         valueEntry,
                         operationEntry,
                         slotEntry
                 ),
                 ObjectAdapter.create(
                         () -> new ItemAttributes.ModifierEntry(attributeEntry.getValue(),
-                                !uuidEntry.getValue().isEmpty() ? UUID.fromString(uuidEntry.getValue()) : UUID.randomUUID(),
-                                nameEntry.getValue(),
+                                !modifierIdEntry.getValue().isEmpty() ? Identifier.of(modifierIdEntry.getValue()) : null,
                                 valueEntry.getValue(),
                                 operationEntry.getValue(),
                                 slotEntry.getValue()),

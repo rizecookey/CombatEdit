@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class OldCombatModCompatibilityExtension implements CombatEditInitListener {
     @Override
     public void onCombatEditInit(CombatEditApi combatEditApi) {
-        combatEditApi.registerProfileExtension(new Identifier("combatedit", "1_8_combat"), this::provideExtension);
+        combatEditApi.registerProfileExtension(Identifier.of("combatedit", "1_8_combat"), this::provideExtension);
     }
 
     /**
@@ -53,8 +53,7 @@ public class OldCombatModCompatibilityExtension implements CombatEditInitListene
                             .filter(entry -> !entry.attribute().equals(EntityAttributes.GENERIC_ATTACK_SPEED))
                             .map(entry -> new ItemAttributes.ModifierEntry(
                                     entry.attribute().getKey().orElseThrow().getValue(),
-                                    entry.modifier().uuid(),
-                                    entry.modifier().name(),
+                                    entry.modifier().id(),
                                     entry.modifier().value(),
                                     entry.modifier().operation(),
                                     entry.slot())).toList();

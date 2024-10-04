@@ -34,7 +34,7 @@ public class ExtendedDropdownMenus {
             return string -> {
                 Identifier identifier;
                 try {
-                    identifier = new Identifier(string);
+                    identifier = Identifier.of(string);
                 } catch (InvalidIdentifierException e) {
                     identifier = null;
                 }

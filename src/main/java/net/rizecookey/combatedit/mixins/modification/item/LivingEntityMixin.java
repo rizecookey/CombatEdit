@@ -1,6 +1,7 @@
 package net.rizecookey.combatedit.mixins.modification.item;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -63,7 +64,10 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityEx
                 instance.removeModifier(trackedModifier.second());
             }
         }
+
         trackedModifiers.clear();
+
+        EnchantmentHelper.removeLocationBasedEffects(((LivingEntity) (Object) this));
     }
 
     @ModifyVariable(method = "getEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getEquippedStack(Lnet/minecraft/entity/EquipmentSlot;)Lnet/minecraft/item/ItemStack;"), ordinal = 0)
@@ -80,7 +84,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityEx
     }
 
     @ModifyArg(method = "getEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;applyAttributeModifiers(Lnet/minecraft/entity/EquipmentSlot;Ljava/util/function/BiConsumer;)V", ordinal = 1))
-    private BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> storeItemModifiers(BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> attributeModifierConsumer, @Local(ordinal = 1) ItemStack target) {
+    private BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> storeItemModifiers(BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> attributeModifierConsumer, @Local(ordinal = 0) ItemStack target) {
         return (entry, modifier) -> {
             trackedModifiers.add(new Pair<>(entry, modifier));
             attributeModifierConsumer.accept(entry, modifier);

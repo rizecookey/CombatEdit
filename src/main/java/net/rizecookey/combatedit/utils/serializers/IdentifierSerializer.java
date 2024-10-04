@@ -18,7 +18,7 @@ public class IdentifierSerializer implements JsonDeserializer<Identifier>, JsonS
             throw new JsonParseException("Expected %s to be a string representing an identifier, but was not".formatted(json.getAsString()));
         }
 
-        return new Identifier(json.getAsString());
+        return Identifier.of(json.getAsString());
     }
 
     @Override

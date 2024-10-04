@@ -1,7 +1,7 @@
 package net.rizecookey.combatedit.extension;
 
 import net.minecraft.component.ComponentMap;
-import net.minecraft.component.DataComponentType;
+import net.minecraft.component.ComponentType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -34,12 +34,12 @@ public class DynamicComponentMap implements ComponentMap {
     }
 
     @Override
-    public @Nullable <T> T get(DataComponentType<? extends T> type) {
+    public @Nullable <T> T get(ComponentType<? extends T> type) {
         return getCurrent().get(type);
     }
 
     @Override
-    public Set<DataComponentType<?>> getTypes() {
+    public Set<ComponentType<?>> getTypes() {
         return getCurrent().getTypes();
     }
 

@@ -19,11 +19,11 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 
-import java.util.UUID;
-
 public class ItemStackAttributeHelper {
     private static final String ORIGINAL_ATTRIBUTE_TAG = "combatedit:original_attribute_modifiers";
     private static final String IS_PACKET_MODIFIED_TAG = "combatedit:is_packet_modified";
+
+    private static final Identifier SHARPNESS_MODIFIER_ID = Identifier.of(ReservedIdentifiers.RESERVED_NAMESPACE, "sharpness_modifier");
 
     private static final String ATTRIBUTE_SLOT_TAG = "slot";
     private static final String ATTRIBUTE_TYPE_TAG = "type";
@@ -47,24 +47,27 @@ public class ItemStackAttributeHelper {
         if (modifiers == null) {
             return null;
         }
-        int sharpnessLevel = EnchantmentHelper.getLevel(Enchantments.SHARPNESS, itemStack);
+
+        var sharpnessRegistryEntry = configurationProvider.getCurrentServer().getOverworld().getRegistryManager()
+                .get(Enchantments.SHARPNESS.getRegistryRef()).getEntry(Enchantments.SHARPNESS).orElseThrow();
+        int sharpnessLevel = EnchantmentHelper.getLevel(sharpnessRegistryEntry, itemStack);
         double sharpnessDamage = 1 + (sharpnessLevel - 1) * 0.5;
         boolean shouldAddSharpnessModifier = sharpnessLevel > 0;
 
         AttributeModifiersComponent.Builder builder = AttributeModifiersComponent.builder();
         for (AttributeModifiersComponent.Entry entry : modifiers.modifiers()) {
-            UUID uuid = getSafeUUID(entry.modifier().uuid());
+            Identifier modifierId = getSafeIdentifier(entry.modifier().id());
             if (shouldAddSharpnessModifier && entry.attribute().equals(EntityAttributes.GENERIC_ATTACK_DAMAGE) && entry.slot().equals(AttributeModifierSlot.MAINHAND) && entry.modifier().operation().equals(EntityAttributeModifier.Operation.ADD_VALUE)) {
                 // add sharpness damage display modifier onto this modifier (vanilla doesn't add sharpness to the display on its own)
                 shouldAddSharpnessModifier = false;
-                builder.add(entry.attribute(), new EntityAttributeModifier(uuid, entry.modifier().name(), entry.modifier().value() + sharpnessDamage, entry.modifier().operation()), entry.slot());
+                builder.add(entry.attribute(), new EntityAttributeModifier(modifierId, entry.modifier().value() + sharpnessDamage, entry.modifier().operation()), entry.slot());
                 continue;
             }
-            builder.add(entry.attribute(), new EntityAttributeModifier(uuid, entry.modifier().name(), entry.modifier().value(), entry.modifier().operation()), entry.slot());
+            builder.add(entry.attribute(), new EntityAttributeModifier(modifierId, entry.modifier().value(), entry.modifier().operation()), entry.slot());
         }
 
         if (shouldAddSharpnessModifier) {
-            builder.add(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier("CombatEdit packet sharpness modifier", sharpnessDamage, EntityAttributeModifier.Operation.ADD_VALUE), AttributeModifierSlot.MAINHAND);
+            builder.add(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(SHARPNESS_MODIFIER_ID, sharpnessDamage, EntityAttributeModifier.Operation.ADD_VALUE), AttributeModifierSlot.MAINHAND);
         }
 
         return builder.build();
@@ -112,15 +115,15 @@ public class ItemStackAttributeHelper {
         return reversed;
     }
 
-    private static UUID getSafeUUID(UUID uuid) {
-        if (uuid.equals(Item.ATTACK_DAMAGE_MODIFIER_ID)) {
-            return ReservedUuids.ATTACK_DAMAGE_MODIFIER_ID_ALT;
+    private static Identifier getSafeIdentifier(Identifier identifier) {
+        if (identifier.equals(Item.BASE_ATTACK_DAMAGE_MODIFIER_ID)) {
+            return ReservedIdentifiers.ATTACK_DAMAGE_MODIFIER_ID_ALT;
         }
-        if (uuid.equals(Item.ATTACK_SPEED_MODIFIER_ID)) {
-            return ReservedUuids.ATTACK_SPEED_MODIFIER_ID_ALT;
+        if (identifier.equals(Item.BASE_ATTACK_SPEED_MODIFIER_ID)) {
+            return ReservedIdentifiers.ATTACK_SPEED_MODIFIER_ID_ALT;
         }
 
-        return uuid;
+        return identifier;
     }
 
     private static NbtList toNbtList(AttributeModifiersComponent component) {
@@ -153,7 +156,7 @@ public class ItemStackAttributeHelper {
 
     private static AttributeModifiersComponent.Entry fromNbtCompound(NbtCompound compound) {
         AttributeModifierSlot slot = AttributeModifierSlot.valueOf(compound.getString(ATTRIBUTE_SLOT_TAG));
-        RegistryEntry<EntityAttribute> attribute = Registries.ATTRIBUTE.getEntry(new Identifier(compound.getString(ATTRIBUTE_TYPE_TAG))).orElseThrow();
+        RegistryEntry<EntityAttribute> attribute = Registries.ATTRIBUTE.getEntry(Identifier.of(compound.getString(ATTRIBUTE_TYPE_TAG))).orElseThrow();
         EntityAttributeModifier modifier = EntityAttributeModifier.fromNbt(compound.getCompound(ATTRIBUTE_MODIFIER_TAG));
 
         return new AttributeModifiersComponent.Entry(attribute, modifier, slot);

@@ -102,7 +102,7 @@ public class BaseProfile {
             throw new IllegalArgumentException("Not a valid base profile identifier");
         }
 
-        return new Identifier(longId.getNamespace(), path.substring(BASE_PROFILE_PATH.length() + 1, path.length() - BASE_PROFILE_ENDING.length()));
+        return Identifier.of(longId.getNamespace(), path.substring(BASE_PROFILE_PATH.length() + 1, path.length() - BASE_PROFILE_ENDING.length()));
     }
 
     @Override
@@ -123,8 +123,8 @@ public class BaseProfile {
     public record Info(Identifier id, Text name, Text description) {}
 
     public enum IntegratedProfiles {
-        VANILLA(new Info(new Identifier("combatedit", "vanilla"), Text.translatable("profile.combatedit.vanilla.name"), Text.translatable("profile.combatedit.vanilla.description"))),
-        OLD_1_8_COMBAT(new Info(new Identifier("combatedit", "1_8_combat"), Text.translatable("profile.combatedit.1_8_combat.name"), Text.translatable("profile.combatedit.1_8_combat.description")));
+        VANILLA(new Info(Identifier.of("combatedit", "vanilla"), Text.translatable("profile.combatedit.vanilla.name"), Text.translatable("profile.combatedit.vanilla.description"))),
+        OLD_1_8_COMBAT(new Info(Identifier.of("combatedit", "1_8_combat"), Text.translatable("profile.combatedit.1_8_combat.name"), Text.translatable("profile.combatedit.1_8_combat.description")));
 
         private final Info info;
 

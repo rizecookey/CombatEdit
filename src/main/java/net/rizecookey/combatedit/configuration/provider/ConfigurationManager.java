@@ -58,7 +58,7 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
 
     @Override
     public Identifier getFabricId() {
-        return Identifier.of("combatedit", "server_configuration_provider");
+        return Identifier.tryParse("combatedit", "server_configuration_provider");
     }
 
     public record LoadResult(Settings settings, Map<Identifier, BaseProfile> baseProfiles, List<ProfileExtension> profileExtensions) {}

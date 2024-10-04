@@ -6,11 +6,11 @@ import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * Represents a list of additional item modifiers for a given item.
@@ -80,12 +80,12 @@ public class ItemAttributes {
     }
 
     public static ItemAttributes getDefault() {
-        return new ItemAttributes(new Identifier("minecraft:wooden_sword"), List.of(), false);
+        return new ItemAttributes(Identifier.of("minecraft:wooden_sword"), List.of(), false);
     }
 
-    public record ModifierEntry(Identifier attribute, UUID uuid, String name, double value, EntityAttributeModifier.Operation operation, AttributeModifierSlot slot) {
+    public record ModifierEntry(Identifier attribute, @Nullable Identifier modifierId, double value, EntityAttributeModifier.Operation operation, AttributeModifierSlot slot) {
         public static ModifierEntry getDefault() {
-            return new ModifierEntry(new Identifier("minecraft:generic.attack_damage"), Item.ATTACK_DAMAGE_MODIFIER_ID, "Weapon modifier", 1, EntityAttributeModifier.Operation.ADD_VALUE, AttributeModifierSlot.MAINHAND);
+            return new ModifierEntry(Identifier.of("minecraft:generic.attack_damage"), Item.BASE_ATTACK_DAMAGE_MODIFIER_ID, 1, EntityAttributeModifier.Operation.ADD_VALUE, AttributeModifierSlot.MAINHAND);
         }
 
         public void validate() throws InvalidConfigurationException {

@@ -20,7 +20,7 @@ import java.util.Optional;
 import static net.rizecookey.combatedit.CombatEdit.GSON;
 
 public class MutableConfiguration implements Configuration {
-    public static final int CURRENT_VERSION = 1;
+    public static final int CURRENT_VERSION = 2;
 
     private int configurationVersion;
     private List<ItemAttributes> itemAttributes;
@@ -118,14 +118,6 @@ public class MutableConfiguration implements Configuration {
         for (var attr : getEntityAttributes()) {
             attr.validate();
         }
-    }
-
-    public static JsonObject migrateToNewerVersion(JsonObject old, int version) {
-        JsonObject copy = old.deepCopy();
-        if (version < 1) {
-            copy.addProperty("configuration_version", 1);
-        }
-        return copy;
     }
 
     private static JsonObject loadDefaultJson() throws IOException {

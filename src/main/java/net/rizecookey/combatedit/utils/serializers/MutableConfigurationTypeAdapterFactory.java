@@ -9,6 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import net.rizecookey.combatedit.configuration.representation.MutableConfiguration;
+import net.rizecookey.combatedit.utils.ConfigMigration;
 
 import java.io.IOException;
 
@@ -41,8 +42,9 @@ public class MutableConfigurationTypeAdapterFactory implements TypeAdapterFactor
                 }
 
                 var configurationVersion = object.get("configuration_version");
+                // if no version is set, assume newest
                 if (configurationVersion != null && configurationVersion.isJsonPrimitive() && configurationVersion.getAsInt() < MutableConfiguration.CURRENT_VERSION) {
-                    object = MutableConfiguration.migrateToNewerVersion(object, configurationVersion.getAsInt());
+                    object = ConfigMigration.migrateToNewerVersion(object, configurationVersion.getAsInt());
                 }
 
                 return delegate.fromJsonTree(object);

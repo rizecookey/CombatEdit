@@ -6,11 +6,11 @@ import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
+import net.rizecookey.combatedit.utils.ReservedIdentifiers;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Function;
 
 import static net.rizecookey.combatedit.CombatEdit.LOGGER;
@@ -71,7 +71,7 @@ public class ItemAttributeMap implements ItemAttributeModifierProvider {
             }
 
             var attribute = Registries.ATTRIBUTE.getEntry(entry.attribute()).orElseThrow();
-            var modifier = patchUUIDReference(new EntityAttributeModifier(entry.uuid() != null ? entry.uuid() : UUID.randomUUID(), entry.name(), entry.value(), entry.operation()));
+            var modifier = new EntityAttributeModifier(entry.modifierId() != null ? entry.modifierId() : generateBasedOnIndex(attributes.getModifiers().indexOf(entry)), entry.value(), entry.operation());
 
             builder.add(attribute, modifier, entry.slot());
         }
@@ -79,22 +79,7 @@ public class ItemAttributeMap implements ItemAttributeModifierProvider {
         return Map.entry(item, builder.build());
     }
 
-    /*
-    To make the tooltip appear green, the UUID's reference has to equal the corresponding constant in the Item class with ==.
-    As the parsed UUID will never match that reference, we will patch this manually here.
-     */
-    private static EntityAttributeModifier patchUUIDReference(EntityAttributeModifier modifier) {
-        UUID newUUID = null;
-        if (modifier.uuid().equals(Item.ATTACK_DAMAGE_MODIFIER_ID)) {
-            newUUID = Item.ATTACK_DAMAGE_MODIFIER_ID;
-        } else if (modifier.uuid().equals(Item.ATTACK_SPEED_MODIFIER_ID)) {
-            newUUID = Item.ATTACK_SPEED_MODIFIER_ID;
-        }
-
-        if (newUUID == null) {
-            return modifier;
-        }
-
-        return new EntityAttributeModifier(newUUID, modifier.name(), modifier.value(), modifier.operation());
+    public static Identifier generateBasedOnIndex(int index) {
+        return Identifier.of(ReservedIdentifiers.RESERVED_NAMESPACE, "generated/" + (index + 1));
     }
 }

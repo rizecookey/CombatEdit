@@ -76,12 +76,12 @@ public class EntityAttributes {
     }
 
     public static EntityAttributes getDefault() {
-        return new EntityAttributes(new Identifier("minecraft:creeper"), List.of(), false);
+        return new EntityAttributes(Identifier.of("minecraft:creeper"), List.of(), false);
     }
 
     public record AttributeBaseValue(Identifier attribute, double baseValue) {
         public static AttributeBaseValue getDefault() {
-            return new AttributeBaseValue(new Identifier("minecraft:generic.attack_damage"), 1);
+            return new AttributeBaseValue(Identifier.of("minecraft:generic.attack_damage"), 1);
         }
 
         public void validate() throws InvalidConfigurationException {

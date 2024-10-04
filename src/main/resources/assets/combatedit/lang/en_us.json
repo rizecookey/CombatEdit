@@ -36,9 +36,8 @@
   "option.combatedit.item.item_attributes.modifier_entry": "Attribute modifiers",
   "option.combatedit.item.item_attributes.modifier_entry.entry": "Modifier",
   "option.combatedit.item.item_attributes.modifier_entry.attribute": "Attribute",
-  "option.combatedit.item.item_attributes.modifier_entry.uuid": "Modifier UUID",
-  "option.combatedit.item.item_attributes.modifier_entry.uuid.tooltip": "Can be left empty to generate a random UUID.",
-  "option.combatedit.item.item_attributes.modifier_entry.name": "Modifier name",
+  "option.combatedit.item.item_attributes.modifier_entry.modifier_id": "Modifier Identifier",
+  "option.combatedit.item.item_attributes.modifier_entry.modifier_id.tooltip": "Can be left empty to auto-generate an identifier.",
   "option.combatedit.item.item_attributes.modifier_entry.value": "Modifier value",
   "option.combatedit.item.item_attributes.modifier_entry.operation": "Modifier operation",
   "option.combatedit.item.item_attributes.modifier_entry.slot": "Slot",
@@ -51,7 +50,7 @@
   "option.combatedit.misc.disable_sweeping_without_enchantment": "Disable sweep attacks without enchantment",
 
   "error.combatedit.invalid_identifier": "Not a valid identifier",
-  "error.combatedit.invalid_uuid": "Invalid UUID, enter a correct UUID or leave empty",
+  "error.combatedit.disallowed_namespace": "Cannot use this namespace",
   "error.combatedit.invalid_config.title": "CombatEdit failed to load config",
   "error.combatedit.invalid_config.description": "CombatEdit failed to load your configuration! You can either correct errors in the configuration or reset it to the defaults.\n\nError message: %s\nCheck the logs for more details.",
 
