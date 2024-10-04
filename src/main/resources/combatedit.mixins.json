@@ -9,6 +9,7 @@
     "compatibility.ClientConnectionMixin",
     "compatibility.EntityMixin",
     "compatibility.EntityTypeMixin",
+    "compatibility.ItemStackMixin",
     "compatibility.LevelPropertiesMixin",
     "compatibility.LivingEntityMixin",
     "compatibility.PlayerEntityMixin",
