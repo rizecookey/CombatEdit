@@ -79,14 +79,14 @@ public class AttributesModifier {
             Identifier id = Registries.ENTITY_TYPE.getId(type);
             var entry = (DynamicDefaultAttributeContainer) DefaultAttributeRegistry.get(type);
             var entryExt = (DefaultAttributeContainerExtensions) entry;
+            var previousDefaults = entry.getExchangeable();
             if (!currentEntityModifierProvider.shouldModifyEntity(id, type)) {
                 entry.setExchangeable(entry.getOriginal());
-                continue;
+            } else {
+                entryExt.combatEdit$setSendAllAttributes(true);
+                entry.setExchangeable(currentEntityModifierProvider.getModifiers(id, type, entry.getOriginal()));
             }
 
-            var previousDefaults = entry.getExchangeable();
-            entryExt.combatEdit$setSendAllAttributes(true);
-            entry.setExchangeable(currentEntityModifierProvider.getModifiers(id, type, entry.getOriginal()));
             updateEntitiesAttributeContainers(type, previousDefaults);
         }
     }
