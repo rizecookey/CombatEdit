@@ -19,6 +19,9 @@
   "option.combatedit.profile.custom_base_profile": "Custom base profile identifier",
   "option.combatedit.profile.custom_base_profile.notice": "Please note that this option is for using a data pack-provided base profile. If you simply want to make changes to another base profile, select that profile and add modifiers in the Entity and Item configuration tabs.",
 
+  "category.combatedit.client_only": "Client-only",
+  "option.combatedit.client_only.disable_new_tooltips": "Disable the new (green) tooltips",
+
   "category.combatedit.entity": "Entity configuration",
   "option.combatedit.entity.entity_attributes": "Entity attribute overrides",
   "option.combatedit.entity.entity_attributes.entry": "Entity entry",
