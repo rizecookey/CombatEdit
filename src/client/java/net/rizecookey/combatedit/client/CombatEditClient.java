@@ -3,6 +3,9 @@ package net.rizecookey.combatedit.client;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.toast.SystemToast;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.Item;
 import net.minecraft.text.Text;
 import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.client.configscreen.InvalidConfigScreen;
@@ -12,6 +15,7 @@ import net.rizecookey.combatedit.configuration.Settings;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 
 import java.io.IOException;
+import java.util.List;
 
 public class CombatEditClient extends CombatEdit {
     private static CombatEditClient INSTANCE;
@@ -34,6 +38,18 @@ public class CombatEditClient extends CombatEdit {
         LOGGER.warn("Using default settings.");
         setCurrentSettings(Settings.loadDefault());
         ClientEvents.CLIENT_FINISHED_LOADING.register(client -> sendErrorNotification(client, "settings_load_error"));
+    }
+
+    @Override
+    public void warnAboutItemIncompatibility(List<Item> items) {
+        super.warnAboutItemIncompatibility(items);
+        sendErrorNotification(MinecraftClient.getInstance(), "incompatibility_item");
+    }
+
+    @Override
+    public void warnAboutEntityIncompatibility(List<EntityType<? extends LivingEntity>> entities) {
+        super.warnAboutEntityIncompatibility(entities);
+        sendErrorNotification(MinecraftClient.getInstance(), "incompatibility_entity");
     }
 
     public static void sendErrorNotification(MinecraftClient client, String errorKey) {

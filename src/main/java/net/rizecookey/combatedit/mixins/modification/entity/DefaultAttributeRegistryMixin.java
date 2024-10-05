@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Mixin(DefaultAttributeRegistry.class)
+@Mixin(value = DefaultAttributeRegistry.class, priority = Integer.MAX_VALUE)
 public class DefaultAttributeRegistryMixin {
     @Shadow @Final @Mutable
     public static Map<EntityType<? extends LivingEntity>, DefaultAttributeContainer> DEFAULT_ATTRIBUTE_REGISTRY;

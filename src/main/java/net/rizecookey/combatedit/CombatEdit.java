@@ -8,7 +8,11 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.component.type.AttributeModifierSlot;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
@@ -34,6 +38,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CombatEdit implements CombatEditApi {
     private static CombatEdit INSTANCE;
@@ -159,6 +165,24 @@ public class CombatEdit implements CombatEditApi {
         modificationsEnabled = enabled;
         DynamicComponentMap.setUseExchangeable(enabled);
         DynamicDefaultAttributeContainer.setUseExchangeable(enabled);
+    }
+
+    public void warnAboutItemIncompatibility(List<Item> items) {
+        LOGGER.error("""
+                        The following items do not have a dynamic component map and could therefore not be modified by CombatEdit:{}
+                        Please report this incompatibility at https://www.github.com/rizecookey/CombatEdit/issues.""",
+                items.stream()
+                        .map(item -> System.lineSeparator() + "\t- " + item.toString())
+                        .collect(Collectors.joining()));
+    }
+
+    public void warnAboutEntityIncompatibility(List<EntityType<? extends LivingEntity>> entities) {
+        LOGGER.error("""
+                        The following entity types do not have a dynamic default component and could therefore not be modified by CombatEdit:{}
+                        Please report this incompatibility at https://www.github.com/rizecookey/CombatEdit/issues.""",
+                entities.stream()
+                        .map(entity -> System.lineSeparator() + "\t- " + Registries.ENTITY_TYPE.getId(entity))
+                        .collect(Collectors.joining()));
     }
 
     public static CombatEdit getInstance() {
