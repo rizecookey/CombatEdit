@@ -65,6 +65,7 @@ public class ConfigurationScreenBuilder {
 
         var config = settings.getConfigurationOverrides();
         createProfileCategory(settings, builder);
+        createClientCategory(settings.getClientOnly(), builder);
         createEntityCategory(config.getEntityAttributes(), builder);
         createItemCategory(config.getItemAttributes(), builder);
         createSoundCategory(config, builder);
@@ -145,6 +146,13 @@ public class ConfigurationScreenBuilder {
                         .styled(style -> style.withColor(Formatting.RED)))
                 .setDisplayRequirement(() -> profileSelector.getValue().id() == null)
                 .build());
+    }
+
+    private static void createClientCategory(Settings.ClientOnly clientOnly, ConfigBuilder builder) {
+        builder.getOrCreateCategory(Text.translatable("category.combatedit.client_only"))
+                .addEntry(ENTRY_BUILDER.startBooleanToggle(Text.translatable("option.combatedit.client_only.disable_new_tooltips"), clientOnly.shouldDisableNewTooltips())
+                        .setSaveConsumer(clientOnly::setDisableNewTooltips)
+                        .build());
     }
 
     private static void createEntityCategory(List<EntityAttributes> entityAttributes, ConfigBuilder builder) {

@@ -22,11 +22,13 @@ public class Settings {
 
     private int settingsVersion;
     private Identifier selectedBaseProfile;
+    private ClientOnly client;
     private MutableConfiguration configurationOverrides;
 
-    public Settings(int settingsVersion, Identifier selectedBaseProfile, MutableConfiguration configurationOverrides) {
+    public Settings(int settingsVersion, Identifier selectedBaseProfile, ClientOnly client, MutableConfiguration configurationOverrides) {
         this.settingsVersion = settingsVersion;
         this.selectedBaseProfile = selectedBaseProfile;
+        this.client = client;
         this.configurationOverrides = configurationOverrides;
     }
 
@@ -51,16 +53,20 @@ public class Settings {
         return configurationOverrides;
     }
 
+    public ClientOnly getClientOnly() {
+        if (client == null) {
+            client = new ClientOnly();
+        }
+
+        return client;
+    }
+
     public void setSettingsVersion(int settingsVersion) {
         this.settingsVersion = settingsVersion;
     }
 
     public void setSelectedBaseProfile(Identifier selectedBaseProfile) {
         this.selectedBaseProfile = selectedBaseProfile;
-    }
-
-    public void setConfigurationOverrides(MutableConfiguration mutableConfigurationOverrides) {
-        this.configurationOverrides = mutableConfigurationOverrides;
     }
 
     public void validate() throws InvalidConfigurationException {
@@ -86,7 +92,7 @@ public class Settings {
     }
 
     public Settings copy() {
-        return new Settings(settingsVersion, selectedBaseProfile, configurationOverrides.copy());
+        return new Settings(settingsVersion, selectedBaseProfile, client != null ? client.copy() : null, configurationOverrides != null ? configurationOverrides.copy() : null);
     }
 
     public static Settings load(Path path) throws IOException, InvalidConfigurationException {
@@ -124,6 +130,28 @@ public class Settings {
             return GSON.fromJson(loadDefaultJson(), Settings.class);
         } catch (IOException e) {
             throw new RuntimeException("Could not load default settings file", e);
+        }
+    }
+
+    public static class ClientOnly {
+        private boolean disableNewTooltips;
+
+        public ClientOnly(boolean disableNewTooltips) {
+            this.disableNewTooltips = disableNewTooltips;
+        }
+
+        public ClientOnly() {}
+
+        public boolean shouldDisableNewTooltips() {
+            return disableNewTooltips;
+        }
+
+        public void setDisableNewTooltips(boolean disableNewTooltips) {
+            this.disableNewTooltips = disableNewTooltips;
+        }
+
+        public ClientOnly copy() {
+            return new ClientOnly(disableNewTooltips);
         }
     }
 }
