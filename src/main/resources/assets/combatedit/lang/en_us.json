@@ -59,6 +59,10 @@
   "notification.combatedit.settings_load_error.description": "Failed to load settings file. Please try restarting the game. See the logs for more information.",
   "notification.combatedit.settings_save_error.title": "CombatEdit: Settings save failed",
   "notification.combatedit.settings_save_error.description": "Failed to save to settings file. Your modifications were not saved. See the logs for more information.",
+  "notification.combatedit.incompatibility_entity.title": "CombatEdit: Unable to modify entity",
+  "notification.combatedit.incompatibility_entity.description": "The default attributes for some entity types could not be modified. Check the logs for more information.",
+  "notification.combatedit.incompatibility_item.title": "CombatEdit: Unable to modify item",
+  "notification.combatedit.incompatibility_item.description": "The default attributes modifiers for some items could not be modified. Check the logs for more information.",
 
   "command.combatedit.profile.list": "There are %s base profile(s): %s",
   "command.combatedit.profile.get": "The currently used base profile is %s",

@@ -14,18 +14,18 @@ public class DynamicComponentMap implements ComponentMap {
 
     public DynamicComponentMap(ComponentMap original) {
         this.original = original;
-        this.exchangeable = null;
+        this.exchangeable = original;
     }
 
     public ComponentMap getOriginal() {
         return original;
     }
 
-    public @Nullable ComponentMap getExchangeable() {
+    public ComponentMap getExchangeable() {
         return exchangeable;
     }
 
-    public void setExchangeable(@Nullable ComponentMap exchangeable) {
+    public void setExchangeable(ComponentMap exchangeable) {
         this.exchangeable = exchangeable;
     }
 

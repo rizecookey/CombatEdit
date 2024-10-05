@@ -18,12 +18,13 @@ import net.rizecookey.combatedit.extension.AttributeContainerExtension;
 import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtensions;
 import net.rizecookey.combatedit.extension.DynamicComponentMap;
 import net.rizecookey.combatedit.extension.DynamicDefaultAttributeContainer;
-import net.rizecookey.combatedit.extension.ItemExtension;
 import net.rizecookey.combatedit.modification.entity.EntityAttributeMap;
 import net.rizecookey.combatedit.modification.entity.EntityAttributeModifierProvider;
 import net.rizecookey.combatedit.modification.item.ItemAttributeMap;
 import net.rizecookey.combatedit.modification.item.ItemAttributeModifierProvider;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class AttributesModifier {
@@ -57,27 +58,54 @@ public class AttributesModifier {
     }
 
     private void modifyItemAttributes() {
+        List<Item> incompatibles = null;
         for (Item item : Registries.ITEM) {
             Identifier id = Registries.ITEM.getId(item);
-            DynamicComponentMap components = ((ItemExtension) item).combatEdit$getDynamicComponents();
-
-            if (!currentItemModifierProvider.shouldModifyItem(id, item)) {
-                components.setExchangeable(components.getOriginal());
+            ComponentMap components = item.getComponents();
+            if (!(components instanceof DynamicComponentMap dynamicComponents)) {
+                if (!currentItemModifierProvider.shouldModifyItem(id, item)) {
+                    continue;
+                }
+                if (incompatibles == null) {
+                    incompatibles = new ArrayList<>();
+                }
+                incompatibles.add(item);
                 continue;
             }
 
-            var modifiers = currentItemModifierProvider.getModifiers(id, item, components.getOriginal().get(DataComponentTypes.ATTRIBUTE_MODIFIERS));
-            components.setExchangeable(ComponentMap.builder()
+            if (!currentItemModifierProvider.shouldModifyItem(id, item)) {
+                dynamicComponents.setExchangeable(dynamicComponents.getOriginal());
+                continue;
+            }
+
+            var modifiers = currentItemModifierProvider.getModifiers(id, item, dynamicComponents.getOriginal().get(DataComponentTypes.ATTRIBUTE_MODIFIERS));
+            dynamicComponents.setExchangeable(ComponentMap.builder()
                     .addAll(item.getComponents())
                     .add(DataComponentTypes.ATTRIBUTE_MODIFIERS, modifiers)
                     .build());
         }
+
+        if (incompatibles != null) {
+            configurationProvider.getCombatEdit().warnAboutItemIncompatibility(incompatibles);
+        }
     }
 
     private void modifyEntityAttributes() {
+        List<EntityType<? extends LivingEntity>> incompatibles = null;
         for (EntityType<? extends LivingEntity> type : DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY.keySet()) {
             Identifier id = Registries.ENTITY_TYPE.getId(type);
-            var entry = (DynamicDefaultAttributeContainer) DefaultAttributeRegistry.get(type);
+            var defaults = DefaultAttributeRegistry.get(type);
+            if (!(defaults instanceof DynamicDefaultAttributeContainer entry)) {
+                if (!currentEntityModifierProvider.shouldModifyEntity(id, type)) {
+                    continue;
+                }
+                if (incompatibles == null) {
+                    incompatibles = new ArrayList<>();
+                }
+                incompatibles.add(type);
+                continue;
+            }
+
             var entryExt = (DefaultAttributeContainerExtensions) entry;
             var previousDefaults = entry.getExchangeable();
             if (!currentEntityModifierProvider.shouldModifyEntity(id, type)) {
@@ -88,6 +116,10 @@ public class AttributesModifier {
             }
 
             updateEntitiesAttributeContainers(type, previousDefaults);
+        }
+
+        if (incompatibles != null) {
+            configurationProvider.getCombatEdit().warnAboutEntityIncompatibility(incompatibles);
         }
     }
 
@@ -115,11 +147,18 @@ public class AttributesModifier {
     }
 
     public DefaultAttributeContainer getOriginalDefaults(EntityType<? extends LivingEntity> type) {
-        return ((DynamicDefaultAttributeContainer) DefaultAttributeRegistry.get(type)).getOriginal();
+        var defaultAttributes = DefaultAttributeRegistry.get(type);
+        if (!(defaultAttributes instanceof DynamicDefaultAttributeContainer dynamicDefaults)) {
+            return defaultAttributes;
+        }
+        return dynamicDefaults.getOriginal();
     }
 
     public AttributeModifiersComponent getOriginalDefaults(Item item) {
-        var itemExt = (ItemExtension) item;
-        return Objects.requireNonNullElse(itemExt.combatEdit$getDynamicComponents().getOriginal().get(DataComponentTypes.ATTRIBUTE_MODIFIERS), AttributeModifiersComponent.DEFAULT);
+        var components = item.getComponents();
+        if (!(components instanceof DynamicComponentMap dynamicComponents)) {
+            return components.get(DataComponentTypes.ATTRIBUTE_MODIFIERS);
+        }
+        return Objects.requireNonNullElse(dynamicComponents.getOriginal().get(DataComponentTypes.ATTRIBUTE_MODIFIERS), AttributeModifiersComponent.DEFAULT);
     }
 }

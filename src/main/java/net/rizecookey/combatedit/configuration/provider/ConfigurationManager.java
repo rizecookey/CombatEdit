@@ -117,6 +117,10 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
         }, executor);
     }
 
+    public CombatEdit getCombatEdit() {
+        return combatEdit;
+    }
+
     public Configuration getConfiguration() {
         return configuration;
     }

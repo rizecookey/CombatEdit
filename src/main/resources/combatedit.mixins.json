@@ -7,6 +7,7 @@
   },
   "mixins": [
     "compatibility.ClientConnectionMixin",
+    "compatibility.ComponentMap$BuilderMixin",
     "compatibility.EntityMixin",
     "compatibility.EntityTypeMixin",
     "compatibility.ItemStackMixin",
