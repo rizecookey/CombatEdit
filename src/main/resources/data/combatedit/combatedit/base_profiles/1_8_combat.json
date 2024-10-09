@@ -2,13 +2,13 @@
   "name": { "translate":  "profile.combatedit.1_8_combat.name" },
   "description": { "translate":  "profile.combatedit.1_8_combat.description" },
   "configuration": {
-    "configuration_version": 2,
+    "configuration_version": 3,
     "entity_attributes": [
       {
         "entity_id": "minecraft:player",
         "base_values": [
           {
-            "attribute": "minecraft:generic.attack_speed",
+            "attribute": "minecraft:attack_speed",
             "base_value": 20.0
           }
         ]
@@ -19,7 +19,7 @@
         "item_id": "minecraft:trident",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 8.0,
@@ -32,7 +32,7 @@
         "item_id": "minecraft:wooden_sword",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 4.0,
@@ -45,7 +45,7 @@
         "item_id": "minecraft:wooden_shovel",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 1.0,
@@ -58,7 +58,7 @@
         "item_id": "minecraft:wooden_pickaxe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 2.0,
@@ -71,7 +71,7 @@
         "item_id": "minecraft:wooden_axe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 3.0,
@@ -84,7 +84,7 @@
         "item_id": "minecraft:wooden_hoe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 2.0,
@@ -97,7 +97,7 @@
         "item_id": "minecraft:stone_sword",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 5.0,
@@ -110,7 +110,7 @@
         "item_id": "minecraft:stone_shovel",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 2.0,
@@ -123,7 +123,7 @@
         "item_id": "minecraft:stone_pickaxe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 3.0,
@@ -136,7 +136,7 @@
         "item_id": "minecraft:stone_axe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 4.0,
@@ -149,7 +149,7 @@
         "item_id": "minecraft:stone_hoe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 3.0,
@@ -162,7 +162,7 @@
         "item_id": "minecraft:golden_sword",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 4.0,
@@ -175,7 +175,7 @@
         "item_id": "minecraft:golden_shovel",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 1.0,
@@ -188,7 +188,7 @@
         "item_id": "minecraft:golden_pickaxe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 2.0,
@@ -201,7 +201,7 @@
         "item_id": "minecraft:golden_axe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 3.0,
@@ -214,7 +214,7 @@
         "item_id": "minecraft:golden_hoe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 2.0,
@@ -227,7 +227,7 @@
         "item_id": "minecraft:iron_sword",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 6.0,
@@ -240,7 +240,7 @@
         "item_id": "minecraft:iron_shovel",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 3.0,
@@ -253,7 +253,7 @@
         "item_id": "minecraft:iron_pickaxe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 4.0,
@@ -266,7 +266,7 @@
         "item_id": "minecraft:iron_axe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 5.0,
@@ -279,7 +279,7 @@
         "item_id": "minecraft:iron_hoe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 4.0,
@@ -292,7 +292,7 @@
         "item_id": "minecraft:diamond_sword",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 7.0,
@@ -305,7 +305,7 @@
         "item_id": "minecraft:diamond_shovel",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 4.0,
@@ -318,7 +318,7 @@
         "item_id": "minecraft:diamond_pickaxe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 5.0,
@@ -331,7 +331,7 @@
         "item_id": "minecraft:diamond_axe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 6.0,
@@ -344,7 +344,7 @@
         "item_id": "minecraft:diamond_hoe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 5.0,
@@ -357,7 +357,7 @@
         "item_id": "minecraft:netherite_sword",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 8.0,
@@ -370,7 +370,7 @@
         "item_id": "minecraft:netherite_shovel",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 5.0,
@@ -383,7 +383,7 @@
         "item_id": "minecraft:netherite_pickaxe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 6.0,
@@ -396,7 +396,7 @@
         "item_id": "minecraft:netherite_axe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 7.0,
@@ -409,7 +409,7 @@
         "item_id": "minecraft:netherite_hoe",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 6.0,
@@ -422,7 +422,7 @@
         "item_id": "minecraft:mace",
         "modifiers": [
           {
-            "attribute": "minecraft:generic.attack_damage",
+            "attribute": "minecraft:attack_damage",
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 5.0,

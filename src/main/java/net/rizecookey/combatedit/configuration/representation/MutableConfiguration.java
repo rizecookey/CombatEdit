@@ -20,7 +20,7 @@ import java.util.Optional;
 import static net.rizecookey.combatedit.CombatEdit.GSON;
 
 public class MutableConfiguration implements Configuration {
-    public static final int CURRENT_VERSION = 2;
+    public static final int CURRENT_VERSION = 3;
 
     private int configurationVersion;
     private List<ItemAttributes> itemAttributes;

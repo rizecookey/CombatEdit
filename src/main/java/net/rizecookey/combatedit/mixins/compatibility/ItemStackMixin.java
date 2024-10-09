@@ -1,7 +1,7 @@
 package net.rizecookey.combatedit.mixins.compatibility;
 
 import net.minecraft.component.ComponentMap;
-import net.minecraft.component.ComponentMapImpl;
+import net.minecraft.component.MergedComponentMap;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.rizecookey.combatedit.extension.DynamicComponentMap;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class ItemStackMixin implements ItemStackExtension {
     @Mutable
     @Shadow @Final
-    ComponentMapImpl components;
+    MergedComponentMap components;
 
     @Shadow public abstract Item getItem();
 
@@ -26,6 +26,6 @@ public abstract class ItemStackMixin implements ItemStackExtension {
             return;
         }
 
-        this.components = ComponentMapImpl.create(dynamicComponents.getOriginal(), this.components.getChanges());
+        this.components = MergedComponentMap.create(dynamicComponents.getOriginal(), this.components.getChanges());
     }
 }

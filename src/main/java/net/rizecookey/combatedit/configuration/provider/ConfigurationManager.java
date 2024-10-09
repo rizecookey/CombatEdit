@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
 import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.api.extension.ProfileExtensionProvider;
 import net.rizecookey.combatedit.configuration.BaseProfile;
@@ -64,7 +63,7 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
     public record LoadResult(Settings settings, Map<Identifier, BaseProfile> baseProfiles, List<ProfileExtension> profileExtensions) {}
 
     @Override
-    public CompletableFuture<LoadResult> load(ResourceManager manager, Profiler profiler, Executor executor) {
+    public CompletableFuture<LoadResult> load(ResourceManager manager, Executor executor) {
         var settingsLoader = CompletableFuture.supplyAsync(() -> loadSettings(combatEdit), executor);
         var baseProfileLoader = CompletableFuture.supplyAsync(() -> loadBaseProfiles(manager), executor);
         var profileLoader = settingsLoader.thenCombineAsync(baseProfileLoader, (settings, baseProfiles) -> {
@@ -88,7 +87,7 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
     }
 
     @Override
-    public CompletableFuture<Void> apply(LoadResult data, ResourceManager manager, Profiler profiler, Executor executor) {
+    public CompletableFuture<Void> apply(LoadResult data, ResourceManager manager, Executor executor) {
         return CompletableFuture.runAsync(() -> {
             if (data == null) {
                 throw new IllegalStateException("Apply stage did not provide valid data");

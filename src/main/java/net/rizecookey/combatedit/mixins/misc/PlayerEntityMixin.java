@@ -18,15 +18,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements LivingEn
         super(entityType, world);
     }
 
-    @ModifyVariable(method = "attack", ordinal = 3, at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
+    @ModifyVariable(method = "attack",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;sidedDamage(Lnet/minecraft/entity/damage/DamageSource;F)Z"), ordinal = 3)
     public boolean checkIfSweepEnchant(boolean bl4) {
         if (getWorld().isClient()) {
             return bl4;
         }
         Configuration.MiscOptions miscOptions = combatEdit$configurationManager().getConfiguration().getMiscOptions();
         var thisPlayer = (PlayerEntity) (Object) this;
-        var sweepingRegistryEntry = getWorld().getRegistryManager().get(Enchantments.SWEEPING_EDGE.getRegistryRef())
-                .getEntry(Enchantments.SWEEPING_EDGE).orElseThrow();
+        var sweepingRegistryEntry = getWorld().getRegistryManager().getOrThrow(Enchantments.SWEEPING_EDGE.getRegistryRef())
+                .getEntry(Enchantments.SWEEPING_EDGE.getValue()).orElseThrow();
         if (EnchantmentHelper.getEquipmentLevel(sweepingRegistryEntry, thisPlayer) == 0
                 && miscOptions.isSweepingWithoutEnchantmentDisabled().orElse(false)) {
             bl4 = false;

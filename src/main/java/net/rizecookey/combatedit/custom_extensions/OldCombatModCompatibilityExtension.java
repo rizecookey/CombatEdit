@@ -45,12 +45,12 @@ public class OldCombatModCompatibilityExtension implements CombatEditInitListene
                 .forEach(item -> {
                     AttributeModifiersComponent component = originalItemDefaults.apply(item);
                     assert component != null;
-                    if (component.modifiers().stream().noneMatch(entry -> entry.attribute().equals(EntityAttributes.GENERIC_ATTACK_SPEED))) {
+                    if (component.modifiers().stream().noneMatch(entry -> entry.attribute().equals(EntityAttributes.ATTACK_SPEED))) {
                         return;
                     }
 
                     List<ItemAttributes.ModifierEntry> newEntries = component.modifiers().stream()
-                            .filter(entry -> !entry.attribute().equals(EntityAttributes.GENERIC_ATTACK_SPEED))
+                            .filter(entry -> !entry.attribute().equals(EntityAttributes.ATTACK_SPEED))
                             .map(entry -> new ItemAttributes.ModifierEntry(
                                     entry.attribute().getKey().orElseThrow().getValue(),
                                     entry.modifier().id(),

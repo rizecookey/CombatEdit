@@ -50,7 +50,7 @@ public class ItemStackAttributeHelper {
         }
 
         var sharpnessRegistryEntry = configurationProvider.getCurrentServer().getOverworld().getRegistryManager()
-                .get(Enchantments.SHARPNESS.getRegistryRef()).getEntry(Enchantments.SHARPNESS).orElseThrow();
+                .getOrThrow(Enchantments.SHARPNESS.getRegistryRef()).getEntry(Enchantments.SHARPNESS.getValue()).orElseThrow();
         int sharpnessLevel = EnchantmentHelper.getLevel(sharpnessRegistryEntry, itemStack);
         double sharpnessDamage = 1 + (sharpnessLevel - 1) * 0.5;
         boolean shouldAddSharpnessModifier = sharpnessLevel > 0;
@@ -58,7 +58,7 @@ public class ItemStackAttributeHelper {
         AttributeModifiersComponent.Builder builder = AttributeModifiersComponent.builder();
         for (AttributeModifiersComponent.Entry entry : modifiers.modifiers()) {
             Identifier modifierId = getSafeIdentifier(entry.modifier().id());
-            if (shouldAddSharpnessModifier && entry.attribute().equals(EntityAttributes.GENERIC_ATTACK_DAMAGE) && entry.slot().equals(AttributeModifierSlot.MAINHAND) && entry.modifier().operation().equals(EntityAttributeModifier.Operation.ADD_VALUE)) {
+            if (shouldAddSharpnessModifier && entry.attribute().equals(EntityAttributes.ATTACK_DAMAGE) && entry.slot().equals(AttributeModifierSlot.MAINHAND) && entry.modifier().operation().equals(EntityAttributeModifier.Operation.ADD_VALUE)) {
                 // add sharpness damage display modifier onto this modifier (vanilla doesn't add sharpness to the display on its own)
                 shouldAddSharpnessModifier = false;
                 builder.add(entry.attribute(), new EntityAttributeModifier(modifierId, entry.modifier().value() + sharpnessDamage, entry.modifier().operation()), entry.slot());
@@ -68,7 +68,7 @@ public class ItemStackAttributeHelper {
         }
 
         if (shouldAddSharpnessModifier) {
-            builder.add(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(SHARPNESS_MODIFIER_ID, sharpnessDamage, EntityAttributeModifier.Operation.ADD_VALUE), AttributeModifierSlot.MAINHAND);
+            builder.add(EntityAttributes.ATTACK_DAMAGE, new EntityAttributeModifier(SHARPNESS_MODIFIER_ID, sharpnessDamage, EntityAttributeModifier.Operation.ADD_VALUE), AttributeModifierSlot.MAINHAND);
         }
 
         return builder.build();

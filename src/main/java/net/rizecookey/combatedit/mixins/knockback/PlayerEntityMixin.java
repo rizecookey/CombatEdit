@@ -38,7 +38,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             return;
         }
 
-        speed = (float) (speed * (1.0D - Objects.requireNonNull(livingEntity.getAttributeInstance(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE)).getValue()));
+        speed = (float) (speed * (1.0D - Objects.requireNonNull(livingEntity.getAttributeInstance(EntityAttributes.KNOCKBACK_RESISTANCE)).getValue()));
         livingEntity.addVelocity(-(xMovement * speed), 0.1D, -(zMovement * speed));
     }
 }

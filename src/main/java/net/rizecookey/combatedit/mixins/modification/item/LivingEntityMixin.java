@@ -1,6 +1,5 @@
 package net.rizecookey.combatedit.mixins.modification.item;
 
-import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -75,16 +74,16 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityEx
         return lastKnownReload < combatEdit$configurationManager().getLastAttributeReload() ? ItemStack.EMPTY : previous;
     }
 
-    @ModifyArg(method = "getEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;applyAttributeModifiers(Lnet/minecraft/entity/EquipmentSlot;Ljava/util/function/BiConsumer;)V", ordinal = 0))
-    private BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> removeOldItemModifiers(BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> attributeModifierConsumer, @Local(ordinal = 0) ItemStack target) {
+    @ModifyArg(method = "onEquipmentRemoved", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;applyAttributeModifiers(Lnet/minecraft/entity/EquipmentSlot;Ljava/util/function/BiConsumer;)V", ordinal = 0))
+    private BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> removeOldItemModifiers(BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> attributeModifierConsumer) {
         return (entry, modifier) -> {
             trackedModifiers.remove(new Pair<>(entry, modifier));
             attributeModifierConsumer.accept(entry, modifier);
         };
     }
 
-    @ModifyArg(method = "getEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;applyAttributeModifiers(Lnet/minecraft/entity/EquipmentSlot;Ljava/util/function/BiConsumer;)V", ordinal = 1))
-    private BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> storeItemModifiers(BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> attributeModifierConsumer, @Local(ordinal = 0) ItemStack target) {
+    @ModifyArg(method = "getEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;applyAttributeModifiers(Lnet/minecraft/entity/EquipmentSlot;Ljava/util/function/BiConsumer;)V", ordinal = 0))
+    private BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> storeItemModifiers(BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> attributeModifierConsumer) {
         return (entry, modifier) -> {
             trackedModifiers.add(new Pair<>(entry, modifier));
             attributeModifierConsumer.accept(entry, modifier);
