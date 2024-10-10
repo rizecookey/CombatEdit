@@ -33,6 +33,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements LivingEn
         }
 
         Configuration configuration = combatEdit$configurationManager().getConfiguration();
-        return configuration.isSoundEnabled(sound.getId()).orElse(false);
+        return configuration.isSoundEnabled(sound.id()).orElse(false);
     }
 }

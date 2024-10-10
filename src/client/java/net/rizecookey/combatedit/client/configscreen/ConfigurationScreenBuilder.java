@@ -191,8 +191,8 @@ public class ConfigurationScreenBuilder {
         addLocalWarning(category);
         for (var sound : Configuration.CONFIGURABLE_SOUNDS) {
             String translationKey = determineSoundTranslationKey(sound);
-            category.addEntry(optionalBooleanEntry(Text.translatable(translationKey), configuration.isSoundEnabled(sound.getId()).orElse(null),
-                    value -> configuration.setSoundEnabled(sound.getId(), value)));
+            category.addEntry(optionalBooleanEntry(Text.translatable(translationKey), configuration.isSoundEnabled(sound.id()).orElse(null),
+                    value -> configuration.setSoundEnabled(sound.id(), value)));
         }
     }
 
@@ -207,12 +207,12 @@ public class ConfigurationScreenBuilder {
 
     private static String determineSoundTranslationKey(SoundEvent sound) {
         Language language = Language.getInstance();
-        String key = "subtitles." + sound.getId().getPath();
+        String key = "subtitles." + sound.id().getPath();
         if (language.hasTranslation(key)) {
             return key;
         }
 
-        return "combatedit.sound." + sound.getId().getPath();
+        return "combatedit.sound." + sound.id().getPath();
     }
 
     private static ObjectListEntry<EntityAttributes> createEntry(EntityAttributes attributes, int entryIndex) {
