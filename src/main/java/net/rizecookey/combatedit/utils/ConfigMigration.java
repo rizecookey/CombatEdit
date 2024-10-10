@@ -17,21 +17,21 @@ public final class ConfigMigration {
         if (version < 1) {
             copy.addProperty("configuration_version", 1);
         }
-        if (version < 2 && old.has("item_attributes") && old.get("item_attributes").isJsonArray()) {
-            var oldArray = old.get("item_attributes").getAsJsonArray();
+        if (version < 2 && copy.has("item_attributes") && copy.get("item_attributes").isJsonArray()) {
+            var oldArray = copy.get("item_attributes").getAsJsonArray();
             JsonArray newAttributes = migrateModifierUUIDsToIdentifiers(oldArray);
             copy.remove("item_attributes");
             copy.add("item_attributes", newAttributes);
         }
         if (version < 3) {
-            if (old.has("item_attributes") && old.get("item_attributes").isJsonArray()) {
-                var oldArray = old.get("item_attributes").getAsJsonArray();
+            if (copy.has("item_attributes") && copy.get("item_attributes").isJsonArray()) {
+                var oldArray = copy.get("item_attributes").getAsJsonArray();
                 JsonArray newAttributes = migrateItemAttributesAttributeIds(oldArray);
                 copy.add("item_attributes", newAttributes);
             }
 
-            if (old.has("entity_attributes") && old.get("entity_attributes").isJsonArray()) {
-                var oldArray = old.get("entity_attributes").getAsJsonArray();
+            if (copy.has("entity_attributes") && copy.get("entity_attributes").isJsonArray()) {
+                var oldArray = copy.get("entity_attributes").getAsJsonArray();
                 JsonArray newDefaults = migrateEntityAttributesAttributeIds(oldArray);
                 copy.add("entity_attributes", newDefaults);
             }
