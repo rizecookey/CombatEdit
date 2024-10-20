@@ -2,7 +2,9 @@ package net.rizecookey.combatedit.configuration.representation;
 
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
@@ -80,12 +82,12 @@ public class ItemAttributes {
     }
 
     public static ItemAttributes getDefault() {
-        return new ItemAttributes(Identifier.of("minecraft:wooden_sword"), List.of(), false);
+        return new ItemAttributes(Registries.ITEM.getId(Items.WOODEN_SWORD), List.of(), false);
     }
 
     public record ModifierEntry(Identifier attribute, @Nullable Identifier modifierId, double value, EntityAttributeModifier.Operation operation, AttributeModifierSlot slot) {
         public static ModifierEntry getDefault() {
-            return new ModifierEntry(Identifier.of("minecraft:generic.attack_damage"), Item.BASE_ATTACK_DAMAGE_MODIFIER_ID, 1, EntityAttributeModifier.Operation.ADD_VALUE, AttributeModifierSlot.MAINHAND);
+            return new ModifierEntry(Registries.ATTRIBUTE.getId(EntityAttributes.ATTACK_DAMAGE.value()), Item.BASE_ATTACK_DAMAGE_MODIFIER_ID, 1, EntityAttributeModifier.Operation.ADD_VALUE, AttributeModifierSlot.MAINHAND);
         }
 
         public void validate() throws InvalidConfigurationException {

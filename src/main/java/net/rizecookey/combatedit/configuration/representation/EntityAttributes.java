@@ -1,5 +1,6 @@
 package net.rizecookey.combatedit.configuration.representation;
 
+import net.minecraft.entity.EntityType;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
@@ -76,12 +77,13 @@ public class EntityAttributes {
     }
 
     public static EntityAttributes getDefault() {
-        return new EntityAttributes(Identifier.of("minecraft:creeper"), List.of(), false);
+        return new EntityAttributes(Registries.ENTITY_TYPE.getId(EntityType.CREEPER), List.of(), false);
     }
 
     public record AttributeBaseValue(Identifier attribute, double baseValue) {
         public static AttributeBaseValue getDefault() {
-            return new AttributeBaseValue(Identifier.of("minecraft:generic.attack_damage"), 1);
+            var attackDamageAttribute = net.minecraft.entity.attribute.EntityAttributes.ATTACK_DAMAGE;
+            return new AttributeBaseValue(Registries.ATTRIBUTE.getId(attackDamageAttribute.value()), 1);
         }
 
         public void validate() throws InvalidConfigurationException {
