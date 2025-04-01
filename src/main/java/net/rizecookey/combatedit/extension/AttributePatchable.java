@@ -1,5 +1,7 @@
 package net.rizecookey.combatedit.extension;
 
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+
 public interface AttributePatchable {
-    void combatEdit$patchAttributes();
+    default void combatEdit$preSend(ServerPlayNetworkHandler networkHandler) {}
 }

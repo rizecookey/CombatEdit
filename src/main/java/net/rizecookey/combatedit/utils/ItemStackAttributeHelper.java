@@ -6,16 +6,12 @@ import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.extension.ItemStackExtension;
@@ -25,10 +21,6 @@ public class ItemStackAttributeHelper {
     private static final String IS_PACKET_MODIFIED_TAG = "combatedit:is_packet_modified";
 
     private static final Identifier SHARPNESS_MODIFIER_ID = Identifier.of(ReservedIdentifiers.RESERVED_NAMESPACE, "sharpness_modifier");
-
-    private static final String ATTRIBUTE_SLOT_TAG = "slot";
-    private static final String ATTRIBUTE_TYPE_TAG = "type";
-    private static final String ATTRIBUTE_MODIFIER_TAG = "modifier";
 
     private final ConfigurationManager configurationProvider;
 
@@ -83,7 +75,7 @@ public class ItemStackAttributeHelper {
         }
 
         NbtCompound nbt = itemStack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
-        if (nbt.contains(IS_PACKET_MODIFIED_TAG) && nbt.getBoolean(IS_PACKET_MODIFIED_TAG)) {
+        if (nbt.getBoolean(IS_PACKET_MODIFIED_TAG).orElse(false)) {
             return itemStack;
         }
 
@@ -91,7 +83,7 @@ public class ItemStackAttributeHelper {
         ((ItemStackExtension) (Object) modified).combatEdit$useOriginalComponentMapAsBase();
         nbt.putBoolean(IS_PACKET_MODIFIED_TAG, true);
         AttributeModifiersComponent component = itemStack.getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
-        nbt.put(ORIGINAL_ATTRIBUTE_TAG, toNbtList(component));
+        nbt.put(ORIGINAL_ATTRIBUTE_TAG, AttributeModifiersComponent.CODEC, component);
         modified.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, getDisplayModifiers(itemStack));
         modified.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
 
@@ -100,12 +92,12 @@ public class ItemStackAttributeHelper {
 
     public ItemStack reverseDisplayModifiers(ItemStack itemStack) {
         NbtCompound nbt = itemStack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
-        if (!nbt.contains(IS_PACKET_MODIFIED_TAG) || !nbt.getBoolean(IS_PACKET_MODIFIED_TAG) || !nbt.contains(ORIGINAL_ATTRIBUTE_TAG)) {
+        if (!nbt.getBoolean(IS_PACKET_MODIFIED_TAG).orElse(false) || !nbt.contains(ORIGINAL_ATTRIBUTE_TAG)) {
             return itemStack;
         }
 
         ItemStack reversed = itemStack.copy();
-        reversed.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, fromNbtList(nbt.getList(ORIGINAL_ATTRIBUTE_TAG, NbtElement.COMPOUND_TYPE)));
+        reversed.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, nbt.get(ORIGINAL_ATTRIBUTE_TAG, AttributeModifiersComponent.CODEC).orElseThrow());
         nbt.remove(ORIGINAL_ATTRIBUTE_TAG);
         nbt.remove(IS_PACKET_MODIFIED_TAG);
 
@@ -126,41 +118,5 @@ public class ItemStackAttributeHelper {
         }
 
         return identifier;
-    }
-
-    private static NbtList toNbtList(AttributeModifiersComponent component) {
-        NbtList list = new NbtList();
-        for (AttributeModifiersComponent.Entry entry : component.modifiers()) {
-            list.add(toNbtCompound(entry));
-        }
-
-        return list;
-    }
-
-    private static AttributeModifiersComponent fromNbtList(NbtList list) {
-        AttributeModifiersComponent.Builder builder = AttributeModifiersComponent.builder();
-        for (int i = 0; i < list.size(); i++) {
-            AttributeModifiersComponent.Entry entry = fromNbtCompound(list.getCompound(i));
-            builder.add(entry.attribute(), entry.modifier(), entry.slot());
-        }
-
-        return builder.build();
-    }
-
-    private static NbtCompound toNbtCompound(AttributeModifiersComponent.Entry entry) {
-        NbtCompound compound = new NbtCompound();
-        compound.putString(ATTRIBUTE_SLOT_TAG, entry.slot().toString());
-        compound.putString(ATTRIBUTE_TYPE_TAG, entry.attribute().getIdAsString());
-        compound.put(ATTRIBUTE_MODIFIER_TAG, entry.modifier().toNbt());
-
-        return compound;
-    }
-
-    private static AttributeModifiersComponent.Entry fromNbtCompound(NbtCompound compound) {
-        AttributeModifierSlot slot = AttributeModifierSlot.valueOf(compound.getString(ATTRIBUTE_SLOT_TAG));
-        RegistryEntry<EntityAttribute> attribute = Registries.ATTRIBUTE.getEntry(Identifier.of(compound.getString(ATTRIBUTE_TYPE_TAG))).orElseThrow();
-        EntityAttributeModifier modifier = EntityAttributeModifier.fromNbt(compound.getCompound(ATTRIBUTE_MODIFIER_TAG));
-
-        return new AttributeModifiersComponent.Entry(attribute, modifier, slot);
     }
 }

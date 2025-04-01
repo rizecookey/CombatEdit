@@ -6,6 +6,7 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.server.network.ServerCommonNetworkHandler;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.rizecookey.combatedit.extension.AttributePatchable;
 import net.rizecookey.combatedit.extension.ServerCommonNetworkHandlerExtension;
 import org.jetbrains.annotations.Nullable;
@@ -27,8 +28,11 @@ public abstract class ServerCommonNetworkHandlerMixin implements ServerCommonNet
 
     @Inject(method = "send", at = @At("HEAD"))
     private void potentiallyPatchPacket(Packet<?> packet, @Nullable PacketCallbacks callbacks, CallbackInfo ci) {
+        if (!((ServerCommonNetworkHandler) (Object) this instanceof ServerPlayNetworkHandler handler)) {
+            return;
+        }
         if (combatEdit$isAttributePatchingEnabled() && packet instanceof AttributePatchable patchable) {
-            patchable.combatEdit$patchAttributes();
+            patchable.combatEdit$preSend(handler);
         }
     }
 

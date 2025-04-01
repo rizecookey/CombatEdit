@@ -1,5 +1,6 @@
 package net.rizecookey.combatedit.mixins.sound;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,10 +20,17 @@ public abstract class PlayerEntityMixin extends LivingEntity implements LivingEn
         super(entityType, world);
     }
 
-    @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/player/PlayerEntity;DDDLnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FF)V"))
-    public void disableAttackSounds(World world, PlayerEntity player, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+    @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/Entity;DDDLnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;)V"))
+    public void disableAttackSounds(World world, Entity entity, double x, double y, double z, SoundEvent sound, SoundCategory category) {
         if (getWorld().isClient() || shouldPlayAttackSound(sound)) {
-            world.playSound(player, x, y, z, sound, category, volume, pitch);
+            world.playSound(entity, x, y, z, sound, category);
+        }
+    }
+
+    @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/Entity;DDDLnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FF)V"))
+    public void disableAttackSounds(World world, Entity entity, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+        if (getWorld().isClient() || shouldPlayAttackSound(sound)) {
+            world.playSound(entity, x, y, z, sound, category, volume, pitch);
         }
     }
 

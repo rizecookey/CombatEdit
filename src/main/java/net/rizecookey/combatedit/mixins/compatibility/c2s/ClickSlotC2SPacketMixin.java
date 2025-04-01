@@ -1,35 +1,60 @@
 package net.rizecookey.combatedit.mixins.compatibility.c2s;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.item.ItemStack;
+import net.minecraft.network.listener.ServerPlayPacketListener;
 import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
-import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
-import net.rizecookey.combatedit.extension.AttributePatchReversible;
-import net.rizecookey.combatedit.utils.ItemStackAttributeHelper;
+import net.minecraft.screen.sync.ItemStackHash;
+import net.minecraft.screen.sync.TrackedSlot;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.rizecookey.combatedit.extension.ServerCommonNetworkHandlerExtension;
+import net.rizecookey.combatedit.extension.TrackedSlotExtension;
+import net.rizecookey.combatedit.mixins.compatibility.ScreenHandlerAccessor;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClickSlotC2SPacket.class)
-public abstract class ClickSlotC2SPacketMixin implements AttributePatchReversible {
-    @Final @Shadow @Mutable private ItemStack stack;
+public abstract class ClickSlotC2SPacketMixin {
+    @Shadow @Final private Int2ObjectMap<ItemStackHash> modifiedStacks;
 
-    @Shadow @Final @Mutable private Int2ObjectMap<ItemStack> modifiedStacks;
-
-    @Unique
-    @Override
-    public void combatEdit$reverseAttributePatches() {
-        ItemStackAttributeHelper helper = ConfigurationManager.getInstance().getAttributeHelper();
-
-        this.stack = helper.reverseDisplayModifiers(this.stack);
-        Int2ObjectMap<ItemStack> newMap = new Int2ObjectOpenHashMap<>();
-        for (Int2ObjectMap.Entry<ItemStack> entry : this.modifiedStacks.int2ObjectEntrySet()) {
-            newMap.put(entry.getIntKey(), helper.reverseDisplayModifiers(entry.getValue()));
+    @Inject(method = "apply(Lnet/minecraft/network/listener/ServerPlayPacketListener;)V", at = @At("HEAD"))
+    public void preApply(ServerPlayPacketListener serverPlayPacketListener, CallbackInfo ci) {
+        if (!(serverPlayPacketListener instanceof ServerPlayNetworkHandler networkHandler)) {
+            return;
         }
-        this.modifiedStacks = Int2ObjectMaps.unmodifiable(newMap);
+
+        var handlerExt = (ServerCommonNetworkHandlerExtension) serverPlayPacketListener;
+        if (!handlerExt.combatEdit$isAttributePatchingEnabled()) {
+            return;
+        }
+
+        ScreenHandlerAccessor handlerAccessor = (ScreenHandlerAccessor) networkHandler.player.currentScreenHandler;
+        for (int key : modifiedStacks.keySet()) {
+            TrackedSlot trackedSlot = handlerAccessor.getTrackedSlots().get(key);
+            ((TrackedSlotExtension) trackedSlot).combatEdit$setCompareWithDisplayModified(true);
+        }
+        ((TrackedSlotExtension) handlerAccessor.getTrackedCursorSlot()).combatEdit$setCompareWithDisplayModified(true);
+    }
+
+    @Inject(method = "apply(Lnet/minecraft/network/listener/ServerPlayPacketListener;)V", at = @At("RETURN"))
+    public void postApply(ServerPlayPacketListener serverPlayPacketListener, CallbackInfo ci) {
+        if (!(serverPlayPacketListener instanceof ServerPlayNetworkHandler networkHandler)) {
+            return;
+        }
+
+        var handlerExt = (ServerCommonNetworkHandlerExtension) networkHandler;
+        if (!handlerExt.combatEdit$isAttributePatchingEnabled()) {
+            return;
+        }
+
+        ScreenHandlerAccessor handlerAccessor = (ScreenHandlerAccessor) networkHandler.player.currentScreenHandler;
+        for (int key : modifiedStacks.keySet()) {
+            TrackedSlot trackedSlot = handlerAccessor.getTrackedSlots().get(key);
+            ((TrackedSlotExtension) trackedSlot).combatEdit$setCompareWithDisplayModified(false);
+        }
+        ((TrackedSlotExtension) handlerAccessor.getTrackedCursorSlot()).combatEdit$setCompareWithDisplayModified(false);
     }
 }

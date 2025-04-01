@@ -122,7 +122,7 @@ public class CombatEditCommand implements CommandRegistrationCallback {
     private static Text baseProfileToText(Identifier id, BaseProfile baseProfile) {
         return Text.literal(id.toString())
                 .styled(style -> style.withColor(Formatting.GREEN)
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.empty()
+                        .withHoverEvent(new HoverEvent.ShowText(Text.empty()
                                 .append(baseProfile.getName())
                                 .append("\n")
                                 .append(baseProfile.getDescription()))));

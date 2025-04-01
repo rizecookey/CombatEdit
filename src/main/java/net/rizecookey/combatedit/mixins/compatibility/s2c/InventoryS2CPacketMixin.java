@@ -2,6 +2,7 @@ package net.rizecookey.combatedit.mixins.compatibility.s2c;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.collection.DefaultedList;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.extension.AttributePatchable;
@@ -20,7 +21,7 @@ public abstract class InventoryS2CPacketMixin implements AttributePatchable {
     @Shadow @Final @Mutable private ItemStack cursorStack;
 
     @Override
-    public void combatEdit$patchAttributes() {
+    public void combatEdit$preSend(ServerPlayNetworkHandler networkHandler) {
         ItemStackAttributeHelper helper = ConfigurationManager.getInstance().getAttributeHelper();
         List<ItemStack> modifiedSlotStackList = DefaultedList.ofSize(this.contents.size(), ItemStack.EMPTY);
         for (ItemStack itemStack : this.contents) {

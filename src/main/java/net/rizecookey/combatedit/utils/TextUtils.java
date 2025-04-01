@@ -30,8 +30,8 @@ public final class TextUtils {
     private static List<Text> additionalParts(Text text) {
         List<Text> additionalParts = new ArrayList<>(text.getSiblings());
         var hoverEvent = text.getStyle().getHoverEvent();
-        if (hoverEvent != null && hoverEvent.getAction().equals(HoverEvent.Action.SHOW_TEXT)) {
-            additionalParts.add(hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT));
+        if (hoverEvent instanceof HoverEvent.ShowText(Text value)) {
+            additionalParts.add(value);
         }
 
         if (text.getContent().getType().equals(TranslatableTextContent.TYPE)) {
