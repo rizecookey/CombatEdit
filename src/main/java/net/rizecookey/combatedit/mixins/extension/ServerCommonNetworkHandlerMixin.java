@@ -1,7 +1,7 @@
 package net.rizecookey.combatedit.mixins.extension;
 
+import io.netty.channel.ChannelFutureListener;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.PacketCallbacks;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ConnectedClientData;
@@ -27,7 +27,7 @@ public abstract class ServerCommonNetworkHandlerMixin implements ServerCommonNet
     }
 
     @Inject(method = "send", at = @At("HEAD"))
-    private void potentiallyPatchPacket(Packet<?> packet, @Nullable PacketCallbacks callbacks, CallbackInfo ci) {
+    private void potentiallyPatchPacket(Packet<?> packet, @Nullable ChannelFutureListener channelFutureListener, CallbackInfo ci) {
         if (!((ServerCommonNetworkHandler) (Object) this instanceof ServerPlayNetworkHandler handler)) {
             return;
         }

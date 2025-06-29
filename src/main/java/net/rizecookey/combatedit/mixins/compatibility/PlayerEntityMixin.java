@@ -16,7 +16,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements LivingEn
         super(entityType, world);
     }
 
-    @Redirect(method = "readCustomDataFromNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/attribute/EntityAttributeInstance;setBaseValue(D)V", ordinal = 0))
+    @Redirect(method = "readCustomData", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/attribute/EntityAttributeInstance;setBaseValue(D)V", ordinal = 0))
     private void dontOverrideAttributeWithAbilityValue(EntityAttributeInstance instance, double baseValue) {
         // why mojang?
     }

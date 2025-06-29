@@ -5,7 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.world.World;
 import net.rizecookey.combatedit.extension.AttributeContainerExtension;
 import net.rizecookey.combatedit.extension.LivingEntityExtension;
@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Slice;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 @Mixin(LivingEntity.class)
@@ -26,11 +27,11 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityEx
         super(type, world);
     }
 
-    @ModifyArg(method = "readCustomDataFromNbt", slice = @Slice(
+    @ModifyArg(method = "readCustomData", slice = @Slice(
             from = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setAbsorptionAmountUnclamped(F)V"),
-            to = @At(value = "FIELD", target = "Lnet/minecraft/nbt/NbtOps;INSTANCE:Lnet/minecraft/nbt/NbtOps;")),
+            to = @At(value = "FIELD", target = "Lnet/minecraft/entity/effect/StatusEffectInstance;CODEC:Lcom/mojang/serialization/Codec;")),
             at = @At(value = "INVOKE", target = "Ljava/util/Optional;ifPresent(Ljava/util/function/Consumer;)V", ordinal = 0), index = 0)
-    public Consumer<? super NbtList> useNewDefaults(Consumer<? super NbtList> action) {
+    public Consumer<? super List<EntityAttributeInstance.Packed>> useNewDefaults(Consumer<? super List<EntityAttributeInstance.Packed>> action) {
         return list -> {
             action.accept(list);
             if (!AttributeContainerExtension.IS_SAVE_CALL.get().getFirst()) {
@@ -42,7 +43,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityEx
         };
     }
 
-    @ModifyExpressionValue(method = "writeCustomDataToNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getAttributes()Lnet/minecraft/entity/attribute/AttributeContainer;"))
+    @ModifyExpressionValue(method = "writeCustomData", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getAttributes()Lnet/minecraft/entity/attribute/AttributeContainer;"))
     private AttributeContainer useOldDefaults(AttributeContainer original) {
         if (!AttributeContainerExtension.IS_SAVE_CALL.get().getFirst()) {
             return original;

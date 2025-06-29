@@ -28,10 +28,10 @@ import java.util.stream.Stream;
 @Mixin(AttributeContainer.class)
 public abstract class AttributeContainerMixin implements AttributeContainerExtension {
     @Shadow @Final private Map<RegistryEntry<EntityAttribute>, EntityAttributeInstance> custom;
-    @Shadow @Final private DefaultAttributeContainer fallback;
 
     @Shadow protected abstract void updateTrackedStatus(EntityAttributeInstance instance);
 
+    @Shadow @Final private DefaultAttributeContainer defaultAttributes;
     @Unique
     private boolean combatEdit$sendAllAttributes;
 
@@ -47,7 +47,7 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
             return;
         }
 
-        for (var instance : ((DefaultAttributeContainerExtensions) fallback).combatEdit$getInstances().values()) {
+        for (var instance : ((DefaultAttributeContainerExtensions) defaultAttributes).combatEdit$getInstances().values()) {
             if (custom.containsKey(instance.getAttribute())) {
                 continue;
             }
@@ -63,7 +63,7 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
         if (combatEdit$sendAllAttributes) {
             cir.setReturnValue(Stream
                     .concat(
-                            ((DefaultAttributeContainerExtensions) fallback).combatEdit$getInstances().values().stream()
+                            ((DefaultAttributeContainerExtensions) defaultAttributes).combatEdit$getInstances().values().stream()
                                     .filter(instance -> !custom.containsKey(instance.getAttribute())),
                             custom.values().stream())
                     .filter(instance -> instance.getAttribute().value().isTracked())
@@ -80,12 +80,12 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
     @Override
     public void combatEdit$patchWithNewDefaults(EntityType<? extends LivingEntity> type, DefaultAttributeContainer previousDefaults) {
         custom.forEach((attribute, instance) -> {
-            if (!this.fallback.has(attribute) || !previousDefaults.has(attribute)) {
+            if (!this.defaultAttributes.has(attribute) || !previousDefaults.has(attribute)) {
                 return;
             }
 
             double oldDefault = previousDefaults.getBaseValue(attribute);
-            double newDefault = fallback.getBaseValue(attribute);
+            double newDefault = defaultAttributes.getBaseValue(attribute);
 
             if (instance.getBaseValue() == oldDefault) {
                 combatEdit$sendAllAttributes = true;
@@ -97,10 +97,10 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
     @Override
     public AttributeContainer combatEdit$getWithOriginalDefaults(EntityType<? extends LivingEntity> type) {
         DefaultAttributeContainer originalDefaults = configurationProvider().getModifier().getOriginalDefaults(type);
-        AttributeContainer copy = new AttributeContainer(fallback);
+        AttributeContainer copy = new AttributeContainer(defaultAttributes);
         copy.setFrom(thisInstance());
         custom.forEach((attribute, instance) -> {
-            if (!fallback.has(attribute) || !originalDefaults.has(attribute)) {
+            if (!defaultAttributes.has(attribute) || !originalDefaults.has(attribute)) {
                 return;
             }
 
@@ -109,7 +109,7 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
                 return;
             }
 
-            double newDefault = fallback.getBaseValue(attribute);
+            double newDefault = defaultAttributes.getBaseValue(attribute);
             double oldDefault = originalDefaults.getBaseValue(attribute);
             if (instance.getBaseValue() == newDefault) {
                 copyInstance.setBaseValue(oldDefault);

@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public abstract class MinecraftClientMixin implements MinecraftClientExtension {
     }
 
     @Inject(method = "createInitScreens", at = @At("TAIL"))
-    private void addCustomInitScreens(List<Function<Runnable, Screen>> list, CallbackInfo ci) {
+    private void addCustomInitScreens(List<Function<Runnable, Screen>> list, CallbackInfoReturnable<Boolean> cir) {
         list.addAll(additionalInitScreens);
     }
 

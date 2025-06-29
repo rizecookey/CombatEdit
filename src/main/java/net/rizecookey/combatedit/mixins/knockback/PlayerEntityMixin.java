@@ -1,11 +1,9 @@
 package net.rizecookey.combatedit.mixins.knockback;
 
-import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,7 +25,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void injectCombatEditReference(World world, BlockPos pos, float yaw, GameProfile gameProfile, CallbackInfo ci) {
+    private void injectCombatEditReference(CallbackInfo ci) {
         configurationProvider = ConfigurationManager.getInstance();
     }
 
