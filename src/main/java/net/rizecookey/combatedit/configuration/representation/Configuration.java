@@ -4,7 +4,6 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -33,14 +32,14 @@ public interface Configuration {
      *
      * @return a list of all item attribute overrides of this configuration
      */
-    @NotNull List<ItemAttributes> getItemAttributes();
+    List<ItemAttributes> getItemAttributes();
 
     /**
      * Returns a list of all attribute overrides for entities.
      *
      * @return a list of all entity attribute overrides of this configuration
      */
-    @NotNull List<EntityAttributes> getEntityAttributes();
+    List<EntityAttributes> getEntityAttributes();
 
     /**
      * Returns whether a specific attack sound should be played or not.
@@ -59,13 +58,13 @@ public interface Configuration {
      *
      * @return the sound enablement map
      */
-    @NotNull Map<Identifier, Boolean> getSoundMap();
+    Map<Identifier, Boolean> getSoundMap();
 
     /**
      * Returns the miscellaneous options set by this configuration
      * @return the miscellaneous options for this configuration
      */
-    @NotNull MiscOptions getMiscOptions();
+    MiscOptions getMiscOptions();
 
     void validate() throws InvalidConfigurationException;
 

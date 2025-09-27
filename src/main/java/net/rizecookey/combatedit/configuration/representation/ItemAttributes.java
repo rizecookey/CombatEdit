@@ -43,7 +43,7 @@ public class ItemAttributes {
     }
 
     /**
-     * Returns all addition item modifiers to be added for the specified item.
+     * Returns all additional item modifiers to be added for the specified item.
      * @return a list of additional item modifiers
      */
     public List<ModifierEntry> getModifiers() {
