@@ -8,4 +8,8 @@ public class InvalidConfigurationException extends Exception {
     public InvalidConfigurationException(Throwable cause) {
         super(cause);
     }
+
+    public InvalidConfigurationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

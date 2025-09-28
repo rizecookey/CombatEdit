@@ -1,5 +1,6 @@
 package net.rizecookey.combatedit.configuration.representation;
 
+import com.google.gson.annotations.SerializedName;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.component.ComponentType;
 import net.minecraft.component.DataComponentTypes;
@@ -9,6 +10,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Unit;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,37 +64,58 @@ public class ItemComponents {
     }
 
     /**
+     * Enum for declaring the change type of a component change entry.
+     */
+    public enum ChangeType {
+        /** Sets a new value for a component. */
+        @SerializedName("set")
+        SET,
+        /** Removes the default component value for the given type from the item. */
+        @SerializedName("remove")
+        REMOVE,
+    }
+
+    /**
      * A component change entry for an item.
      *
      * @param componentType the identifier of the component to be changed
-     * @param value the value to use for this component, or {@code null} if the component type should be removed from
-     *              the default components of the item
+     * @param changeType the change type for this component entry
+     * @param value the value to use for this component, or an empty string if the component type has no values or the component is to be removed
      */
-    public record ComponentChangeEntry(Identifier componentType, @Nullable String value) {
+    public record ComponentChangeEntry(Identifier componentType, ChangeType changeType, String value) {
+        public ComponentChangeEntry(Identifier componentType, @Nullable ChangeType changeType, @Nullable String value) {
+            this.componentType = componentType;
+            this.changeType = changeType != null ? changeType : ChangeType.SET;
+            this.value = value != null ? value : "";
+        }
         public void validate() throws InvalidConfigurationException {
-            if (!Registries.DATA_COMPONENT_TYPE.containsId(componentType)) {
+            if (componentType == null || !Registries.DATA_COMPONENT_TYPE.containsId(componentType)) {
                 throw new InvalidConfigurationException("Unknown component id");
             }
 
-            if (value == null) {
+            if (ChangeType.REMOVE.equals(changeType)) {
                 return;
             }
 
             ComponentType<?> type = Registries.DATA_COMPONENT_TYPE.get(componentType);
             assert type != null;
+            if (Unit.CODEC.equals(type.getCodec())) {
+                return; // value irrelevant
+            }
+
             var reader = StringNbtReader.fromOps(NbtOps.INSTANCE);
             NbtElement element;
             try {
                 element = reader.read(value);
             } catch (CommandSyntaxException e) {
-                throw new InvalidConfigurationException(e);
+                throw new InvalidConfigurationException("Could not read value for component %s".formatted(componentType), e);
             }
             type.getCodecOrThrow().parse(NbtOps.INSTANCE, element)
                     .getOrThrow(error -> new InvalidConfigurationException("Error parsing component: " + error));
         }
 
         public static ComponentChangeEntry getDefault() {
-            return new ComponentChangeEntry(Registries.DATA_COMPONENT_TYPE.getId(DataComponentTypes.DAMAGE), "0");
+            return new ComponentChangeEntry(Registries.DATA_COMPONENT_TYPE.getId(DataComponentTypes.DAMAGE), ChangeType.SET, "0");
         }
     }
 
