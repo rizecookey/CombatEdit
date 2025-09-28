@@ -35,6 +35,15 @@ public interface Configuration {
     List<ItemAttributes> getItemAttributes();
 
     /**
+     * Returns a list of additional components and overrides for items.
+     *
+     * @return a list of item component changes
+     */
+    default List<ItemComponents> getItemComponents() {
+        return List.of();
+    }
+
+    /**
      * Returns a list of all attribute overrides for entities.
      *
      * @return a list of all entity attribute overrides of this configuration

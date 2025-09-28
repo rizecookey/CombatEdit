@@ -23,13 +23,19 @@ public class MutableConfiguration implements Configuration {
 
     private int configurationVersion;
     private List<ItemAttributes> itemAttributes;
+    private List<ItemComponents> itemComponents;
     private List<EntityAttributes> entityAttributes;
     private Map<Identifier, Boolean> enabledSounds;
     private MiscOptions miscOptions;
 
     public MutableConfiguration(List<ItemAttributes> itemAttributes, List<EntityAttributes> entityAttributes, Map<Identifier, Boolean> enabledSounds, MiscOptions miscOptions) {
+        this(itemAttributes, List.of(), entityAttributes, enabledSounds, miscOptions);
+    }
+
+    public MutableConfiguration(List<ItemAttributes> itemAttributes, List<ItemComponents> itemComponents, List<EntityAttributes> entityAttributes, Map<Identifier, Boolean> enabledSounds, MiscOptions miscOptions) {
         this.configurationVersion = CURRENT_VERSION;
         this.itemAttributes = itemAttributes != null ? new ArrayList<>(itemAttributes) : new ArrayList<>();
+        this.itemComponents = itemComponents != null ? new ArrayList<>(itemComponents) : new ArrayList<>();
         this.entityAttributes = entityAttributes != null ? new ArrayList<>(entityAttributes) : new ArrayList<>();
         this.enabledSounds = enabledSounds != null ? new HashMap<>(enabledSounds) : new HashMap<>();
         this.miscOptions = miscOptions;
@@ -51,6 +57,15 @@ public class MutableConfiguration implements Configuration {
             itemAttributes = new ArrayList<>();
         }
         return itemAttributes;
+    }
+
+    @Override
+    public List<ItemComponents> getItemComponents() {
+        if (itemComponents == null) {
+            itemComponents = new ArrayList<>();
+        }
+
+        return itemComponents;
     }
 
     @Override
@@ -99,6 +114,7 @@ public class MutableConfiguration implements Configuration {
     public MutableConfiguration copy() {
         return new MutableConfiguration(
                 itemAttributes != null ? itemAttributes.stream().map(ItemAttributes::copy).toList() : null,
+                itemComponents != null ? itemComponents.stream().map(ItemComponents::copy).toList() : null,
                 entityAttributes != null ? entityAttributes.stream().map(EntityAttributes::copy).toList() : null,
                 enabledSounds != null ? Map.copyOf(enabledSounds) : null,
                 miscOptions != null ? miscOptions.copy() : null
@@ -112,6 +128,10 @@ public class MutableConfiguration implements Configuration {
 
         for (var attr : getItemAttributes()) {
             attr.validate();
+        }
+
+        for (var comp : getItemComponents()) {
+            comp.validate();
         }
 
         for (var attr : getEntityAttributes()) {
@@ -140,12 +160,12 @@ public class MutableConfiguration implements Configuration {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof MutableConfiguration that)) return false;
-        return Objects.equals(getItemAttributes(), that.getItemAttributes()) && Objects.equals(getEntityAttributes(), that.getEntityAttributes()) && Objects.equals(enabledSounds, that.enabledSounds) && Objects.equals(getMiscOptions(), that.getMiscOptions());
+        return Objects.equals(getItemAttributes(), that.getItemAttributes()) && Objects.equals(getItemComponents(), that.getItemComponents()) && Objects.equals(getEntityAttributes(), that.getEntityAttributes()) && Objects.equals(enabledSounds, that.enabledSounds) && Objects.equals(getMiscOptions(), that.getMiscOptions());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getItemAttributes(), getEntityAttributes(), enabledSounds, getMiscOptions());
+        return Objects.hash(getItemAttributes(), getItemComponents(), getEntityAttributes(), enabledSounds, getMiscOptions());
     }
 
     public static class MiscOptions implements Configuration.MiscOptions {

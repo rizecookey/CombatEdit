@@ -28,6 +28,13 @@ public class ConfigurationView implements Configuration {
     }
 
     @Override
+    public List<ItemComponents> getItemComponents() {
+        return configurations.reversed().stream()
+                .flatMap(config -> config.getItemComponents().stream())
+                .toList();
+    }
+
+    @Override
     public List<EntityAttributes> getEntityAttributes() {
         return configurations.reversed().stream()
                 .flatMap(config -> config.getEntityAttributes().stream())
@@ -75,6 +82,7 @@ public class ConfigurationView implements Configuration {
     public MutableConfiguration compileCurrentState() {
         return new MutableConfiguration(
                 getItemAttributes(),
+                getItemComponents(),
                 getEntityAttributes(),
                 getSoundMap(),
                 new MutableConfiguration.MiscOptions(
