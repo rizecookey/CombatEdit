@@ -15,7 +15,7 @@ public class DynamicDefaultAttributeContainer extends DefaultAttributeContainer 
 
     public DynamicDefaultAttributeContainer(DefaultAttributeContainer original) {
         super(Map.copyOf(extension(original).combatEdit$getInstances()));
-        this.original = original;
+        this.exchangeable = this.original = original;
     }
 
     private static DefaultAttributeContainerExtensions extension(DefaultAttributeContainer container) {

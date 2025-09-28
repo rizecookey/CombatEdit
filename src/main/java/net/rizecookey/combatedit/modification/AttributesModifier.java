@@ -25,6 +25,7 @@ import net.rizecookey.combatedit.modification.item.ItemAttributeModifierProvider
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class AttributesModifier {
@@ -34,6 +35,8 @@ public class AttributesModifier {
 
     public AttributesModifier(ConfigurationManager configurationProvider) {
         this.configurationProvider = configurationProvider;
+        this.currentItemModifierProvider = new ItemAttributeMap(Map.of());
+        this.currentEntityModifierProvider = new EntityAttributeMap(Map.of());
     }
 
     public void makeModifications() {
@@ -74,7 +77,6 @@ public class AttributesModifier {
             }
 
             if (!currentItemModifierProvider.shouldModifyItem(id, item)) {
-                dynamicComponents.setExchangeable(dynamicComponents.getOriginal());
                 continue;
             }
 

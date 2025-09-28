@@ -7,6 +7,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
 import net.rizecookey.combatedit.utils.ReservedIdentifiers;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,7 @@ public class ItemAttributeMap implements ItemAttributeModifierProvider {
 
     @Override
     public AttributeModifiersComponent getModifiers(Identifier id, Item item, AttributeModifiersComponent originalDefaults) {
-        return attributeMap.get(item);
+        return attributeMap.getOrDefault(item, originalDefaults);
     }
 
     @Override
@@ -52,7 +53,7 @@ public class ItemAttributeMap implements ItemAttributeModifierProvider {
         return new ItemAttributeMap(map);
     }
 
-    private static Map.Entry<Item, AttributeModifiersComponent> fromConfigurationEntry(ItemAttributes attributes, Function<Item, AttributeModifiersComponent> originalDefaults) {
+    private static @Nullable Map.Entry<Item, AttributeModifiersComponent> fromConfigurationEntry(ItemAttributes attributes, Function<Item, AttributeModifiersComponent> originalDefaults) {
         var builder = AttributeModifiersComponent.builder();
         if (!Registries.ITEM.containsId(attributes.getItemId())) {
             LOGGER.warn("No item with id {} found, skipping all attribute specifications", attributes.getItemId());

@@ -13,8 +13,7 @@ public class DynamicComponentMap implements ComponentMap {
     private ComponentMap exchangeable;
 
     public DynamicComponentMap(ComponentMap original) {
-        this.original = original;
-        this.exchangeable = original;
+        this.original = this.exchangeable = original;
     }
 
     public ComponentMap getOriginal() {

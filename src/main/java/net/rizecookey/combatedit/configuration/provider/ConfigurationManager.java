@@ -80,17 +80,19 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
             return new Pair<>(baseProfiles, loadProfileExtensions(manager, selectedProfile));
         }, executor);
 
-        return profileLoader.thenCombineAsync(settingsLoader, (profile, settings) -> new LoadResult(settings, profile.first(), profile.second()), executor).exceptionallyAsync(e -> {
-            LOGGER.error("Failed to load CombatEdit configuration resources", e);
-            return null;
-        }, executor);
+        return profileLoader.thenCombineAsync(settingsLoader, (profile, settings) -> new LoadResult(settings, profile.first(), profile.second()), executor)
+                .exceptionallyAsync(e -> {
+                    LOGGER.error("Failed to load CombatEdit configuration resources", e);
+                    return null;
+                    }, executor);
     }
 
     @Override
     public CompletableFuture<Void> apply(LoadResult data, ResourceManager manager, Executor executor) {
         return CompletableFuture.runAsync(() -> {
             if (data == null) {
-                throw new IllegalStateException("Apply stage did not provide valid data");
+                updateConfiguration(null);
+                return;
             }
 
             baseProfiles = data.baseProfiles();
@@ -109,10 +111,6 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
             if (attributeConfigChanged) {
                 adjustModifications();
             }
-        }, executor).exceptionallyAsync(e -> {
-            LOGGER.error("Failed to apply the configuration", e);
-            updateConfiguration(null);
-            return null;
         }, executor);
     }
 
