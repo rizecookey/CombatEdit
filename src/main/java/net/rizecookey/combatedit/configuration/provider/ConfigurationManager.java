@@ -14,7 +14,7 @@ import net.rizecookey.combatedit.configuration.representation.ConfigurationView;
 import net.rizecookey.combatedit.configuration.representation.EntityAttributes;
 import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
 import net.rizecookey.combatedit.configuration.representation.MutableConfiguration;
-import net.rizecookey.combatedit.modification.AttributesModifier;
+import net.rizecookey.combatedit.modification.PropertyModifier;
 import net.rizecookey.combatedit.utils.ItemStackAttributeHelper;
 import net.rizecookey.combatedit.utils.Pair;
 
@@ -37,7 +37,7 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
 
     private Configuration configuration;
     private final ItemStackAttributeHelper attributeHelper;
-    private final AttributesModifier attributesModifier;
+    private final PropertyModifier propertyModifier;
     private final Map<Identifier, List<ProfileExtensionProvider>> registeredProfileExtensions;
 
     private Map<Identifier, BaseProfile> baseProfiles;
@@ -48,7 +48,7 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
 
     public ConfigurationManager(CombatEdit combatEdit) {
         this.combatEdit = combatEdit;
-        this.attributesModifier = new AttributesModifier(this);
+        this.propertyModifier = new PropertyModifier(this);
         this.attributeHelper = new ItemStackAttributeHelper(this);
         this.registeredProfileExtensions = new HashMap<>();
 
@@ -101,8 +101,7 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
             registeredProfileExtensions.getOrDefault(data.settings().getSelectedBaseProfile(), new ArrayList<>())
                     .forEach(provider -> withCustom.add(provider.provideExtension(
                             data.baseProfiles().get(data.settings().getSelectedBaseProfile()),
-                            item -> this.getModifier().getOriginalDefaults(item),
-                            type -> this.getModifier().getOriginalDefaults(type)
+                            getModifier()
                     )));
 
             updateConfiguration(new LoadResult(data.settings(), data.baseProfiles(), withCustom));
@@ -126,8 +125,8 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
         return attributeHelper;
     }
 
-    public AttributesModifier getModifier() {
-        return attributesModifier;
+    public PropertyModifier getModifier() {
+        return propertyModifier;
     }
 
     public MinecraftServer getCurrentServer() {
@@ -183,7 +182,7 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
     }
 
     private void adjustModifications() {
-        attributesModifier.makeModifications();
+        propertyModifier.makeModifications();
 
         oldItemAttributes = List.copyOf(configuration.getItemAttributes());
         oldEntityAttributes = List.copyOf(configuration.getEntityAttributes());

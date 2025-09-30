@@ -5,6 +5,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import net.rizecookey.combatedit.api.extension.DefaultsSupplier;
 import net.rizecookey.combatedit.configuration.representation.EntityAttributes;
 import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtensions;
 
@@ -15,10 +16,10 @@ import java.util.function.Function;
 
 import static net.rizecookey.combatedit.CombatEdit.LOGGER;
 
-public class EntityAttributeMap implements EntityAttributeModifierProvider {
+public class EntityModificationMap implements EntityModificationProvider {
     private final Map<EntityType<? extends LivingEntity>, DefaultAttributeContainer> attributeMap;
 
-    public EntityAttributeMap(Map<EntityType<? extends LivingEntity>, DefaultAttributeContainer> entries) {
+    public EntityModificationMap(Map<EntityType<? extends LivingEntity>, DefaultAttributeContainer> entries) {
         this.attributeMap = Map.copyOf(entries);
     }
 
@@ -32,13 +33,13 @@ public class EntityAttributeMap implements EntityAttributeModifierProvider {
         return attributeMap.get(type);
     }
 
-    public static EntityAttributeMap fromConfiguration(List<EntityAttributes> entityAttributes, Function<EntityType<? extends LivingEntity>, DefaultAttributeContainer> originalDefaults) {
+    public static EntityModificationMap fromConfiguration(List<EntityAttributes> entityAttributes, DefaultsSupplier.Entities entityDefaultsSupplier) {
         Map<EntityType<? extends LivingEntity>, DefaultAttributeContainer> map = new HashMap<>();
         Function<EntityType<? extends LivingEntity>, DefaultAttributeContainer> defaultProvider = type -> {
             if (map.containsKey(type)) {
                 return map.get(type);
             } else {
-                return originalDefaults.apply(type);
+                return entityDefaultsSupplier.getVanillaDefaultAttributes(type);
             }
         };
 
@@ -49,7 +50,7 @@ public class EntityAttributeMap implements EntityAttributeModifierProvider {
             }
         }
 
-        return new EntityAttributeMap(map);
+        return new EntityModificationMap(map);
     }
 
     @SuppressWarnings("unchecked")

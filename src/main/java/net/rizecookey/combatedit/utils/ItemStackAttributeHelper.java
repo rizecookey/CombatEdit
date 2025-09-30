@@ -29,10 +29,10 @@ public class ItemStackAttributeHelper {
     }
 
     public AttributeModifiersComponent getDisplayModifiers(ItemStack itemStack) {
-        var itemModifiers = configurationProvider.getModifier().getCurrentItemModifierProvider();
+        var itemModifiers = configurationProvider.getModifier().items().modificationProvider();
         Item item = itemStack.getItem();
         Identifier id = Registries.ITEM.getId(item);
-        if (!itemModifiers.shouldModifyItem(id, item)) {
+        if (!itemModifiers.shouldModifyAttributes(id, item)) {
             return null;
         }
 
@@ -67,10 +67,12 @@ public class ItemStackAttributeHelper {
     }
 
     public ItemStack getDisplayModified(ItemStack itemStack) {
-        var itemModifiers = configurationProvider.getModifier().getCurrentItemModifierProvider();
+        var itemModifiers = configurationProvider.getModifier().items().modificationProvider();
         Item item = itemStack.getItem();
         Identifier id = Registries.ITEM.getId(item);
-        if (!itemModifiers.shouldModifyItem(id, item)) {
+        boolean shouldModifyAttributes = itemModifiers.shouldModifyAttributes(id, item);
+        boolean shouldModifyComponents = itemModifiers.shouldModifyDefaultComponents(id, item);
+        if (!shouldModifyAttributes && !shouldModifyComponents) {
             return itemStack;
         }
 
@@ -82,9 +84,12 @@ public class ItemStackAttributeHelper {
         ItemStack modified = itemStack.copy();
         ((ItemStackExtension) (Object) modified).combatEdit$useOriginalComponentMapAsBase();
         nbt.putBoolean(IS_PACKET_MODIFIED_TAG, true);
-        AttributeModifiersComponent component = itemStack.getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
-        nbt.put(ORIGINAL_ATTRIBUTE_TAG, AttributeModifiersComponent.CODEC, component);
-        modified.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, getDisplayModifiers(itemStack));
+
+        if (shouldModifyAttributes) {
+            AttributeModifiersComponent component = itemStack.getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
+            nbt.put(ORIGINAL_ATTRIBUTE_TAG, AttributeModifiersComponent.CODEC, component);
+            modified.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, getDisplayModifiers(itemStack));
+        }
         modified.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
 
         return modified;
@@ -97,8 +102,10 @@ public class ItemStackAttributeHelper {
         }
 
         ItemStack reversed = itemStack.copy();
-        reversed.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, nbt.get(ORIGINAL_ATTRIBUTE_TAG, AttributeModifiersComponent.CODEC).orElseThrow());
-        nbt.remove(ORIGINAL_ATTRIBUTE_TAG);
+        if (nbt.contains(ORIGINAL_ATTRIBUTE_TAG)) {
+            reversed.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, nbt.get(ORIGINAL_ATTRIBUTE_TAG, AttributeModifiersComponent.CODEC).orElseThrow());
+            nbt.remove(ORIGINAL_ATTRIBUTE_TAG);
+        }
         nbt.remove(IS_PACKET_MODIFIED_TAG);
 
         if (!nbt.isEmpty()) {

@@ -39,7 +39,8 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityEx
             }
 
             @SuppressWarnings("unchecked") EntityType<? extends LivingEntity> type = ((EntityType<? extends LivingEntity>) getType());
-            ((AttributeContainerExtension) getAttributes()).combatEdit$patchWithNewDefaults(type, combatEdit$configurationManager().getModifier().getOriginalDefaults(type));
+            ((AttributeContainerExtension) getAttributes()).combatEdit$patchWithNewDefaults(type,
+                    combatEdit$configurationManager().getModifier().entities().getVanillaDefaultAttributes(type));
         };
     }
 

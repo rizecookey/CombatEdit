@@ -1,15 +1,13 @@
 package net.rizecookey.combatedit.custom_extensions;
 
 import net.minecraft.component.type.AttributeModifiersComponent;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.rizecookey.combatedit.api.CombatEditApi;
 import net.rizecookey.combatedit.api.CombatEditInitListener;
+import net.rizecookey.combatedit.api.extension.DefaultsSupplier;
 import net.rizecookey.combatedit.configuration.BaseProfile;
 import net.rizecookey.combatedit.configuration.ProfileExtension;
 import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
@@ -18,7 +16,6 @@ import net.rizecookey.combatedit.configuration.representation.MutableConfigurati
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class OldCombatModCompatibilityExtension implements CombatEditInitListener {
@@ -31,7 +28,7 @@ public class OldCombatModCompatibilityExtension implements CombatEditInitListene
      * This profile extension ensures that custom items not present in vanilla will have attack speed modifiers removed
      * from them by default.
      */
-    public ProfileExtension provideExtension(BaseProfile baseProfile, Function<Item, AttributeModifiersComponent> originalItemDefaults, Function<EntityType<? extends LivingEntity>, DefaultAttributeContainer> originalEntityDefaults) {
+    public ProfileExtension provideExtension(BaseProfile baseProfile, DefaultsSupplier defaultsSupplier) {
         List<ItemAttributes> modifications = new ArrayList<>();
 
         Set<Item> modifiedItems = baseProfile.getConfiguration().getItemAttributes()
@@ -41,9 +38,9 @@ public class OldCombatModCompatibilityExtension implements CombatEditInitListene
 
         Registries.ITEM.stream()
                 .filter(item -> !modifiedItems.contains(item)
-                        && !AttributeModifiersComponent.DEFAULT.equals(originalItemDefaults.apply(item)))
+                        && !AttributeModifiersComponent.DEFAULT.equals(defaultsSupplier.items().getVanillaAttributeModifiers(item)))
                 .forEach(item -> {
-                    AttributeModifiersComponent component = originalItemDefaults.apply(item);
+                    AttributeModifiersComponent component = defaultsSupplier.items().getVanillaAttributeModifiers(item);
                     assert component != null;
                     if (component.modifiers().stream().noneMatch(entry -> entry.attribute().equals(EntityAttributes.ATTACK_SPEED))) {
                         return;

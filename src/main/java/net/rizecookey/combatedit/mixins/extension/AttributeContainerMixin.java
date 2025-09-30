@@ -96,7 +96,8 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
 
     @Override
     public AttributeContainer combatEdit$getWithOriginalDefaults(EntityType<? extends LivingEntity> type) {
-        DefaultAttributeContainer originalDefaults = configurationProvider().getModifier().getOriginalDefaults(type);
+        DefaultAttributeContainer originalDefaults = configurationProvider().getModifier().entities()
+                .getVanillaDefaultAttributes(type);
         AttributeContainer copy = new AttributeContainer(defaultAttributes);
         copy.setFrom(thisInstance());
         custom.forEach((attribute, instance) -> {
