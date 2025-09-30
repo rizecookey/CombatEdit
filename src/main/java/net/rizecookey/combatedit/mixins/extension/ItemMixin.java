@@ -11,6 +11,6 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class ItemMixin {
     @ModifyExpressionValue(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item$Settings;getValidatedComponents(Lnet/minecraft/text/Text;Lnet/minecraft/util/Identifier;)Lnet/minecraft/component/ComponentMap;"))
     private ComponentMap replaceWithExchangeableComponentMap(ComponentMap original) {
-        return new DynamicComponentMap(original);
+        return original instanceof DynamicComponentMap ? original : new DynamicComponentMap(original);
     }
 }
