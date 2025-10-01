@@ -50,7 +50,8 @@
       "net/minecraft/class_8609": ["net/rizecookey/combatedit/extension/ServerCommonNetworkHandlerExtension"],
       "net/minecraft/class_10927": ["net/rizecookey/combatedit/extension/TrackedSlotExtension"],
       "net/minecraft/class_2588": ["net/rizecookey/combatedit/extension/TranslatableTextContentExtension"],
-      "net/minecraft/class_310": ["net/rizecookey/combatedit/client/extension/MinecraftClientExtension"]
+      "net/minecraft/class_310": ["net/rizecookey/combatedit/client/extension/MinecraftClientExtension"],
+      "net/minecraft/class_9323\u0024class_9324": ["net/rizecookey/combatedit/extension/ComponentMapBuilderExtension"]
     }
   },
 

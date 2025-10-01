@@ -131,7 +131,7 @@ public class PropertyModifier implements DefaultsSupplier {
                     continue;
                 }
 
-                var builder = ComponentMap.builder();
+                var builder = ComponentMap.builder().combatEdit$preventDynamicWrap();
                 modificationProvider.getComponents(id, item, dynamicComponents.getOriginal())
                         .forEach(component -> builder.add((ComponentType<Object>) component.type(), component.value()));
 

@@ -119,7 +119,7 @@ public class ItemModificationMap implements ItemModificationProvider {
         }
 
         var item = Registries.ITEM.get(components.getItemId());
-        var builder = ComponentMap.builder();
+        var builder = ComponentMap.builder().combatEdit$preventDynamicWrap();
         originalDefaults.apply(item).forEach(component -> builder.add((ComponentType<Object>) component.type(), component.value()));
         for (var entry : components.getChanges()) {
             if (!Registries.DATA_COMPONENT_TYPE.containsId(entry.componentType())) {
