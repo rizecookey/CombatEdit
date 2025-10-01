@@ -6,7 +6,6 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "compatibility.ComponentMap$BuilderMixin",
     "compatibility.EntityMixin",
     "compatibility.EntityTypeMixin",
     "compatibility.ItemStackMixin",
@@ -36,6 +35,7 @@
     "knockback.PlayerEntityMixin",
     "misc.PlayerEntityMixin",
     "modification.entity.DefaultAttributeRegistryMixin",
+    "modification.item.ComponentMap$BuilderMixin",
     "modification.item.LivingEntityMixin",
     "sound.PlayerEntityMixin"
   ]

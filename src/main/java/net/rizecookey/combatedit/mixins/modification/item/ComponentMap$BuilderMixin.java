@@ -1,4 +1,4 @@
-package net.rizecookey.combatedit.mixins.compatibility;
+package net.rizecookey.combatedit.mixins.modification.item;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.component.ComponentMap;
