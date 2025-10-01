@@ -4,7 +4,6 @@ import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Language;
-import net.rizecookey.combatedit.extension.TranslatableTextContentExtension;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -51,6 +50,6 @@ public final class TextUtils {
         TranslatableTextContent textContent = (TranslatableTextContent) text.getContent();
         Language language = Language.getInstance();
         String fallback = language.get(textContent.getKey());
-        ((TranslatableTextContentExtension) textContent).combatEdit$setFallback(fallback);
+        textContent.combatEdit$setFallback(fallback);
     }
 }

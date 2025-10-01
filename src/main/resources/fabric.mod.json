@@ -36,6 +36,23 @@
   ],
 
   "accessWidener": "combatedit.accesswidener",
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_5131": ["net/rizecookey/combatedit/extension/AttributeContainerExtension"],
+      "net/minecraft/class_2649": ["net/rizecookey/combatedit/extension/AttributePatchable"],
+      "net/minecraft/class_2653": ["net/rizecookey/combatedit/extension/AttributePatchable"],
+      "net/minecraft/class_9834": ["net/rizecookey/combatedit/extension/AttributePatchable"],
+      "net/minecraft/class_9835": ["net/rizecookey/combatedit/extension/AttributePatchable"],
+      "net/minecraft/class_2873": ["net/rizecookey/combatedit/extension/CreativeInventoryActionC2SPacketExtension"],
+      "net/minecraft/class_5132": ["net/rizecookey/combatedit/extension/DefaultAttributeContainerExtensions"],
+      "net/minecraft/class_1799": ["net/rizecookey/combatedit/extension/ItemStackExtension"],
+      "net/minecraft/class_1309": ["net/rizecookey/combatedit/extension/LivingEntityExtension"],
+      "net/minecraft/class_8609": ["net/rizecookey/combatedit/extension/ServerCommonNetworkHandlerExtension"],
+      "net/minecraft/class_10927": ["net/rizecookey/combatedit/extension/TrackedSlotExtension"],
+      "net/minecraft/class_2588": ["net/rizecookey/combatedit/extension/TranslatableTextContentExtension"],
+      "net/minecraft/class_310": ["net/rizecookey/combatedit/client/extension/MinecraftClientExtension"]
+    }
+  },
 
   "depends": {
     "fabricloader": ">=0.16.9",

@@ -12,6 +12,11 @@ import java.util.List;
 public interface AttributeContainerExtension {
     ThreadLocal<Deque<Boolean>> IS_SAVE_CALL = ThreadLocal.withInitial(() -> new ArrayDeque<>(List.of(false)));
 
-    void combatEdit$patchWithNewDefaults(EntityType<? extends LivingEntity> type, DefaultAttributeContainer previousDefaults);
-    AttributeContainer combatEdit$getWithOriginalDefaults(EntityType<? extends LivingEntity> type);
+    default void combatEdit$patchWithNewDefaults(EntityType<? extends LivingEntity> type, DefaultAttributeContainer previousDefaults) {
+        throw new UnsupportedOperationException("Extension not applied correctly");
+    }
+
+    default AttributeContainer combatEdit$getWithOriginalDefaults(EntityType<? extends LivingEntity> type) {
+        throw new UnsupportedOperationException("Extension not applied correctly");
+    }
 }

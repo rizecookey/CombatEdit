@@ -7,5 +7,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import java.util.Map;
 
 public interface DefaultAttributeContainerInstancesProvider {
-    Map<RegistryEntry<EntityAttribute>, EntityAttributeInstance> combatEdit$getInstances();
+    default Map<RegistryEntry<EntityAttribute>, EntityAttributeInstance> combatEdit$getInstances() {
+        throw new UnsupportedOperationException("Extension not applied correctly");
+    }
 }

@@ -39,7 +39,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityEx
             }
 
             @SuppressWarnings("unchecked") EntityType<? extends LivingEntity> type = ((EntityType<? extends LivingEntity>) getType());
-            ((AttributeContainerExtension) getAttributes()).combatEdit$patchWithNewDefaults(type,
+            getAttributes().combatEdit$patchWithNewDefaults(type,
                     combatEdit$configurationManager().getModifier().entities().getVanillaDefaultAttributes(type));
         };
     }
@@ -51,6 +51,6 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityEx
         }
 
         @SuppressWarnings("unchecked") EntityType<? extends LivingEntity> type = ((EntityType<? extends LivingEntity>) getType());
-        return ((AttributeContainerExtension) original).combatEdit$getWithOriginalDefaults(type);
+        return original.combatEdit$getWithOriginalDefaults(type);
     }
 }

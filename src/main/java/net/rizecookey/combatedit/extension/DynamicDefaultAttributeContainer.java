@@ -14,12 +14,8 @@ public class DynamicDefaultAttributeContainer extends DefaultAttributeContainer 
     private DefaultAttributeContainer exchangeable;
 
     public DynamicDefaultAttributeContainer(DefaultAttributeContainer original) {
-        super(Map.copyOf(extension(original).combatEdit$getInstances()));
+        super(Map.copyOf(original.combatEdit$getInstances()));
         this.exchangeable = this.original = original;
-    }
-
-    private static DefaultAttributeContainerExtensions extension(DefaultAttributeContainer container) {
-        return (DefaultAttributeContainerExtensions) container;
     }
 
     public DefaultAttributeContainer getOriginal() {
@@ -44,6 +40,6 @@ public class DynamicDefaultAttributeContainer extends DefaultAttributeContainer 
 
     @Override
     public Map<RegistryEntry<EntityAttribute>, EntityAttributeInstance> combatEdit$getInstances() {
-        return USE_EXCHANGEABLE ? extension(exchangeable).combatEdit$getInstances() : extension(original).combatEdit$getInstances();
+        return USE_EXCHANGEABLE ? exchangeable.combatEdit$getInstances() : original.combatEdit$getInstances();
     }
 }

@@ -16,7 +16,6 @@ import net.minecraft.util.TypeFilter;
 import net.rizecookey.combatedit.api.extension.DefaultsSupplier;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
-import net.rizecookey.combatedit.extension.AttributeContainerExtension;
 import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtensions;
 import net.rizecookey.combatedit.extension.DynamicComponentMap;
 import net.rizecookey.combatedit.extension.DynamicDefaultAttributeContainer;
@@ -61,7 +60,7 @@ public class PropertyModifier implements DefaultsSupplier {
 
         server.getWorlds()
                 .forEach(world -> world.getEntitiesByType(TypeFilter.instanceOf(LivingEntity.class), entity -> entity.getType().equals(type))
-                        .forEach(entity -> ((AttributeContainerExtension) entity.getAttributes()).combatEdit$patchWithNewDefaults(type, previousDefaults))
+                        .forEach(entity -> entity.getAttributes().combatEdit$patchWithNewDefaults(type, previousDefaults))
                 );
     }
 

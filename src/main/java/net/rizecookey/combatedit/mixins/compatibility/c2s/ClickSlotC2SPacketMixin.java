@@ -7,7 +7,6 @@ import net.minecraft.screen.sync.ItemStackHash;
 import net.minecraft.screen.sync.TrackedSlot;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.rizecookey.combatedit.extension.ServerCommonNetworkHandlerExtension;
-import net.rizecookey.combatedit.extension.TrackedSlotExtension;
 import net.rizecookey.combatedit.mixins.compatibility.ScreenHandlerAccessor;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -34,9 +33,9 @@ public abstract class ClickSlotC2SPacketMixin {
         ScreenHandlerAccessor handlerAccessor = (ScreenHandlerAccessor) networkHandler.player.currentScreenHandler;
         for (int key : modifiedStacks.keySet()) {
             TrackedSlot trackedSlot = handlerAccessor.getTrackedSlots().get(key);
-            ((TrackedSlotExtension) trackedSlot).combatEdit$setCompareWithDisplayModified(true);
+            trackedSlot.combatEdit$setCompareWithDisplayModified(true);
         }
-        ((TrackedSlotExtension) handlerAccessor.getTrackedCursorSlot()).combatEdit$setCompareWithDisplayModified(true);
+        handlerAccessor.getTrackedCursorSlot().combatEdit$setCompareWithDisplayModified(true);
     }
 
     @Inject(method = "apply(Lnet/minecraft/network/listener/ServerPlayPacketListener;)V", at = @At("RETURN"))
@@ -53,8 +52,8 @@ public abstract class ClickSlotC2SPacketMixin {
         ScreenHandlerAccessor handlerAccessor = (ScreenHandlerAccessor) networkHandler.player.currentScreenHandler;
         for (int key : modifiedStacks.keySet()) {
             TrackedSlot trackedSlot = handlerAccessor.getTrackedSlots().get(key);
-            ((TrackedSlotExtension) trackedSlot).combatEdit$setCompareWithDisplayModified(false);
+            trackedSlot.combatEdit$setCompareWithDisplayModified(false);
         }
-        ((TrackedSlotExtension) handlerAccessor.getTrackedCursorSlot()).combatEdit$setCompareWithDisplayModified(false);
+        handlerAccessor.getTrackedCursorSlot().combatEdit$setCompareWithDisplayModified(false);
     }
 }

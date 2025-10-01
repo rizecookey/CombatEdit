@@ -10,7 +10,6 @@ import net.minecraft.text.Text;
 import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.client.configscreen.InvalidConfigScreen;
 import net.rizecookey.combatedit.client.event.ClientEvents;
-import net.rizecookey.combatedit.client.extension.MinecraftClientExtension;
 import net.rizecookey.combatedit.configuration.Settings;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 
@@ -29,7 +28,7 @@ public class CombatEditClient extends CombatEdit {
     protected void onSettingsLoadError(InvalidConfigurationException exception) {
         LOGGER.error("Settings validation failed", exception);
         setCurrentSettings(null);
-        ClientLifecycleEvents.CLIENT_STARTED.register(client -> ((MinecraftClientExtension) client).combatEdit$addInitScreen(onClose -> new InvalidConfigScreen(exception, onClose)));
+        ClientLifecycleEvents.CLIENT_STARTED.register(client -> client.combatEdit$addInitScreen(onClose -> new InvalidConfigScreen(exception, onClose)));
     }
 
     @Override
