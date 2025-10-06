@@ -96,7 +96,7 @@ public class ItemStackAttributeHelper {
 
     public ItemStack reverseDisplayModifiers(ItemStack itemStack) {
         NbtCompound nbt = itemStack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
-        if (!nbt.getBoolean(IS_PACKET_MODIFIED_TAG).orElse(false) || !nbt.contains(ORIGINAL_ATTRIBUTE_TAG)) {
+        if (!nbt.getBoolean(IS_PACKET_MODIFIED_TAG).orElse(false)) {
             return itemStack;
         }
 
