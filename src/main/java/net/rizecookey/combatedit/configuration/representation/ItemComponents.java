@@ -9,6 +9,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.registry.Registries;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Unit;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
@@ -69,10 +70,21 @@ public class ItemComponents {
     public enum ChangeType {
         /** Sets a new value for a component. */
         @SerializedName("set")
-        SET,
+        SET(Text.translatable("option.combatedit.item.item_components.component_change_entry.change_type.set")),
         /** Removes the default component value for the given type from the item. */
         @SerializedName("remove")
-        REMOVE,
+        REMOVE(Text.translatable("option.combatedit.item.item_components.component_change_entry.change_type.remove")),
+        ;
+
+        private final Text text;
+
+        ChangeType(Text text) {
+            this.text = text;
+        }
+
+        public Text getText() {
+            return text;
+        }
     }
 
     /**

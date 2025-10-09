@@ -42,9 +42,19 @@
   "option.combatedit.item.item_attributes.modifier_entry.modifier_id": "Modifier Identifier",
   "option.combatedit.item.item_attributes.modifier_entry.modifier_id.tooltip": "Can be left empty to auto-generate an identifier.",
   "option.combatedit.item.item_attributes.modifier_entry.value": "Modifier value",
+  "option.combatedit.item.item_attributes.modifier_entry.value.remove_tooltip": "Value is ignored for change type \"Remove default\".",
   "option.combatedit.item.item_attributes.modifier_entry.operation": "Modifier operation",
   "option.combatedit.item.item_attributes.modifier_entry.slot": "Slot",
   "option.combatedit.item.item_attributes.override_defaults": "Override default modifiers",
+
+  "option.combatedit.item.item_components": "Item components",
+  "option.combatedit.item.item_components.component_change_entry": "Component change entries",
+  "option.combatedit.item.item_components.component_change_entry.entry": "Change entry",
+  "option.combatedit.item.item_components.component_change_entry.component": "Component Type",
+  "option.combatedit.item.item_components.component_change_entry.change_type": "Change Type",
+  "option.combatedit.item.item_components.component_change_entry.change_type.set": "Set",
+  "option.combatedit.item.item_components.component_change_entry.change_type.remove": "Remove default",
+  "option.combatedit.item.item_components.component_change_entry.value": "Value",
 
   "category.combatedit.sounds": "Attack sounds",
 
