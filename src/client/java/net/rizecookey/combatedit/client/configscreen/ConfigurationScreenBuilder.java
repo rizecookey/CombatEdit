@@ -1,5 +1,6 @@
 package net.rizecookey.combatedit.client.configscreen;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.gui.entries.DropdownBoxEntry;
@@ -7,8 +8,12 @@ import me.shedaniel.clothconfig2.gui.entries.EnumListEntry;
 import me.shedaniel.clothconfig2.impl.builders.DropdownMenuBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.component.ComponentType;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
@@ -16,6 +21,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 import net.minecraft.util.Language;
+import net.minecraft.util.Unit;
 import net.rizecookey.clothconfig2.extension.api.ExtendedConfigEntryBuilder;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectAdapter;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectListEntry;
@@ -426,6 +432,26 @@ public class ConfigurationScreenBuilder {
                 .setTooltipSupplier(() -> changeTypeEntry.getValue().equals(ItemComponents.ChangeType.REMOVE)
                         ? Optional.of(new Text[] {Text.translatable("option.combatedit.item.item_attributes.modifier_entry.value.remove_tooltip")})
                         : Optional.empty())
+                .setErrorSupplier(val -> {
+                    if (changeTypeEntry.getValue().equals(ItemComponents.ChangeType.REMOVE)) return Optional.empty();
+
+                    ComponentType<?> type = Registries.DATA_COMPONENT_TYPE.get(componentTypeEntry.getValue());
+                    if (type == null) return Optional.empty();
+                    if (Unit.CODEC.equals(type.getCodec())) return Optional.empty();
+
+                    var reader = StringNbtReader.fromOps(NbtOps.INSTANCE);
+                    NbtElement element;
+                    try {
+                        element = reader.read(val);
+                    } catch (CommandSyntaxException e) {
+                        return Optional.of(Text.literal(e.getMessage()));
+                    }
+                    var result = type.getCodecOrThrow().parse(NbtOps.INSTANCE, element);
+                    return result.mapOrElse(
+                            ignored -> Optional.empty(),
+                            error -> Optional.of(Text.translatable("arguments.item.component.malformed",
+                                    componentTypeEntry.getValue(), error.message())));
+                })
                 .build();
 
         return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.item.item_components.component_change_entry.entry"),
