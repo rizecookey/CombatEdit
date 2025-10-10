@@ -13,6 +13,7 @@ import net.rizecookey.combatedit.configuration.representation.Configuration;
 import net.rizecookey.combatedit.configuration.representation.ConfigurationView;
 import net.rizecookey.combatedit.configuration.representation.EntityAttributes;
 import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
+import net.rizecookey.combatedit.configuration.representation.ItemComponents;
 import net.rizecookey.combatedit.configuration.representation.MutableConfiguration;
 import net.rizecookey.combatedit.modification.PropertyModifier;
 import net.rizecookey.combatedit.utils.ItemStackAttributeHelper;
@@ -44,6 +45,7 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
 
     private List<EntityAttributes> oldEntityAttributes;
     private List<ItemAttributes> oldItemAttributes;
+    private List<ItemComponents> oldItemComponents;
     private long lastAttributeReload = Long.MIN_VALUE;
 
     public ConfigurationManager(CombatEdit combatEdit) {
@@ -105,9 +107,11 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
                     )));
 
             updateConfiguration(new LoadResult(data.settings(), data.baseProfiles(), withCustom));
-            boolean attributeConfigChanged = !Objects.equals(oldItemAttributes, configuration.getItemAttributes()) || !Objects.equals(oldEntityAttributes, configuration.getEntityAttributes());
+            boolean modificationsChanged = !Objects.equals(oldItemAttributes, configuration.getItemAttributes())
+                    || !Objects.equals(oldEntityAttributes, configuration.getEntityAttributes())
+                    || !Objects.equals(oldItemComponents, configuration.getItemComponents());
 
-            if (attributeConfigChanged) {
+            if (modificationsChanged) {
                 adjustModifications();
             }
         }, executor);
@@ -186,6 +190,7 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
 
         oldItemAttributes = List.copyOf(configuration.getItemAttributes());
         oldEntityAttributes = List.copyOf(configuration.getEntityAttributes());
+        oldItemComponents = List.copyOf(configuration.getItemComponents());
         lastAttributeReload = System.currentTimeMillis();
         LOGGER.info("Adjusted attribute modifications.");
     }
