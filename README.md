@@ -103,7 +103,7 @@ following keys:
   - `minecraft:entity.player.attack.strong`
   - `minecraft:entity.player.attack.sweep`
   - `minecraft:entity.player.attack.crit`
-- `misc`: An object configuring [Miscellaneous options](#miscellaneous-options).
+- `misc_options`: An object configuring [Miscellaneous options](#miscellaneous-options).
 
 #### Entity attribute
 Entity attribute entries have the following structure:
@@ -123,28 +123,36 @@ Item attribute entries have the following structure:
      used instead
   - `value`: The value for the modifier
   - `operation`: Operation type for the modifier. Can be one of the following:
-    - `add_value`: Adds the value of this modifier to the base value of the attribute for the entity
-    - `add_multiplied_base`: Multiplies the base value for the attribute by the specified value and adds the result to
+    - `"add_value"`: Adds the value of this modifier to the base value of the attribute for the entity
+    - `"add_multiplied_base"`: Multiplies the base value for the attribute by the specified value and adds the result to
       the total attribute value
-    - `add_multiplied_total`: Multiplies the sum of the base value and all modifiers of type
-      `add_multiplied_base` and adds the result to the total attribute value
+    - `"add_multiplied_total"`: Multiplies the sum of the base value and all modifiers of type
+      `"add_multiplied_base"` and adds the result to the total attribute value
   - `slot`: The slot in which the item has to be for the modifier to apply. Can be one of the following:
-    - `any`: Applies in all slots
-    - `mainhand`: Applies when the item is held in the main hand
-    - `offhand`: Applies when the item is held in the off hand
-    - `hand`: Applies when the item is held in any hand
-    - `feet`: Applies when the item is equipped in the boots slot
-    - `legs`: Applies when the item is equipped in the leggings slot
-    - `chest`: Applies when the item is equipped in the chestplate slot
-    - `head`: Applies when the item is equipped in the helmet slot
-    - `armor`: Applies when the item is equipped in any armor slot (on players or animals)
-    - `body`: Applies when the item is equipped on an animal
-    - `saddle`: Applies when the item is equipped on a horse's saddle slot
+    - `"any"`: Applies in all slots
+    - `"mainhand"`: Applies when the item is held in the main hand
+    - `"offhand"`: Applies when the item is held in the off hand
+    - `"hand"`: Applies when the item is held in any hand
+    - `"feet"`: Applies when the item is equipped in the boots slot
+    - `"legs"`: Applies when the item is equipped in the leggings slot
+    - `"chest"`: Applies when the item is equipped in the chestplate slot
+    - `"head"`: Applies when the item is equipped in the helmet slot
+    - `"armor"`: Applies when the item is equipped in any armor slot (on players or animals)
+    - `"body"`: Applies when the item is equipped on an animal
+    - `"saddle"`: Applies when the item is equipped on a horse's saddle slot
 - `override_default`: Boolean option. If set to `true`, the item's default attribute modifiers are removed before applying
   the changes specified by this entry
 
 #### Item component
-TODO
+Item component entries have the following structure:
+- `item_id`: The identifier of the item whose components are to be modified
+- `changes`: An array of component changes to be made, which have the following structure:
+  - `component_type`: The identifier of the component type for which to change the value
+  - `change_type`: The change to be made by this entry, which is either:
+    - `"set"` if a new value for this component type is to be set
+    - `"remove"` if the default value for this component is to be removed from the item entirely
+  - `value`: The value to set for this component. Is optional if the component type does not have values or the change
+    type is `"remove"`
 
 ### Miscellaneous options
 - `enable_1_8_knockback`: A boolean specifying whether 1.8 knockback should be enabled instead of the default knockback
