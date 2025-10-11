@@ -1,0 +1,35 @@
+{
+  "name": { "text":  "Tiny players" },
+  "description": { "text":  "Base profile for tiny players :)" },
+  "configuration": {
+    "configuration_version": 3,
+    "entity_attributes": [
+      {
+        "entity_id": "minecraft:player",
+        "base_values": [
+          {
+            "attribute": "minecraft:movement_speed",
+            "base_value": 0.15
+          },
+          {
+            "attribute": "minecraft:scale",
+            "base_value": 0.25
+          },
+          {
+            "attribute": "minecraft:jump_strength",
+            "base_value": 0.5
+          },
+          {
+            "attribute": "minecraft:safe_fall_distance",
+            "base_value": 10.0
+          },
+          {
+            "attribute": "minecraft:gravity",
+            "base_value": 0.1
+          }
+        ],
+        "override_default": false
+      }
+    ]
+  }
+}
