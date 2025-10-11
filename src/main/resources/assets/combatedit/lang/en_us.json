@@ -51,6 +51,7 @@
   "option.combatedit.item.item_components.component_change_entry": "Component change entries",
   "option.combatedit.item.item_components.component_change_entry.entry": "Change entry",
   "option.combatedit.item.item_components.component_change_entry.component": "Component Type",
+  "option.combatedit.item.item_components.component_change_entry.component.attribute_modifiers_unsupported": "Use the Item attribute modifiers feature to change the attribute modifiers of an item!",
   "option.combatedit.item.item_components.component_change_entry.change_type": "Change Type",
   "option.combatedit.item.item_components.component_change_entry.change_type.set": "Set",
   "option.combatedit.item.item_components.component_change_entry.change_type.remove": "Remove default",

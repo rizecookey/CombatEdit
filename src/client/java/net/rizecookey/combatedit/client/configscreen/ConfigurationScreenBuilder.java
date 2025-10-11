@@ -9,6 +9,7 @@ import me.shedaniel.clothconfig2.impl.builders.DropdownMenuBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.component.ComponentType;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.nbt.NbtElement;
@@ -410,9 +411,16 @@ public class ConfigurationScreenBuilder {
     private static ObjectListEntry<ItemComponents.ComponentChangeEntry> createEntry(ItemComponents.ComponentChangeEntry componentChangeEntry) {
         var componentTypeEntry = ENTRY_BUILDER.startDropdownMenu(
                 Text.translatable("option.combatedit.item.item_components.component_change_entry.component"),
-                ExtendedDropdownMenus.TopCellElementBuilder.ofRegistryIdentifier(Registries.DATA_COMPONENT_TYPE, Registries.DATA_COMPONENT_TYPE.get(componentChangeEntry.componentType())),
-                ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(Registries.DATA_COMPONENT_TYPE)
-        ).setSelections(Registries.DATA_COMPONENT_TYPE.getIds()).build();
+                        ExtendedDropdownMenus.TopCellElementBuilder.ofRegistryIdentifier(Registries.DATA_COMPONENT_TYPE, Registries.DATA_COMPONENT_TYPE.get(componentChangeEntry.componentType())),
+                        ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(Registries.DATA_COMPONENT_TYPE)
+                ).setSelections(Registries.DATA_COMPONENT_TYPE.getIds())
+                .setErrorSupplier(ident -> {
+                    if (!DataComponentTypes.ATTRIBUTE_MODIFIERS.equals(Registries.DATA_COMPONENT_TYPE.get(ident))) {
+                        return Optional.empty();
+                    }
+                    return Optional.of(Text.translatable("option.combatedit.item.item_components.component_change_entry.component.attribute_modifiers_unsupported"));
+                })
+                .build();
         var changeTypeEntry = ENTRY_BUILDER.startEnumSelector(Text.translatable("option.combatedit.item.item_components.component_change_entry.change_type"), ItemComponents.ChangeType.class, componentChangeEntry.changeType())
                 .setEnumNameProvider(anEnum -> ((ItemComponents.ChangeType) anEnum).getText())
                 .build();
