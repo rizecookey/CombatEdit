@@ -249,7 +249,7 @@ public class ConfigurationScreenBuilder {
                 .setExpanded(true)
                 .build();
 
-        return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.entity.entity_attributes.entry"),
+        return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.entity.entry"),
                 List.of(
                         entityTypeEntry,
                         attributeValueMap
@@ -312,7 +312,7 @@ public class ConfigurationScreenBuilder {
                 .setSaveConsumer(attributes::setOverrideDefault)
                 .build();
 
-        return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.item.item_attributes.entry"),
+        return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.item.entry"),
                 List.of(
                         itemEntry,
                         modifiersEntry,
@@ -388,7 +388,7 @@ public class ConfigurationScreenBuilder {
                 .setExpanded(true)
                 .build();
 
-        return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.item.item_attributes.entry"),
+        return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.item.entry"),
                         List.of(
                                 itemEntry,
                                 componentsEntry
