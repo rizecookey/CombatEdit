@@ -1,0 +1,50 @@
+{
+  "priority": 0,
+  "configuration_overrides": {
+    "configuration_version": 3,
+    "item_attributes": [
+      {
+        "item_id": "minecraft:netherite_sword",
+        "modifiers": [
+          {
+            "attribute": "minecraft:attack_knockback",
+            "modifier_id": "buffed_netherite_sword:knockback",
+            "value": 1.0,
+            "operation": "add_value",
+            "slot": "mainhand"
+          },
+          {
+            "attribute": "minecraft:movement_speed",
+            "modifier_id": "buffed_netherite_sword:movement_speed",
+            "value": 0.1,
+            "operation": "add_value",
+            "slot": "mainhand"
+          }
+        ],
+        "override_default": false
+      }
+    ],
+    "item_components": [
+      {
+        "item_id": "minecraft:netherite_sword",
+        "changes": [
+          {
+            "component_type": "minecraft:unbreakable",
+            "change_type": "set",
+            "value": "0"
+          },
+          {
+            "component_type": "minecraft:enchantment_glint_override",
+            "change_type": "set",
+            "value": "true"
+          },
+          {
+            "component_type": "minecraft:lore",
+            "change_type": "set",
+            "value": "[{text:\"Buffed netherite sword because why not\"}]"
+          }
+        ]
+      }
+    ]
+  }
+}

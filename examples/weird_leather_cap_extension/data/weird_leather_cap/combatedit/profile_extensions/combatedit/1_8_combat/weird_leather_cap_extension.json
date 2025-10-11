@@ -1,0 +1,45 @@
+{
+  "priority": 0,
+  "configuration_overrides": {
+    "configuration_version": 3,
+    "item_components": [
+      {
+        "item_id": "minecraft:leather_helmet",
+        "changes": [
+          {
+            "component_type": "minecraft:equippable",
+            "change_type": "set",
+            "value": "{slot:chest}"
+          },
+          {
+            "component_type": "minecraft:lore",
+            "change_type": "set",
+            "value": "[{text:\"This is not your usual leather cap...\"}]"
+          }
+        ]
+      }
+    ],
+    "item_attributes": [
+      {
+        "item_id": "minecraft:leather_helmet",
+        "modifiers": [
+          {
+            "attribute": "minecraft:armor",
+            "modifier_id": "weird_leather_cap:armor",
+            "value": 1.0,
+            "operation": "add_value",
+            "slot": "chest"
+          },
+          {
+            "attribute": "minecraft:scale",
+            "modifier_id": "weird_leather_cap:scale",
+            "value": -0.5,
+            "operation": "add_value",
+            "slot": "chest"
+          }
+        ],
+        "override_default": true
+      }
+    ]
+  }
+}

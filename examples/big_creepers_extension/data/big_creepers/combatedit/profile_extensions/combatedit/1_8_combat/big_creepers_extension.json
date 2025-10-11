@@ -1,0 +1,30 @@
+{
+  "priority": 0,
+  "configuration_overrides": {
+    "configuration_version": 3,
+    "entity_attributes": [
+      {
+        "entity_id": "minecraft:creeper",
+        "base_values": [
+          {
+            "attribute": "minecraft:scale",
+            "base_value": 2.0
+          },
+          {
+            "attribute": "minecraft:jump_strength",
+            "base_value": 0.5
+          },
+          {
+            "attribute": "minecraft:safe_fall_distance",
+            "base_value": 10.0
+          },
+          {
+            "attribute": "minecraft:attack_damage",
+            "base_value": 100.0
+          }
+        ],
+        "override_default": false
+      }
+    ]
+  }
+}
