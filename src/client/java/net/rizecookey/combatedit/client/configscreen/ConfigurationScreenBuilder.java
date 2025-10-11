@@ -42,6 +42,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static net.rizecookey.combatedit.client.CombatEditClient.LOGGER;
 
@@ -338,21 +340,7 @@ public class ConfigurationScreenBuilder {
                 ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(Registries.ATTRIBUTE)
         ).setSelections(Registries.ATTRIBUTE.getIds()).build();
         var modifierIdEntry = ENTRY_BUILDER.startStrField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.modifier_id"), modifierEntry.modifierId() != null ? modifierEntry.modifierId().toString() : "")
-                .setErrorSupplier(value -> {
-                    if (value.isEmpty()) {
-                        return Optional.empty();
-                    }
-                    Identifier id;
-                    try {
-                        id = Identifier.of(value);
-                    } catch (InvalidIdentifierException e) {
-                        return Optional.of(Text.translatable("error.combatedit.invalid_identifier"));
-                    }
-                    if (id.getNamespace().equals(ReservedIdentifiers.RESERVED_NAMESPACE)) {
-                        return Optional.of(Text.translatable("error.combatedit.disallowed_namespace"));
-                    }
-                    return Optional.empty();
-                })
+                .setErrorSupplier(attributeModifierIdErrorSupplier())
                 .setTooltip(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.modifier_id.tooltip"))
                 .build();
         var valueEntry = ENTRY_BUILDER.startDoubleField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.value"), modifierEntry.value())
@@ -429,29 +417,8 @@ public class ConfigurationScreenBuilder {
                 .setEnumNameProvider(anEnum -> ((ItemComponents.ChangeType) anEnum).getText())
                 .build();
         var valueEntry = ENTRY_BUILDER.startStrField(Text.translatable("option.combatedit.item.item_components.component_change_entry.value"), componentChangeEntry.value())
-                .setTooltipSupplier(() -> changeTypeEntry.getValue().equals(ItemComponents.ChangeType.REMOVE)
-                        ? Optional.of(new Text[] {Text.translatable("option.combatedit.item.item_attributes.modifier_entry.value.remove_tooltip")})
-                        : Optional.empty())
-                .setErrorSupplier(val -> {
-                    if (changeTypeEntry.getValue().equals(ItemComponents.ChangeType.REMOVE)) return Optional.empty();
-
-                    ComponentType<?> type = Registries.DATA_COMPONENT_TYPE.get(componentTypeEntry.getValue());
-                    if (type == null) return Optional.empty();
-                    if (Unit.CODEC.equals(type.getCodec())) return Optional.empty();
-
-                    var reader = StringNbtReader.fromOps(NbtOps.INSTANCE);
-                    NbtElement element;
-                    try {
-                        element = reader.read(val);
-                    } catch (CommandSyntaxException e) {
-                        return Optional.of(Text.literal(e.getMessage()));
-                    }
-                    var result = type.getCodecOrThrow().parse(NbtOps.INSTANCE, element);
-                    return result.mapOrElse(
-                            ignored -> Optional.empty(),
-                            error -> Optional.of(Text.translatable("arguments.item.component.malformed",
-                                    componentTypeEntry.getValue(), error.message())));
-                })
+                .setTooltipSupplier(componentValueTooltipSupplier(componentTypeEntry, changeTypeEntry))
+                .setErrorSupplier(componentValueErrorSupplier(componentTypeEntry, changeTypeEntry))
                 .build();
 
         return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.item.item_components.component_change_entry.entry"),
@@ -467,5 +434,65 @@ public class ConfigurationScreenBuilder {
                                 () -> Optional.of(ItemComponents.ComponentChangeEntry.getDefault())))
                 .setExpanded(true)
                 .build();
+    }
+
+    private static Function<String, Optional<Text>> attributeModifierIdErrorSupplier() {
+        return value -> {
+            if (value.isEmpty()) {
+                return Optional.empty();
+            }
+            Identifier id;
+            try {
+                id = Identifier.of(value);
+            } catch (InvalidIdentifierException e) {
+                return Optional.of(Text.translatable("error.combatedit.invalid_identifier"));
+            }
+            if (id.getNamespace().equals(ReservedIdentifiers.RESERVED_NAMESPACE)) {
+                return Optional.of(Text.translatable("error.combatedit.disallowed_namespace"));
+            }
+            return Optional.empty();
+        };
+    }
+
+    private static Supplier<Optional<Text[]>> componentValueTooltipSupplier(DropdownBoxEntry<Identifier> componentTypeEntry, EnumListEntry<ItemComponents.ChangeType> changeTypeEntry) {
+        return () -> {
+            if (changeTypeEntry.getValue().equals(ItemComponents.ChangeType.REMOVE)) {
+                return Optional.of(new Text[] {Text.translatable("option.combatedit.item.item_components.component_change_entry.value.remove_tooltip")});
+            }
+
+            var componentType = Registries.DATA_COMPONENT_TYPE.get(componentTypeEntry.getValue());
+            if (componentType == null) {
+                return Optional.empty();
+            }
+
+            if (Unit.CODEC.equals(componentType.getCodec())) {
+                return Optional.of(new Text[] {Text.translatable("option.combatedit.item.item_components.component_change_entry.value.unit_tooltip")});
+            }
+
+            return Optional.empty();
+        };
+    }
+
+    private static Function<String, Optional<Text>> componentValueErrorSupplier(DropdownBoxEntry<Identifier> componentTypeEntry, EnumListEntry<ItemComponents.ChangeType> changeTypeEntry) {
+        return val -> {
+            if (changeTypeEntry.getValue().equals(ItemComponents.ChangeType.REMOVE)) return Optional.empty();
+
+            ComponentType<?> type = Registries.DATA_COMPONENT_TYPE.get(componentTypeEntry.getValue());
+            if (type == null) return Optional.empty();
+            if (Unit.CODEC.equals(type.getCodec())) return Optional.empty();
+
+            var reader = StringNbtReader.fromOps(NbtOps.INSTANCE);
+            NbtElement element;
+            try {
+                element = reader.read(val);
+            } catch (CommandSyntaxException e) {
+                return Optional.of(Text.literal(e.getMessage()));
+            }
+            var result = type.getCodecOrThrow().parse(NbtOps.INSTANCE, element);
+            return result.mapOrElse(
+                    ignored -> Optional.empty(),
+                    error -> Optional.of(Text.translatable("arguments.item.component.malformed",
+                            componentTypeEntry.getValue(), error.message())));
+        };
     }
 }
