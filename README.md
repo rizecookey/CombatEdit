@@ -106,10 +106,42 @@ following keys:
 - `misc`: An object configuring [Miscellaneous options](#miscellaneous-options).
 
 #### Entity attribute
-TODO
+Entity attribute entries have the following structure:
+- `entity_id`: The identifier of the entity type to be modified
+- `base_values`: An array of attribute base value objects, which have the following keys:
+  - `attribute`: The identifier of the attribute whose value is changed
+  - `base_value`: The base value to use for the specified attribute
+- `override_default`: Boolean option. If set to `true`, the entity's default attributes are removed before applying the
+  the changes specified in this entity attribute entry
 
 #### Item attribute
-TODO
+Item attribute entries have the following structure:
+- `item_id`: The identifier of the item to be modified
+- `modifiers`: An array of attribute modifier objects, which have the following structure:
+  - `attribute`: The attribute for which to add a modifier
+  - `modifier_id`: A unique identifier for the attribute modifier. Optional, if not specified, a random identifier is
+     used instead
+  - `value`: The value for the modifier
+  - `operation`: Operation type for the modifier. Can be one of the following:
+    - `add_value`: Adds the value of this modifier to the base value of the attribute for the entity
+    - `add_multiplied_base`: Multiplies the base value for the attribute by the specified value and adds the result to
+      the total attribute value
+    - `add_multiplied_total`: Multiplies the sum of the base value and all modifiers of type
+      `add_multiplied_base` and adds the result to the total attribute value
+  - `slot`: The slot in which the item has to be for the modifier to apply. Can be one of the following:
+    - `any`: Applies in all slots
+    - `mainhand`: Applies when the item is held in the main hand
+    - `offhand`: Applies when the item is held in the off hand
+    - `hand`: Applies when the item is held in any hand
+    - `feet`: Applies when the item is equipped in the boots slot
+    - `legs`: Applies when the item is equipped in the leggings slot
+    - `chest`: Applies when the item is equipped in the chestplate slot
+    - `head`: Applies when the item is equipped in the helmet slot
+    - `armor`: Applies when the item is equipped in any armor slot (on players or animals)
+    - `body`: Applies when the item is equipped on an animal
+    - `saddle`: Applies when the item is equipped on a horse's saddle slot
+- `override_default`: Boolean option. If set to `true`, the item's default attribute modifiers are removed before applying
+  the changes specified by this entry
 
 #### Item component
 TODO
