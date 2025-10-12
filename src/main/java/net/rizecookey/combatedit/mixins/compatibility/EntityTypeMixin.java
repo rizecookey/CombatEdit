@@ -12,12 +12,12 @@ import java.util.Optional;
 
 @Mixin(EntityType.class)
 public class EntityTypeMixin {
-    @Inject(method = "getEntityFromData", at = @At("HEAD"))
+    @Inject(method = "getEntityFromData*", at = @At("HEAD"))
     private static void setSaveCall(CallbackInfoReturnable<Optional<Entity>> cir) {
         AttributeContainerExtension.IS_SAVE_CALL.get().push(true);
     }
 
-    @Inject(method = "getEntityFromData", at = @At("RETURN"))
+    @Inject(method = "getEntityFromData*", at = @At("RETURN"))
     private static void unsetSaveCall(CallbackInfoReturnable<Optional<Entity>> cir) {
         AttributeContainerExtension.IS_SAVE_CALL.get().pop();
     }

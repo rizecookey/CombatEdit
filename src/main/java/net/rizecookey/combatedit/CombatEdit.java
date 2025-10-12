@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.entity.EntityType;
@@ -142,7 +142,9 @@ public class CombatEdit implements CombatEditApi {
     public void registerListeners() {
         CommandRegistrationCallback.EVENT.register(new CombatEditCommand(this));
 
-        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(configurationManager);
+        ResourceLoader.get(ResourceType.SERVER_DATA).registerReloader(
+                Identifier.of("combatedit", "server_configuration_provider"),
+                configurationManager);
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             this.currentServer = server;

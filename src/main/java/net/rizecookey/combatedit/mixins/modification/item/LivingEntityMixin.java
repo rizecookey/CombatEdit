@@ -92,7 +92,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityEx
 
     @Inject(method = "getEquipmentChanges", at = @At("RETURN"))
     private void setLastKnownReload(CallbackInfoReturnable<Map<EquipmentSlot, ItemStack>> cir) {
-        if (getWorld().isClient()) {
+        if (getEntityWorld().isClient()) {
             return;
         }
         lastKnownReload = combatEdit$configurationManager().getLastAttributeReload();

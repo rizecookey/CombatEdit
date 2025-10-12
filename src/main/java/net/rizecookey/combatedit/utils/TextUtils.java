@@ -33,7 +33,7 @@ public final class TextUtils {
             additionalParts.add(value);
         }
 
-        if (text.getContent().getType().equals(TranslatableTextContent.TYPE)) {
+        if (text.getContent().getCodec().equals(TranslatableTextContent.CODEC)) {
             Arrays.stream(((TranslatableTextContent) text.getContent()).getArgs())
                     .filter(arg -> arg instanceof Text)
                     .forEach(arg -> additionalParts.add((Text) arg));
@@ -43,7 +43,7 @@ public final class TextUtils {
     }
 
     private static void setFallbacks(Text text) {
-        if (!text.getContent().getType().equals(TranslatableTextContent.TYPE)) {
+        if (!text.getContent().getCodec().equals(TranslatableTextContent.CODEC)) {
             return;
         }
 

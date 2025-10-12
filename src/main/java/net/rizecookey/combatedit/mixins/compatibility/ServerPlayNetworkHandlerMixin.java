@@ -28,6 +28,6 @@ public abstract class ServerPlayNetworkHandlerMixin extends ServerCommonNetworkH
 
     @Unique
     private boolean shouldPatchAttributes() {
-        return server.isDedicated() || !server.isHost(getPlayer().getGameProfile());
+        return server.isDedicated() || !server.isHost(getPlayer().getPlayerConfigEntry());
     }
 }

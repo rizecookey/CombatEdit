@@ -2,6 +2,7 @@ package net.rizecookey.combatedit.mixins.knockback;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.PlayerLikeEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
@@ -16,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Objects;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity {
+public abstract class PlayerEntityMixin extends PlayerLikeEntity {
     @Unique
     private ConfigurationManager configurationProvider;
 
@@ -31,7 +32,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;takeKnockback(DDD)V"))
     public void handleTakeKnockback(LivingEntity livingEntity, double speed, double xMovement, double zMovement) {
-        if (getWorld().isClient() || !configurationProvider.getConfiguration().getMiscOptions().is1_8KnockbackEnabled().orElse(false)) {
+        if (getEntityWorld().isClient() || !configurationProvider.getConfiguration().getMiscOptions().is1_8KnockbackEnabled().orElse(false)) {
             livingEntity.takeKnockback(speed, xMovement, zMovement);
             return;
         }

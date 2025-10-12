@@ -3,6 +3,7 @@ package net.rizecookey.combatedit.mixins.sound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.PlayerLikeEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -15,21 +16,21 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity implements LivingEntityExtension {
+public abstract class PlayerEntityMixin extends PlayerLikeEntity implements LivingEntityExtension {
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
     }
 
     @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/Entity;DDDLnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;)V"))
     public void disableAttackSounds(World world, Entity entity, double x, double y, double z, SoundEvent sound, SoundCategory category) {
-        if (getWorld().isClient() || shouldPlayAttackSound(sound)) {
+        if (getEntityWorld().isClient() || shouldPlayAttackSound(sound)) {
             world.playSound(entity, x, y, z, sound, category);
         }
     }
 
     @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/Entity;DDDLnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FF)V"))
     public void disableAttackSounds(World world, Entity entity, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch) {
-        if (getWorld().isClient() || shouldPlayAttackSound(sound)) {
+        if (getEntityWorld().isClient() || shouldPlayAttackSound(sound)) {
             world.playSound(entity, x, y, z, sound, category, volume, pitch);
         }
     }

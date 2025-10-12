@@ -8,12 +8,15 @@ import me.shedaniel.clothconfig2.gui.widget.DynamicEntryListWidget;
 import me.shedaniel.math.Color;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.gui.navigation.GuiNavigation;
 import net.minecraft.client.gui.navigation.GuiNavigationPath;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,7 +82,7 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
             inner.setScreen(listListEntry.getConfigScreen());
             inner.render(drawContext, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isSelected, delta);
             if (this.selected) {
-                drawContext.drawBorder(x - 16, y - 1, entryWidth + 17, entryHeight - 2, Color.ofRGB(127, 127, 127).getColor());
+                drawContext.drawStrokedRectangle(x - 16, y - 1, entryWidth + 17, entryHeight - 2, Color.ofRGB(127, 127, 127).getColor());
             }
 
             inner.lateRender(drawContext, mouseX, mouseY, delta);
@@ -102,18 +105,18 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            return inner.mouseClicked(mouseX, mouseY, button);
+        public boolean mouseClicked(Click event, boolean doubleClick) {
+            return inner.mouseClicked(event, doubleClick);
         }
 
         @Override
-        public boolean mouseReleased(double mouseX, double mouseY, int button) {
-            return inner.mouseReleased(mouseX, mouseY, button);
+        public boolean mouseReleased(Click event) {
+            return inner.mouseReleased(event);
         }
 
         @Override
-        public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-            return inner.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        public boolean mouseDragged(Click event, double f, double g) {
+            return inner.mouseDragged(event, f, g);
         }
 
         @Override
@@ -122,18 +125,18 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
         }
 
         @Override
-        public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-            return inner.keyReleased(keyCode, scanCode, modifiers);
+        public boolean keyReleased(KeyInput event) {
+            return inner.keyReleased(event);
         }
 
         @Override
-        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            return inner.keyPressed(keyCode, scanCode, modifiers);
+        public boolean keyPressed(KeyInput event) {
+            return inner.keyPressed(event);
         }
 
         @Override
-        public boolean charTyped(char chr, int modifiers) {
-            return inner.charTyped(chr, modifiers);
+        public boolean charTyped(CharInput event) {
+            return inner.charTyped(event);
         }
 
         @Override
@@ -216,11 +219,6 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
         @Override
         public ScreenRect getNavigationFocus() {
             return inner.getNavigationFocus();
-        }
-
-        @Override
-        public boolean isNarratable() {
-            return inner.isNarratable();
         }
 
         @Override

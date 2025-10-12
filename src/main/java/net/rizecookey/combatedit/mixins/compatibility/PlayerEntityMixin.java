@@ -2,6 +2,7 @@ package net.rizecookey.combatedit.mixins.compatibility;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.PlayerLikeEntity;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
@@ -11,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity implements LivingEntityExtension {
+public abstract class PlayerEntityMixin extends PlayerLikeEntity implements LivingEntityExtension {
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
     }

@@ -10,7 +10,7 @@
   ],
   "contact": {
     "sources": "https://github.com/rizecookey/CombatEdit",
-    "homepage": "https://github.com/rizecookey/CombatEdit/blob/master/README.md",
+    "homepage": "https://github.com/rizecookey/CombatEdit/blob/main/README.md",
     "issues": "https://github.com/rizecookey/CombatEdit/issues"
   },
 
@@ -57,7 +57,7 @@
 
   "depends": {
     "fabricloader": ">=0.17.0",
-    "minecraft": ">=1.21.6 <=1.21.8",
+    "minecraft": ">=1.21.9 <=1.21.10",
     "java": ">=21"
   }
 }

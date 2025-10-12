@@ -94,6 +94,71 @@
         "override_default": true
       },
       {
+        "item_id": "minecraft:copper_sword",
+        "modifiers": [
+          {
+            "attribute": "minecraft:attack_damage",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_damage",
+            "value": 5.0,
+            "operation": "add_value"
+          }
+        ],
+        "override_default": true
+      },
+      {
+        "item_id": "minecraft:copper_shovel",
+        "modifiers": [
+          {
+            "attribute": "minecraft:attack_damage",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_damage",
+            "value": 2.0,
+            "operation": "add_value"
+          }
+        ],
+        "override_default": true
+      },
+      {
+        "item_id": "minecraft:copper_pickaxe",
+        "modifiers": [
+          {
+            "attribute": "minecraft:attack_damage",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_damage",
+            "value": 3.0,
+            "operation": "add_value"
+          }
+        ],
+        "override_default": true
+      },
+      {
+        "item_id": "minecraft:copper_axe",
+        "modifiers": [
+          {
+            "attribute": "minecraft:attack_damage",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_damage",
+            "value": 4.0,
+            "operation": "add_value"
+          }
+        ],
+        "override_default": true
+      },
+      {
+        "item_id": "minecraft:copper_hoe",
+        "modifiers": [
+          {
+            "attribute": "minecraft:attack_damage",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_damage",
+            "value": 3.0,
+            "operation": "add_value"
+          }
+        ],
+        "override_default": true
+      },
+      {
         "item_id": "minecraft:stone_sword",
         "modifiers": [
           {

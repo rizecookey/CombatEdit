@@ -1,6 +1,6 @@
 package net.rizecookey.combatedit.configuration.provider;
 
-import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
+import net.fabricmc.fabric.api.resource.v1.reloader.SimpleResourceReloader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
@@ -17,7 +17,6 @@ import net.rizecookey.combatedit.configuration.representation.ItemComponents;
 import net.rizecookey.combatedit.configuration.representation.MutableConfiguration;
 import net.rizecookey.combatedit.modification.PropertyModifier;
 import net.rizecookey.combatedit.utils.ItemStackAttributeHelper;
-import net.rizecookey.combatedit.utils.Pair;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,13 +24,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 import static net.rizecookey.combatedit.CombatEdit.LOGGER;
 
-public class ConfigurationManager implements SimpleResourceReloadListener<ConfigurationManager.LoadResult> {
+public class ConfigurationManager extends SimpleResourceReloader<ConfigurationManager.LoadResult> {
     private static ConfigurationManager INSTANCE;
 
     private final CombatEdit combatEdit;
@@ -58,64 +55,52 @@ public class ConfigurationManager implements SimpleResourceReloadListener<Config
     }
 
     @Override
-    public Identifier getFabricId() {
-        return Identifier.tryParse("combatedit", "server_configuration_provider");
+    protected LoadResult prepare(Store store) {
+        ResourceManager manager = store.getResourceManager();
+        var settings = loadSettings(combatEdit);
+        var baseProfiles = loadBaseProfiles(manager);
+        Identifier selectedProfile = settings.getSelectedBaseProfile();
+        if (!baseProfiles.containsKey(selectedProfile)) {
+            LOGGER.error("No base profile with id {} found! Using default profile.", settings.getSelectedBaseProfile());
+            selectedProfile = Settings.loadDefault().getSelectedBaseProfile();
+            if (!baseProfiles.containsKey(selectedProfile)) {
+                LOGGER.error("Failed to load CombatEdit configuration resources: Default base profile does not exist");
+                return null;
+            }
+        }
+        LOGGER.info("Selected base profile: {}", selectedProfile.toString());
+        var profileExtensions = loadProfileExtensions(manager, selectedProfile);
+
+        return new LoadResult(settings, baseProfiles, profileExtensions);
+    }
+
+    @Override
+    protected void apply(LoadResult prepared, Store store) {
+        if (prepared == null) {
+            updateConfiguration(null);
+            return;
+        }
+
+        baseProfiles = prepared.baseProfiles();
+
+        List<ProfileExtension> withCustom = new ArrayList<>(prepared.profileExtensions());
+        registeredProfileExtensions.getOrDefault(prepared.settings().getSelectedBaseProfile(), new ArrayList<>())
+                .forEach(provider -> withCustom.add(provider.provideExtension(
+                        prepared.baseProfiles().get(prepared.settings().getSelectedBaseProfile()),
+                        getModifier()
+                )));
+
+        updateConfiguration(new LoadResult(prepared.settings(), prepared.baseProfiles(), withCustom));
+        boolean modificationsChanged = !Objects.equals(oldItemAttributes, configuration.getItemAttributes())
+                || !Objects.equals(oldEntityAttributes, configuration.getEntityAttributes())
+                || !Objects.equals(oldItemComponents, configuration.getItemComponents());
+
+        if (modificationsChanged) {
+            adjustModifications();
+        }
     }
 
     public record LoadResult(Settings settings, Map<Identifier, BaseProfile> baseProfiles, List<ProfileExtension> profileExtensions) {}
-
-    @Override
-    public CompletableFuture<LoadResult> load(ResourceManager manager, Executor executor) {
-        var settingsLoader = CompletableFuture.supplyAsync(() -> loadSettings(combatEdit), executor);
-        var baseProfileLoader = CompletableFuture.supplyAsync(() -> loadBaseProfiles(manager), executor);
-        var profileLoader = settingsLoader.thenCombineAsync(baseProfileLoader, (settings, baseProfiles) -> {
-            Identifier selectedProfile = settings.getSelectedBaseProfile();
-            if (!baseProfiles.containsKey(selectedProfile)) {
-                LOGGER.error("No base profile with id {} found! Using default profile.", settings.getSelectedBaseProfile());
-                selectedProfile = Settings.loadDefault().getSelectedBaseProfile();
-                if (!baseProfiles.containsKey(selectedProfile)) {
-                    throw new IllegalStateException("Default base profile does not exist");
-                }
-            }
-            LOGGER.info("Selected base profile: {}", selectedProfile.toString());
-
-            return new Pair<>(baseProfiles, loadProfileExtensions(manager, selectedProfile));
-        }, executor);
-
-        return profileLoader.thenCombineAsync(settingsLoader, (profile, settings) -> new LoadResult(settings, profile.first(), profile.second()), executor)
-                .exceptionallyAsync(e -> {
-                    LOGGER.error("Failed to load CombatEdit configuration resources", e);
-                    return null;
-                    }, executor);
-    }
-
-    @Override
-    public CompletableFuture<Void> apply(LoadResult data, ResourceManager manager, Executor executor) {
-        return CompletableFuture.runAsync(() -> {
-            if (data == null) {
-                updateConfiguration(null);
-                return;
-            }
-
-            baseProfiles = data.baseProfiles();
-
-            List<ProfileExtension> withCustom = new ArrayList<>(data.profileExtensions());
-            registeredProfileExtensions.getOrDefault(data.settings().getSelectedBaseProfile(), new ArrayList<>())
-                    .forEach(provider -> withCustom.add(provider.provideExtension(
-                            data.baseProfiles().get(data.settings().getSelectedBaseProfile()),
-                            getModifier()
-                    )));
-
-            updateConfiguration(new LoadResult(data.settings(), data.baseProfiles(), withCustom));
-            boolean modificationsChanged = !Objects.equals(oldItemAttributes, configuration.getItemAttributes())
-                    || !Objects.equals(oldEntityAttributes, configuration.getEntityAttributes())
-                    || !Objects.equals(oldItemComponents, configuration.getItemComponents());
-
-            if (modificationsChanged) {
-                adjustModifications();
-            }
-        }, executor);
-    }
 
     public CombatEdit getCombatEdit() {
         return combatEdit;

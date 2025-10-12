@@ -30,7 +30,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @ModifyArg(method = "takeKnockback", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(DDD)V"), index = 1)
     public double changeKnockbackY(double y, @Local(ordinal = 0, argsOnly = true) double strength, @Local(ordinal = 0) Vec3d vec3d) {
-        if (getWorld().isClient() || !configurationProvider.getConfiguration().getMiscOptions().is1_8KnockbackEnabled().orElse(false)) {
+        if (getEntityWorld().isClient() || !configurationProvider.getConfiguration().getMiscOptions().is1_8KnockbackEnabled().orElse(false)) {
             return y;
         }
 
