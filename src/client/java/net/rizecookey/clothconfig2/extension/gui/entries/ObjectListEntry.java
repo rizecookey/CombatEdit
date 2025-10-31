@@ -4,8 +4,7 @@ import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.gui.entries.MultiElementListEntry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.text.Text;
-
+import net.minecraft.network.chat.Component;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +13,7 @@ import java.util.Optional;
 public class ObjectListEntry<T> extends MultiElementListEntry<T> {
     private final ObjectAdapter<T> adapter;
 
-    public ObjectListEntry(Text fieldName, List<AbstractConfigListEntry<?>> fieldEntries, ObjectAdapter<T> adapter, boolean defaultExpanded) {
+    public ObjectListEntry(Component fieldName, List<AbstractConfigListEntry<?>> fieldEntries, ObjectAdapter<T> adapter, boolean defaultExpanded) {
         super(fieldName, null, fieldEntries, true);
         this.setExpanded(defaultExpanded);
         this.adapter = adapter;

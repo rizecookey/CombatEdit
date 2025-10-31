@@ -1,9 +1,9 @@
 package net.rizecookey.combatedit.extension;
 
-import net.minecraft.component.ComponentMap;
+import net.minecraft.core.component.DataComponentMap;
 
 public interface ComponentMapBuilderExtension {
-    default ComponentMap.Builder combatEdit$preventDynamicWrap() {
+    default DataComponentMap.Builder combatEdit$preventDynamicWrap() {
         throw new UnsupportedOperationException("Extension not applied correctly");
     }
 }

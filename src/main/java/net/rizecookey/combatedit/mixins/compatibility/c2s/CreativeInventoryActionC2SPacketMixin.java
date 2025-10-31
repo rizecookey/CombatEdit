@@ -1,11 +1,11 @@
 package net.rizecookey.combatedit.mixins.compatibility.c2s;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.listener.ServerPlayPacketListener;
-import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerSyncHandler;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.network.protocol.game.ServerGamePacketListener;
+import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerSynchronizer;
+import net.minecraft.world.item.ItemStack;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.extension.CreativeInventoryActionC2SPacketExtension;
 import net.rizecookey.combatedit.mixins.compatibility.ScreenHandlerAccessor;
@@ -18,36 +18,36 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(CreativeInventoryActionC2SPacket.class)
+@Mixin(ServerboundSetCreativeModeSlotPacket.class)
 public abstract class CreativeInventoryActionC2SPacketMixin implements CreativeInventoryActionC2SPacketExtension {
-    @Shadow @Final @Mutable private ItemStack stack;
+    @Shadow @Final @Mutable private ItemStack itemStack;
 
-    @Shadow @Final private short slot;
+    @Shadow @Final private short slotNum;
     @Unique
     private boolean hadPacketModification;
 
-    @Inject(method = "apply(Lnet/minecraft/network/listener/ServerPlayPacketListener;)V", at = @At("HEAD"))
-    public void preApply(ServerPlayPacketListener serverPlayPacketListener, CallbackInfo ci) {
-        var unmodifiedStack = ConfigurationManager.getInstance().getAttributeHelper().reverseDisplayModifiers(this.stack);
-        this.hadPacketModification = unmodifiedStack != this.stack;
-        this.stack = unmodifiedStack;
+    @Inject(method = "handle(Lnet/minecraft/network/protocol/game/ServerGamePacketListener;)V", at = @At("HEAD"))
+    public void preApply(ServerGamePacketListener serverPlayPacketListener, CallbackInfo ci) {
+        var unmodifiedStack = ConfigurationManager.getInstance().getAttributeHelper().reverseDisplayModifiers(this.itemStack);
+        this.hadPacketModification = unmodifiedStack != this.itemStack;
+        this.itemStack = unmodifiedStack;
     }
 
-    @Inject(method = "apply(Lnet/minecraft/network/listener/ServerPlayPacketListener;)V", at = @At("TAIL"))
-    public void postApply(ServerPlayPacketListener serverPlayPacketListener, CallbackInfo ci) {
-        if (hadPacketModification || slot < 1 || slot > 45) {
+    @Inject(method = "handle(Lnet/minecraft/network/protocol/game/ServerGamePacketListener;)V", at = @At("TAIL"))
+    public void postApply(ServerGamePacketListener serverPlayPacketListener, CallbackInfo ci) {
+        if (hadPacketModification || slotNum < 1 || slotNum > 45) {
             return;
         }
 
-        ItemStack displayModified = ConfigurationManager.getInstance().getAttributeHelper().getDisplayModified(this.stack);
-        if (displayModified == stack || !(serverPlayPacketListener instanceof ServerPlayNetworkHandler networkHandler)) {
+        ItemStack displayModified = ConfigurationManager.getInstance().getAttributeHelper().getDisplayModified(this.itemStack);
+        if (displayModified == itemStack || !(serverPlayPacketListener instanceof ServerGamePacketListenerImpl networkHandler)) {
             return;
         }
 
-        ScreenHandler screenHandler = networkHandler.player.playerScreenHandler;
-        ScreenHandlerSyncHandler syncHandler = ((ScreenHandlerAccessor) screenHandler).getSyncHandler();
+        AbstractContainerMenu screenHandler = networkHandler.player.inventoryMenu;
+        ContainerSynchronizer syncHandler = ((ScreenHandlerAccessor) screenHandler).getSynchronizer();
         if (syncHandler != null) {
-            syncHandler.updateSlot(screenHandler, slot, displayModified);
+            syncHandler.sendSlotChange(screenHandler, slotNum, displayModified);
         }
     }
 

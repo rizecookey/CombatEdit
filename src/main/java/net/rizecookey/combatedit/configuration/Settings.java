@@ -4,7 +4,7 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonWriter;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 import net.rizecookey.combatedit.configuration.representation.MutableConfiguration;
 
@@ -21,11 +21,11 @@ public class Settings {
     public static final int CURRENT_VERSION = 1;
 
     private int settingsVersion;
-    private Identifier selectedBaseProfile;
+    private ResourceLocation selectedBaseProfile;
     private ClientOnly client;
     private MutableConfiguration configurationOverrides;
 
-    public Settings(int settingsVersion, Identifier selectedBaseProfile, ClientOnly client, MutableConfiguration configurationOverrides) {
+    public Settings(int settingsVersion, ResourceLocation selectedBaseProfile, ClientOnly client, MutableConfiguration configurationOverrides) {
         this.settingsVersion = settingsVersion;
         this.selectedBaseProfile = selectedBaseProfile;
         this.client = client;
@@ -41,7 +41,7 @@ public class Settings {
         return settingsVersion;
     }
 
-    public Identifier getSelectedBaseProfile() {
+    public ResourceLocation getSelectedBaseProfile() {
         return selectedBaseProfile;
     }
 
@@ -65,7 +65,7 @@ public class Settings {
         this.settingsVersion = settingsVersion;
     }
 
-    public void setSelectedBaseProfile(Identifier selectedBaseProfile) {
+    public void setSelectedBaseProfile(ResourceLocation selectedBaseProfile) {
         this.selectedBaseProfile = selectedBaseProfile;
     }
 

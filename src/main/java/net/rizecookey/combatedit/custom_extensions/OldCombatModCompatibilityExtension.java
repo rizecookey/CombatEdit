@@ -1,10 +1,10 @@
 package net.rizecookey.combatedit.custom_extensions;
 
-import net.minecraft.component.type.AttributeModifiersComponent;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.rizecookey.combatedit.api.CombatEditApi;
 import net.rizecookey.combatedit.api.CombatEditInitListener;
 import net.rizecookey.combatedit.api.extension.DefaultsSupplier;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class OldCombatModCompatibilityExtension implements CombatEditInitListener {
     @Override
     public void onCombatEditInit(CombatEditApi combatEditApi) {
-        combatEditApi.registerProfileExtension(Identifier.of("combatedit", "1_8_combat"), this::provideExtension);
+        combatEditApi.registerProfileExtension(ResourceLocation.fromNamespaceAndPath("combatedit", "1_8_combat"), this::provideExtension);
     }
 
     /**
@@ -33,29 +33,29 @@ public class OldCombatModCompatibilityExtension implements CombatEditInitListene
 
         Set<Item> modifiedItems = baseProfile.getConfiguration().getItemAttributes()
                 .stream()
-                .map(attr -> Registries.ITEM.get(attr.getItemId()))
+                .map(attr -> BuiltInRegistries.ITEM.getValue(attr.getItemId()))
                 .collect(Collectors.toSet());
 
-        Registries.ITEM.stream()
+        BuiltInRegistries.ITEM.stream()
                 .filter(item -> !modifiedItems.contains(item)
-                        && !AttributeModifiersComponent.DEFAULT.equals(defaultsSupplier.items().getVanillaAttributeModifiers(item)))
+                        && !ItemAttributeModifiers.EMPTY.equals(defaultsSupplier.items().getVanillaAttributeModifiers(item)))
                 .forEach(item -> {
-                    AttributeModifiersComponent component = defaultsSupplier.items().getVanillaAttributeModifiers(item);
+                    ItemAttributeModifiers component = defaultsSupplier.items().getVanillaAttributeModifiers(item);
                     assert component != null;
-                    if (component.modifiers().stream().noneMatch(entry -> entry.attribute().equals(EntityAttributes.ATTACK_SPEED))) {
+                    if (component.modifiers().stream().noneMatch(entry -> entry.attribute().equals(Attributes.ATTACK_SPEED))) {
                         return;
                     }
 
                     List<ItemAttributes.ModifierEntry> newEntries = component.modifiers().stream()
-                            .filter(entry -> !entry.attribute().equals(EntityAttributes.ATTACK_SPEED))
+                            .filter(entry -> !entry.attribute().equals(Attributes.ATTACK_SPEED))
                             .map(entry -> new ItemAttributes.ModifierEntry(
-                                    entry.attribute().getKey().orElseThrow().getValue(),
+                                    entry.attribute().unwrapKey().orElseThrow().location(),
                                     entry.modifier().id(),
-                                    entry.modifier().value(),
+                                    entry.modifier().amount(),
                                     entry.modifier().operation(),
                                     entry.slot())).toList();
 
-                    modifications.add(new ItemAttributes(Registries.ITEM.getId(item), newEntries, true));
+                    modifications.add(new ItemAttributes(BuiltInRegistries.ITEM.getKey(item), newEntries, true));
                 });
 
         return new ProfileExtension(new MutableConfiguration(modifications, null, null, null), Integer.MIN_VALUE);

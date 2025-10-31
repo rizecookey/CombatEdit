@@ -1,10 +1,10 @@
 package net.rizecookey.combatedit.mixins.extension;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.core.Holder;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtensions;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
@@ -16,10 +16,10 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import java.util.Map;
 
-@Mixin(DefaultAttributeContainer.class)
+@Mixin(AttributeSupplier.class)
 public class DefaultAttributeContainerMixin implements DefaultAttributeContainerExtensions {
     @Shadow @Final @Mutable
-    private Map<RegistryEntry<EntityAttribute>, EntityAttributeInstance> instances;
+    private Map<Holder<Attribute>, AttributeInstance> instances;
     @Unique
     private boolean combatEdit$sendAllAttributes = false;
 
@@ -34,12 +34,12 @@ public class DefaultAttributeContainerMixin implements DefaultAttributeContainer
     }
 
     @Override
-    public Map<RegistryEntry<EntityAttribute>, EntityAttributeInstance> combatEdit$getInstances() {
+    public Map<Holder<Attribute>, AttributeInstance> combatEdit$getInstances() {
         return instances;
     }
 
-    @ModifyExpressionValue(method = "*", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/attribute/DefaultAttributeContainer;instances:Ljava/util/Map;", opcode = Opcodes.GETFIELD))
-    private Map<RegistryEntry<EntityAttribute>, EntityAttributeInstance> useGetter(Map<RegistryEntry<EntityAttribute>, EntityAttributeInstance> previous) {
+    @ModifyExpressionValue(method = "*", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/ai/attributes/AttributeSupplier;instances:Ljava/util/Map;", opcode = Opcodes.GETFIELD))
+    private Map<Holder<Attribute>, AttributeInstance> useGetter(Map<Holder<Attribute>, AttributeInstance> previous) {
         return combatEdit$getInstances();
     }
 }

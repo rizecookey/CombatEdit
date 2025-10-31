@@ -1,6 +1,6 @@
 package net.rizecookey.combatedit.api;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.rizecookey.combatedit.api.extension.ProfileExtensionProvider;
 
 /**
@@ -12,5 +12,5 @@ public interface CombatEditApi {
      * @param profileId         The identifier of the base profile being extended
      * @param extensionProvider An extension provider that provides the extension during resource reloads
      */
-    void registerProfileExtension(Identifier profileId, ProfileExtensionProvider extensionProvider);
+    void registerProfileExtension(ResourceLocation profileId, ProfileExtensionProvider extensionProvider);
 }

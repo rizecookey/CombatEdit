@@ -2,7 +2,7 @@ package net.rizecookey.combatedit.client.event;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 public final class ClientEvents {
     private ClientEvents() {}
@@ -15,6 +15,6 @@ public final class ClientEvents {
 
     @FunctionalInterface
     public interface ClientFinishedLoading {
-        void onClientFinishedLoading(MinecraftClient client);
+        void onClientFinishedLoading(Minecraft client);
     }
 }

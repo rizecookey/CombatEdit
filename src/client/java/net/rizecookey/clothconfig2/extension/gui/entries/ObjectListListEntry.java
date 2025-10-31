@@ -8,16 +8,17 @@ import me.shedaniel.clothconfig2.gui.widget.DynamicEntryListWidget;
 import me.shedaniel.math.Color;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.ScreenRect;
-import net.minecraft.client.gui.navigation.GuiNavigation;
-import net.minecraft.client.gui.navigation.GuiNavigationPath;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.ComponentPath;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.navigation.FocusNavigationEvent;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ import java.util.function.Supplier;
 public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListListEntry.ObjectListCell<T>, ObjectListListEntry<T>> {
     private final List<ReferenceProvider<?>> referencableEntries = new ArrayList<>();
 
-    public ObjectListListEntry(Text fieldName, List<T> value, boolean defaultExpanded, Supplier<Optional<Text[]>> tooltipSupplier, Consumer<List<T>> saveConsumer, Supplier<List<T>> defaultValue, Text resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront, BiFunction<T, ObjectListListEntry<T>, ObjectListEntry<T>> createNewCell) {
+    public ObjectListListEntry(Component fieldName, List<T> value, boolean defaultExpanded, Supplier<Optional<Component[]>> tooltipSupplier, Consumer<List<T>> saveConsumer, Supplier<List<T>> defaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront, BiFunction<T, ObjectListListEntry<T>, ObjectListEntry<T>> createNewCell) {
         super(fieldName, value, defaultExpanded, tooltipSupplier, saveConsumer, defaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront, (t, nestedListListEntry) -> new ObjectListCell<>(t, nestedListListEntry, createNewCell.apply(t, nestedListListEntry)));
         this.cells.forEach(cell -> this.referencableEntries.add(cell.inner));
         setReferenceProviderEntries(referencableEntries);
@@ -65,7 +66,7 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
         }
 
         @Override
-        public Optional<Text> getError() {
+        public Optional<Component> getError() {
             return inner.getError();
         }
 
@@ -77,12 +78,12 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
 
         @SuppressWarnings("unchecked")
         @Override
-        public void render(DrawContext drawContext, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
+        public void render(GuiGraphics drawContext, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
             inner.setParent(((DynamicEntryListWidget<AbstractConfigEntry<T>>) (Object) listListEntry.getParent()));
             inner.setScreen(listListEntry.getConfigScreen());
             inner.render(drawContext, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isSelected, delta);
             if (this.selected) {
-                drawContext.drawStrokedRectangle(x - 16, y - 1, entryWidth + 17, entryHeight - 2, Color.ofRGB(127, 127, 127).getColor());
+                drawContext.submitOutline(x - 16, y - 1, entryWidth + 17, entryHeight - 2, Color.ofRGB(127, 127, 127).getColor());
             }
 
             inner.lateRender(drawContext, mouseX, mouseY, delta);
@@ -90,32 +91,32 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
 
         @Nullable
         @Override
-        public Element getFocused() {
+        public GuiEventListener getFocused() {
             return inner.getFocused();
         }
 
         @Override
-        public void setFocused(@Nullable Element focused) {
+        public void setFocused(@Nullable GuiEventListener focused) {
             inner.setFocused(focused);
         }
 
         @Override
-        public Optional<Element> hoveredElement(double mouseX, double mouseY) {
-            return inner.hoveredElement(mouseX, mouseY);
+        public @NotNull Optional<GuiEventListener> getChildAt(double mouseX, double mouseY) {
+            return inner.getChildAt(mouseX, mouseY);
         }
 
         @Override
-        public boolean mouseClicked(Click event, boolean doubleClick) {
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
             return inner.mouseClicked(event, doubleClick);
         }
 
         @Override
-        public boolean mouseReleased(Click event) {
+        public boolean mouseReleased(MouseButtonEvent event) {
             return inner.mouseReleased(event);
         }
 
         @Override
-        public boolean mouseDragged(Click event, double f, double g) {
+        public boolean mouseDragged(MouseButtonEvent event, double f, double g) {
             return inner.mouseDragged(event, f, g);
         }
 
@@ -125,17 +126,17 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
         }
 
         @Override
-        public boolean keyReleased(KeyInput event) {
+        public boolean keyReleased(KeyEvent event) {
             return inner.keyReleased(event);
         }
 
         @Override
-        public boolean keyPressed(KeyInput event) {
+        public boolean keyPressed(KeyEvent event) {
             return inner.keyPressed(event);
         }
 
         @Override
-        public boolean charTyped(CharInput event) {
+        public boolean charTyped(CharacterEvent event) {
             return inner.charTyped(event);
         }
 
@@ -160,18 +161,18 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
         }
 
         @Override
-        public void appendNarrations(NarrationMessageBuilder builder) {
-            inner.appendNarrations(builder);
+        public void updateNarration(NarrationElementOutput builder) {
+            inner.updateNarration(builder);
         }
 
         @Override
-        public List<? extends Element> children() {
+        public @NotNull List<? extends GuiEventListener> children() {
             return Collections.singletonList(inner);
         }
 
         @Override
-        public SelectionType getType() {
-            return inner.getType();
+        public @NotNull NarrationPriority narrationPriority() {
+            return inner.narrationPriority();
         }
 
         @Override
@@ -206,24 +207,24 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
 
         @Nullable
         @Override
-        public GuiNavigationPath getFocusedPath() {
-            return inner.getFocusedPath();
+        public ComponentPath getCurrentFocusPath() {
+            return inner.getCurrentFocusPath();
         }
 
         @Nullable
         @Override
-        public GuiNavigationPath getNavigationPath(GuiNavigation navigation) {
-            return inner.getNavigationPath(navigation);
+        public ComponentPath nextFocusPath(FocusNavigationEvent navigation) {
+            return inner.nextFocusPath(navigation);
         }
 
         @Override
-        public ScreenRect getNavigationFocus() {
-            return inner.getNavigationFocus();
+        public @NotNull ScreenRectangle getRectangle() {
+            return inner.getRectangle();
         }
 
         @Override
-        public int getNavigationOrder() {
-            return inner.getNavigationOrder();
+        public int getTabOrderGroup() {
+            return inner.getTabOrderGroup();
         }
     }
 }

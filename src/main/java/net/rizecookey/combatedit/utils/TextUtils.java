@@ -1,24 +1,23 @@
 package net.rizecookey.combatedit.utils;
 
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableTextContent;
-import net.minecraft.util.Language;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 
 public final class TextUtils {
     private TextUtils() {
     }
 
-    public static Text fallBackToServerTranslation(Text text) {
-        Deque<Text> parts = new ArrayDeque<>(List.of(text));
+    public static Component fallBackToServerTranslation(Component text) {
+        Deque<Component> parts = new ArrayDeque<>(List.of(text));
         while (!parts.isEmpty()) {
-            Text part = parts.removeFirst();
+            Component part = parts.removeFirst();
             setFallbacks(part);
             parts.addAll(additionalParts(part));
         }
@@ -26,30 +25,30 @@ public final class TextUtils {
         return text;
     }
 
-    private static List<Text> additionalParts(Text text) {
-        List<Text> additionalParts = new ArrayList<>(text.getSiblings());
+    private static List<Component> additionalParts(Component text) {
+        List<Component> additionalParts = new ArrayList<>(text.getSiblings());
         var hoverEvent = text.getStyle().getHoverEvent();
-        if (hoverEvent instanceof HoverEvent.ShowText(Text value)) {
+        if (hoverEvent instanceof HoverEvent.ShowText(Component value)) {
             additionalParts.add(value);
         }
 
-        if (text.getContent().getCodec().equals(TranslatableTextContent.CODEC)) {
-            Arrays.stream(((TranslatableTextContent) text.getContent()).getArgs())
-                    .filter(arg -> arg instanceof Text)
-                    .forEach(arg -> additionalParts.add((Text) arg));
+        if (text.getContents().codec().equals(TranslatableContents.MAP_CODEC)) {
+            Arrays.stream(((TranslatableContents) text.getContents()).getArgs())
+                    .filter(arg -> arg instanceof Component)
+                    .forEach(arg -> additionalParts.add((Component) arg));
         }
 
         return additionalParts;
     }
 
-    private static void setFallbacks(Text text) {
-        if (!text.getContent().getCodec().equals(TranslatableTextContent.CODEC)) {
+    private static void setFallbacks(Component text) {
+        if (!text.getContents().codec().equals(TranslatableContents.MAP_CODEC)) {
             return;
         }
 
-        TranslatableTextContent textContent = (TranslatableTextContent) text.getContent();
+        TranslatableContents textContent = (TranslatableContents) text.getContents();
         Language language = Language.getInstance();
-        String fallback = language.get(textContent.getKey());
+        String fallback = language.getOrDefault(textContent.getKey());
         textContent.combatEdit$setFallback(fallback);
     }
 }

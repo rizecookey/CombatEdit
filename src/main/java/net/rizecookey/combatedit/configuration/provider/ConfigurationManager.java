@@ -1,9 +1,9 @@
 package net.rizecookey.combatedit.configuration.provider;
 
 import net.fabricmc.fabric.api.resource.v1.reloader.SimpleResourceReloader;
-import net.minecraft.resource.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.api.extension.ProfileExtensionProvider;
 import net.rizecookey.combatedit.configuration.BaseProfile;
@@ -36,9 +36,9 @@ public class ConfigurationManager extends SimpleResourceReloader<ConfigurationMa
     private Configuration configuration;
     private final ItemStackAttributeHelper attributeHelper;
     private final PropertyModifier propertyModifier;
-    private final Map<Identifier, List<ProfileExtensionProvider>> registeredProfileExtensions;
+    private final Map<ResourceLocation, List<ProfileExtensionProvider>> registeredProfileExtensions;
 
-    private Map<Identifier, BaseProfile> baseProfiles;
+    private Map<ResourceLocation, BaseProfile> baseProfiles;
 
     private List<EntityAttributes> oldEntityAttributes;
     private List<ItemAttributes> oldItemAttributes;
@@ -55,11 +55,11 @@ public class ConfigurationManager extends SimpleResourceReloader<ConfigurationMa
     }
 
     @Override
-    protected LoadResult prepare(Store store) {
-        ResourceManager manager = store.getResourceManager();
+    protected LoadResult prepare(SharedState store) {
+        ResourceManager manager = store.resourceManager();
         var settings = loadSettings(combatEdit);
         var baseProfiles = loadBaseProfiles(manager);
-        Identifier selectedProfile = settings.getSelectedBaseProfile();
+        ResourceLocation selectedProfile = settings.getSelectedBaseProfile();
         if (!baseProfiles.containsKey(selectedProfile)) {
             LOGGER.error("No base profile with id {} found! Using default profile.", settings.getSelectedBaseProfile());
             selectedProfile = Settings.loadDefault().getSelectedBaseProfile();
@@ -75,7 +75,7 @@ public class ConfigurationManager extends SimpleResourceReloader<ConfigurationMa
     }
 
     @Override
-    protected void apply(LoadResult prepared, Store store) {
+    protected void apply(LoadResult prepared, SharedState store) {
         if (prepared == null) {
             updateConfiguration(null);
             return;
@@ -100,7 +100,7 @@ public class ConfigurationManager extends SimpleResourceReloader<ConfigurationMa
         }
     }
 
-    public record LoadResult(Settings settings, Map<Identifier, BaseProfile> baseProfiles, List<ProfileExtension> profileExtensions) {}
+    public record LoadResult(Settings settings, Map<ResourceLocation, BaseProfile> baseProfiles, List<ProfileExtension> profileExtensions) {}
 
     public CombatEdit getCombatEdit() {
         return combatEdit;
@@ -122,7 +122,7 @@ public class ConfigurationManager extends SimpleResourceReloader<ConfigurationMa
         return combatEdit.getCurrentServer();
     }
 
-    public Map<Identifier, BaseProfile> getBaseProfiles() {
+    public Map<ResourceLocation, BaseProfile> getBaseProfiles() {
         return baseProfiles;
     }
 
@@ -134,18 +134,18 @@ public class ConfigurationManager extends SimpleResourceReloader<ConfigurationMa
         return combatEdit.getCurrentSettings();
     }
 
-    private static Map<Identifier, BaseProfile> loadBaseProfiles(ResourceManager manager) {
+    private static Map<ResourceLocation, BaseProfile> loadBaseProfiles(ResourceManager manager) {
         var result = BaseProfile.find(manager);
         LOGGER.info("Found {} base profiles: {}", result.size(),
                 result.keySet()
                         .stream()
-                        .map(Identifier::toString)
+                        .map(ResourceLocation::toString)
                         .collect(Collectors.joining(", ")));
 
         return result;
     }
 
-    private static List<ProfileExtension> loadProfileExtensions(ResourceManager manager, Identifier baseProfileSelected) {
+    private static List<ProfileExtension> loadProfileExtensions(ResourceManager manager, ResourceLocation baseProfileSelected) {
         var result = ProfileExtension.findForProfile(manager, baseProfileSelected);
         LOGGER.info("Found {} base profile extensions for {}", result.size(), baseProfileSelected.toString());
 
@@ -180,7 +180,7 @@ public class ConfigurationManager extends SimpleResourceReloader<ConfigurationMa
         LOGGER.info("Adjusted attribute modifications.");
     }
 
-    public void registerProfileExtension(Identifier profileId, ProfileExtensionProvider extensionProvider) {
+    public void registerProfileExtension(ResourceLocation profileId, ProfileExtensionProvider extensionProvider) {
         this.registeredProfileExtensions.computeIfAbsent(profileId, key -> new ArrayList<>()).add(extensionProvider);
     }
 

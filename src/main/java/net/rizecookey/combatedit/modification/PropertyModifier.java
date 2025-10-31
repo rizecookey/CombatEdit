@@ -1,18 +1,18 @@
 package net.rizecookey.combatedit.modification;
 
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.ComponentType;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.AttributeModifiersComponent;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.DefaultAttributeRegistry;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.TypeFilter;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.level.entity.EntityTypeTest;
 import net.rizecookey.combatedit.api.extension.DefaultsSupplier;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
@@ -52,14 +52,14 @@ public class PropertyModifier implements DefaultsSupplier {
         items.reloadModificationProvider();
     }
 
-    private void updateEntitiesAttributeContainers(EntityType<? extends LivingEntity> type, DefaultAttributeContainer previousDefaults) {
+    private void updateEntitiesAttributeContainers(EntityType<? extends LivingEntity> type, AttributeSupplier previousDefaults) {
         MinecraftServer server;
         if ((server = configurationProvider.getCurrentServer()) == null) {
             return;
         }
 
-        server.getWorlds()
-                .forEach(world -> world.getEntitiesByType(TypeFilter.instanceOf(LivingEntity.class), entity -> entity.getType().equals(type))
+        server.getAllLevels()
+                .forEach(world -> world.getEntities(EntityTypeTest.forClass(LivingEntity.class), entity -> entity.getType().equals(type))
                         .forEach(entity -> entity.getAttributes().combatEdit$patchWithNewDefaults(type, previousDefaults))
                 );
     }
@@ -70,8 +70,8 @@ public class PropertyModifier implements DefaultsSupplier {
             return;
         }
 
-        for (var player : currentServer.getPlayerManager().getPlayerList()) {
-            player.currentScreenHandler.updateToClient();
+        for (var player : currentServer.getPlayerList().getPlayers()) {
+            player.containerMenu.broadcastFullState();
         }
     }
 
@@ -93,8 +93,8 @@ public class PropertyModifier implements DefaultsSupplier {
         }
 
         @Override
-        public ComponentMap getVanillaComponents(Item item) {
-            var components = item.getComponents();
+        public DataComponentMap getVanillaComponents(Item item) {
+            var components = item.components();
             if (!(components instanceof DynamicComponentMap dynamicComponentMap)) {
                 return components;
             }
@@ -103,10 +103,10 @@ public class PropertyModifier implements DefaultsSupplier {
         }
 
         @Override
-        public AttributeModifiersComponent getVanillaAttributeModifiers(Item item) {
+        public ItemAttributeModifiers getVanillaAttributeModifiers(Item item) {
             var components = getVanillaComponents(item);
-            return Objects.requireNonNullElse(components.get(DataComponentTypes.ATTRIBUTE_MODIFIERS),
-                    AttributeModifiersComponent.DEFAULT);
+            return Objects.requireNonNullElse(components.get(DataComponents.ATTRIBUTE_MODIFIERS),
+                    ItemAttributeModifiers.EMPTY);
         }
 
         private void reloadModificationProvider() {
@@ -117,9 +117,9 @@ public class PropertyModifier implements DefaultsSupplier {
         @SuppressWarnings("unchecked")
         private void modify() {
             List<Item> incompatibles = null;
-            for (Item item : Registries.ITEM) {
-                Identifier id = Registries.ITEM.getId(item);
-                ComponentMap components = item.getComponents();
+            for (Item item : BuiltInRegistries.ITEM) {
+                ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
+                DataComponentMap components = item.components();
                 if (!(components instanceof DynamicComponentMap dynamicComponents)) {
                     if (!modificationProvider.shouldModifyAttributes(id, item) && !modificationProvider.shouldModifyDefaultComponents(id, item)) {
                         continue;
@@ -131,13 +131,13 @@ public class PropertyModifier implements DefaultsSupplier {
                     continue;
                 }
 
-                var builder = ComponentMap.builder().combatEdit$preventDynamicWrap();
+                var builder = DataComponentMap.builder().combatEdit$preventDynamicWrap();
                 modificationProvider.getComponents(id, item, dynamicComponents.getOriginal())
-                        .forEach(component -> builder.add((ComponentType<Object>) component.type(), component.value()));
+                        .forEach(component -> builder.set((DataComponentType<Object>) component.type(), component.value()));
 
                 if (modificationProvider.shouldModifyAttributes(id, item)) {
-                    var modifiers = modificationProvider.getAttributeModifiers(id, item, dynamicComponents.getOriginal().get(DataComponentTypes.ATTRIBUTE_MODIFIERS));
-                    builder.add(DataComponentTypes.ATTRIBUTE_MODIFIERS, modifiers);
+                    var modifiers = modificationProvider.getAttributeModifiers(id, item, dynamicComponents.getOriginal().get(DataComponents.ATTRIBUTE_MODIFIERS));
+                    builder.set(DataComponents.ATTRIBUTE_MODIFIERS, modifiers);
                 }
 
                 dynamicComponents.setExchangeable(builder.build());
@@ -157,8 +157,8 @@ public class PropertyModifier implements DefaultsSupplier {
         }
 
         @Override
-        public DefaultAttributeContainer getVanillaDefaultAttributes(EntityType<? extends LivingEntity> entityType) {
-            var defaultAttributes = DefaultAttributeRegistry.get(entityType);
+        public AttributeSupplier getVanillaDefaultAttributes(EntityType<? extends LivingEntity> entityType) {
+            var defaultAttributes = DefaultAttributes.getSupplier(entityType);
             if (!(defaultAttributes instanceof DynamicDefaultAttributeContainer dynamicDefaults)) {
                 return defaultAttributes;
             }
@@ -172,9 +172,9 @@ public class PropertyModifier implements DefaultsSupplier {
 
         private void modify() {
             List<EntityType<? extends LivingEntity>> incompatibles = null;
-            for (EntityType<? extends LivingEntity> type : DefaultAttributeRegistry.DEFAULT_ATTRIBUTE_REGISTRY.keySet()) {
-                Identifier id = Registries.ENTITY_TYPE.getId(type);
-                var defaults = DefaultAttributeRegistry.get(type);
+            for (EntityType<? extends LivingEntity> type : DefaultAttributes.SUPPLIERS.keySet()) {
+                ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+                var defaults = DefaultAttributes.getSupplier(type);
                 if (!(defaults instanceof DynamicDefaultAttributeContainer entry)) {
                     if (!modificationProvider.shouldModifyEntity(id, type)) {
                         continue;

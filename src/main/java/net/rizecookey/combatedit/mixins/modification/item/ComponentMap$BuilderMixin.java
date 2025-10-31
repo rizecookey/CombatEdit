@@ -1,7 +1,7 @@
 package net.rizecookey.combatedit.mixins.modification.item;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import net.minecraft.component.ComponentMap;
+import net.minecraft.core.component.DataComponentMap;
 import net.rizecookey.combatedit.extension.ComponentMapBuilderExtension;
 import net.rizecookey.combatedit.extension.DynamicComponentMap;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(ComponentMap.Builder.class)
+@Mixin(DataComponentMap.Builder.class)
 public abstract class ComponentMap$BuilderMixin implements ComponentMapBuilderExtension {
     @Unique
     private boolean combatEdit$preventDynamicWrap = false;
@@ -18,18 +18,18 @@ public abstract class ComponentMap$BuilderMixin implements ComponentMapBuilderEx
     @Unique private static final ThreadLocal<Boolean> COMBAT_EDIT$NO_DYNAMIC_WRAPPING = ThreadLocal.withInitial(() -> false);
 
     @Override
-    public ComponentMap.Builder combatEdit$preventDynamicWrap() {
+    public DataComponentMap.Builder combatEdit$preventDynamicWrap() {
         combatEdit$preventDynamicWrap = true;
-        return (ComponentMap.Builder) (Object) this;
+        return (DataComponentMap.Builder) (Object) this;
     }
 
-    @Inject(method = "build()Lnet/minecraft/component/ComponentMap;", at = @At(value = "INVOKE", target = "Lnet/minecraft/component/ComponentMap$Builder;build(Ljava/util/Map;)Lnet/minecraft/component/ComponentMap;"))
-    private void preventDynamicWrapOnBuild(CallbackInfoReturnable<ComponentMap> cir) {
+    @Inject(method = "build", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/component/DataComponentMap$Builder;buildFromMapTrusted(Ljava/util/Map;)Lnet/minecraft/core/component/DataComponentMap;"))
+    private void preventDynamicWrapOnBuild(CallbackInfoReturnable<DataComponentMap> cir) {
         COMBAT_EDIT$NO_DYNAMIC_WRAPPING.set(combatEdit$preventDynamicWrap);
     }
 
-    @ModifyReturnValue(method = "build(Ljava/util/Map;)Lnet/minecraft/component/ComponentMap;", at = @At("RETURN"))
-    private static ComponentMap replaceWithDynamic(ComponentMap original) {
+    @ModifyReturnValue(method = "buildFromMapTrusted", at = @At("RETURN"))
+    private static DataComponentMap replaceWithDynamic(DataComponentMap original) {
         boolean noDynamicWrap = COMBAT_EDIT$NO_DYNAMIC_WRAPPING.get();
         COMBAT_EDIT$NO_DYNAMIC_WRAPPING.remove();
         if (noDynamicWrap) {

@@ -1,9 +1,9 @@
 package net.rizecookey.combatedit.configuration;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 import net.rizecookey.combatedit.configuration.exception.ResourceLoadFailureException;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
@@ -25,12 +25,12 @@ public class BaseProfile {
     public static final String BASE_PROFILE_PATH = "combatedit/base_profiles";
     public static final String BASE_PROFILE_ENDING = ".json";
 
-    private Text name;
-    private Text description;
+    private Component name;
+    private Component description;
     @SerializedName("configuration") private MutableConfiguration parsedConfiguration;
     private transient Configuration configuration;
 
-    public BaseProfile(Text name, Text description, Configuration configuration) {
+    public BaseProfile(Component name, Component description, Configuration configuration) {
         this.name = name;
         this.description = description;
         this.configuration = configuration;
@@ -42,7 +42,7 @@ public class BaseProfile {
      * Returns the name of the base profile.
      * @return the name of the base profile as a Minecraft Text component
      */
-    public Text getName() {
+    public Component getName() {
         return name;
     }
 
@@ -50,7 +50,7 @@ public class BaseProfile {
      * Returns the description of the base profile.
      * @return the description of the base profile as a Minecraft Text component
      */
-    public Text getDescription() {
+    public Component getDescription() {
         return description;
     }
 
@@ -78,11 +78,11 @@ public class BaseProfile {
         getConfiguration().validate();
     }
 
-    public static Map<Identifier, BaseProfile> find(ResourceManager manager) {
-        var baseProfiles = new HashMap<Identifier, BaseProfile>();
-        for (var entry : manager.findResources(BASE_PROFILE_PATH, id -> id.getPath().endsWith(BASE_PROFILE_ENDING)).entrySet()) {
+    public static Map<ResourceLocation, BaseProfile> find(ResourceManager manager) {
+        var baseProfiles = new HashMap<ResourceLocation, BaseProfile>();
+        for (var entry : manager.listResources(BASE_PROFILE_PATH, id -> id.getPath().endsWith(BASE_PROFILE_ENDING)).entrySet()) {
             var shortId = getShortId(entry.getKey());
-            try (var reader = entry.getValue().getReader()) {
+            try (var reader = entry.getValue().openAsReader()) {
                 var baseProfile = GSON.fromJson(reader, BaseProfile.class);
                 baseProfile.validate();
                 baseProfiles.put(shortId, baseProfile);
@@ -96,13 +96,13 @@ public class BaseProfile {
         return baseProfiles;
     }
 
-    private static Identifier getShortId(Identifier longId) {
+    private static ResourceLocation getShortId(ResourceLocation longId) {
         var path = longId.getPath();
         if (!path.startsWith(BASE_PROFILE_PATH) || !path.endsWith(BASE_PROFILE_ENDING)) {
             throw new IllegalArgumentException("Not a valid base profile identifier");
         }
 
-        return Identifier.of(longId.getNamespace(), path.substring(BASE_PROFILE_PATH.length() + 1, path.length() - BASE_PROFILE_ENDING.length()));
+        return ResourceLocation.fromNamespaceAndPath(longId.getNamespace(), path.substring(BASE_PROFILE_PATH.length() + 1, path.length() - BASE_PROFILE_ENDING.length()));
     }
 
     @Override
@@ -120,11 +120,11 @@ public class BaseProfile {
                 && Objects.equals(getConfiguration(), profile.getConfiguration());
     }
 
-    public record Info(Identifier id, Text name, Text description) {}
+    public record Info(ResourceLocation id, Component name, Component description) {}
 
     public enum IntegratedProfiles {
-        VANILLA(new Info(Identifier.of("combatedit", "vanilla"), Text.translatable("profile.combatedit.vanilla.name"), Text.translatable("profile.combatedit.vanilla.description"))),
-        OLD_1_8_COMBAT(new Info(Identifier.of("combatedit", "1_8_combat"), Text.translatable("profile.combatedit.1_8_combat.name"), Text.translatable("profile.combatedit.1_8_combat.description")));
+        VANILLA(new Info(ResourceLocation.fromNamespaceAndPath("combatedit", "vanilla"), Component.translatable("profile.combatedit.vanilla.name"), Component.translatable("profile.combatedit.vanilla.description"))),
+        OLD_1_8_COMBAT(new Info(ResourceLocation.fromNamespaceAndPath("combatedit", "1_8_combat"), Component.translatable("profile.combatedit.1_8_combat.name"), Component.translatable("profile.combatedit.1_8_combat.description")));
 
         private final Info info;
 

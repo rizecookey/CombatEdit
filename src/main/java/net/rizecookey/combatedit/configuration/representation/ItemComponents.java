@@ -2,16 +2,16 @@ package net.rizecookey.combatedit.configuration.representation;
 
 import com.google.gson.annotations.SerializedName;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.component.ComponentType;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.StringNbtReader;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Unit;
+import net.minecraft.world.item.Items;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class ItemComponents {
-    private Identifier itemId;
+    private ResourceLocation itemId;
     private List<ComponentChangeEntry> changes;
 
-    public ItemComponents(Identifier itemId, List<ComponentChangeEntry> changes) {
+    public ItemComponents(ResourceLocation itemId, List<ComponentChangeEntry> changes) {
         this.itemId = itemId;
         this.changes = new ArrayList<>(changes);
     }
@@ -34,11 +34,11 @@ public class ItemComponents {
      * Returns the identifier of the item to be modified.
      * @return the identifier of the item to be modified
      */
-    public Identifier getItemId() {
+    public ResourceLocation getItemId() {
         return itemId;
     }
 
-    public void setItemId(Identifier itemId) {
+    public void setItemId(ResourceLocation itemId) {
         this.itemId = itemId;
     }
 
@@ -55,7 +55,7 @@ public class ItemComponents {
     }
 
     public void validate() throws InvalidConfigurationException {
-        if (itemId == null || !Registries.ITEM.containsId(itemId)) {
+        if (itemId == null || !BuiltInRegistries.ITEM.containsKey(itemId)) {
             throw new InvalidConfigurationException("No item with id %s found".formatted(itemId));
         }
 
@@ -70,19 +70,19 @@ public class ItemComponents {
     public enum ChangeType {
         /** Sets a new value for a component. */
         @SerializedName("set")
-        SET(Text.translatable("option.combatedit.item.item_components.component_change_entry.change_type.set")),
+        SET(Component.translatable("option.combatedit.item.item_components.component_change_entry.change_type.set")),
         /** Removes the default component value for the given type from the item. */
         @SerializedName("remove")
-        REMOVE(Text.translatable("option.combatedit.item.item_components.component_change_entry.change_type.remove")),
+        REMOVE(Component.translatable("option.combatedit.item.item_components.component_change_entry.change_type.remove")),
         ;
 
-        private final Text text;
+        private final Component text;
 
-        ChangeType(Text text) {
+        ChangeType(Component text) {
             this.text = text;
         }
 
-        public Text getText() {
+        public Component getText() {
             return text;
         }
     }
@@ -94,14 +94,14 @@ public class ItemComponents {
      * @param changeType the change type for this component entry
      * @param value the value to use for this component, or an empty string if the component type has no values or the component is to be removed
      */
-    public record ComponentChangeEntry(Identifier componentType, ChangeType changeType, String value) {
-        public ComponentChangeEntry(Identifier componentType, @Nullable ChangeType changeType, @Nullable String value) {
+    public record ComponentChangeEntry(ResourceLocation componentType, ChangeType changeType, String value) {
+        public ComponentChangeEntry(ResourceLocation componentType, @Nullable ChangeType changeType, @Nullable String value) {
             this.componentType = componentType;
             this.changeType = changeType != null ? changeType : ChangeType.SET;
             this.value = value != null ? value : "";
         }
         public void validate() throws InvalidConfigurationException {
-            if (componentType == null || !Registries.DATA_COMPONENT_TYPE.containsId(componentType)) {
+            if (componentType == null || !BuiltInRegistries.DATA_COMPONENT_TYPE.containsKey(componentType)) {
                 throw new InvalidConfigurationException("Unknown component id");
             }
 
@@ -109,25 +109,25 @@ public class ItemComponents {
                 return;
             }
 
-            ComponentType<?> type = Registries.DATA_COMPONENT_TYPE.get(componentType);
+            DataComponentType<?> type = BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(componentType);
             assert type != null;
-            if (Unit.CODEC.equals(type.getCodec())) {
+            if (Unit.CODEC.equals(type.codec())) {
                 return; // value irrelevant
             }
 
-            var reader = StringNbtReader.fromOps(NbtOps.INSTANCE);
-            NbtElement element;
+            var reader = TagParser.create(NbtOps.INSTANCE);
+            Tag element;
             try {
-                element = reader.read(value);
+                element = reader.parseFully(value);
             } catch (CommandSyntaxException e) {
                 throw new InvalidConfigurationException("Could not read value for component %s".formatted(componentType), e);
             }
-            type.getCodecOrThrow().parse(NbtOps.INSTANCE, element)
+            type.codecOrThrow().parse(NbtOps.INSTANCE, element)
                     .getOrThrow(error -> new InvalidConfigurationException("Error parsing component: " + error));
         }
 
         public static ComponentChangeEntry getDefault() {
-            return new ComponentChangeEntry(Registries.DATA_COMPONENT_TYPE.getId(DataComponentTypes.DAMAGE), ChangeType.SET, "0");
+            return new ComponentChangeEntry(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(DataComponents.DAMAGE), ChangeType.SET, "0");
         }
     }
 
@@ -136,7 +136,7 @@ public class ItemComponents {
     }
 
     public static ItemComponents getDefault() {
-        return new ItemComponents(Registries.ITEM.getId(Items.WOODEN_SWORD), List.of());
+        return new ItemComponents(BuiltInRegistries.ITEM.getKey(Items.WOODEN_SWORD), List.of());
     }
 
     @Override

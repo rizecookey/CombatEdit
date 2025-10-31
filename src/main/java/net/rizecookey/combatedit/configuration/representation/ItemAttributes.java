@@ -1,12 +1,12 @@
 package net.rizecookey.combatedit.configuration.representation;
 
-import net.minecraft.component.type.AttributeModifierSlot;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,11 +18,11 @@ import java.util.Objects;
  * Represents a list of additional item modifiers for a given item.
  */
 public class ItemAttributes {
-    private Identifier itemId;
+    private ResourceLocation itemId;
     private List<ModifierEntry> modifiers;
     private boolean overrideDefault;
 
-    public ItemAttributes(Identifier itemId, List<ModifierEntry> modifiers, boolean overrideDefault) {
+    public ItemAttributes(ResourceLocation itemId, List<ModifierEntry> modifiers, boolean overrideDefault) {
         this.itemId = itemId;
         this.modifiers = new ArrayList<>(modifiers);
         this.overrideDefault = overrideDefault;
@@ -34,11 +34,11 @@ public class ItemAttributes {
      * Returns the identifier of the item to be modified.
      * @return the identifier of the item to be modified
      */
-    public Identifier getItemId() {
+    public ResourceLocation getItemId() {
         return itemId;
     }
 
-    public void setItemId(Identifier itemId) {
+    public void setItemId(ResourceLocation itemId) {
         this.itemId = itemId;
     }
 
@@ -68,7 +68,7 @@ public class ItemAttributes {
     }
 
     public void validate() throws InvalidConfigurationException {
-        if (itemId == null || !Registries.ITEM.containsId(itemId)) {
+        if (itemId == null || !BuiltInRegistries.ITEM.containsKey(itemId)) {
             throw new InvalidConfigurationException("No item with id %s found".formatted(itemId));
         }
 
@@ -82,16 +82,16 @@ public class ItemAttributes {
     }
 
     public static ItemAttributes getDefault() {
-        return new ItemAttributes(Registries.ITEM.getId(Items.WOODEN_SWORD), List.of(), false);
+        return new ItemAttributes(BuiltInRegistries.ITEM.getKey(Items.WOODEN_SWORD), List.of(), false);
     }
 
-    public record ModifierEntry(Identifier attribute, @Nullable Identifier modifierId, double value, EntityAttributeModifier.Operation operation, AttributeModifierSlot slot) {
+    public record ModifierEntry(ResourceLocation attribute, @Nullable ResourceLocation modifierId, double value, AttributeModifier.Operation operation, EquipmentSlotGroup slot) {
         public static ModifierEntry getDefault() {
-            return new ModifierEntry(Registries.ATTRIBUTE.getId(EntityAttributes.ATTACK_DAMAGE.value()), Item.BASE_ATTACK_DAMAGE_MODIFIER_ID, 1, EntityAttributeModifier.Operation.ADD_VALUE, AttributeModifierSlot.MAINHAND);
+            return new ModifierEntry(BuiltInRegistries.ATTRIBUTE.getKey(Attributes.ATTACK_DAMAGE.value()), Item.BASE_ATTACK_DAMAGE_ID, 1, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.MAINHAND);
         }
 
         public void validate() throws InvalidConfigurationException {
-            if (attribute == null || !Registries.ATTRIBUTE.containsId(attribute)) {
+            if (attribute == null || !BuiltInRegistries.ATTRIBUTE.containsKey(attribute)) {
                 throw new InvalidConfigurationException("No attribute with id %s found".formatted(attribute));
             }
 

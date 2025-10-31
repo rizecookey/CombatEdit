@@ -1,32 +1,31 @@
 package net.rizecookey.combatedit.extension;
 
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.registry.entry.RegistryEntry;
-
 import java.util.Map;
+import net.minecraft.core.Holder;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 
-public class DynamicDefaultAttributeContainer extends DefaultAttributeContainer implements DefaultAttributeContainerInstancesProvider {
+public class DynamicDefaultAttributeContainer extends AttributeSupplier implements DefaultAttributeContainerInstancesProvider {
     private static boolean USE_EXCHANGEABLE = false;
 
-    private final DefaultAttributeContainer original;
-    private DefaultAttributeContainer exchangeable;
+    private final AttributeSupplier original;
+    private AttributeSupplier exchangeable;
 
-    public DynamicDefaultAttributeContainer(DefaultAttributeContainer original) {
+    public DynamicDefaultAttributeContainer(AttributeSupplier original) {
         super(Map.copyOf(original.combatEdit$getInstances()));
         this.exchangeable = this.original = original;
     }
 
-    public DefaultAttributeContainer getOriginal() {
+    public AttributeSupplier getOriginal() {
         return original;
     }
 
-    public DefaultAttributeContainer getExchangeable() {
+    public AttributeSupplier getExchangeable() {
         return exchangeable;
     }
 
-    public void setExchangeable(DefaultAttributeContainer exchangeable) {
+    public void setExchangeable(AttributeSupplier exchangeable) {
         this.exchangeable = exchangeable;
     }
 
@@ -39,7 +38,7 @@ public class DynamicDefaultAttributeContainer extends DefaultAttributeContainer 
     }
 
     @Override
-    public Map<RegistryEntry<EntityAttribute>, EntityAttributeInstance> combatEdit$getInstances() {
+    public Map<Holder<Attribute>, AttributeInstance> combatEdit$getInstances() {
         return USE_EXCHANGEABLE ? exchangeable.combatEdit$getInstances() : original.combatEdit$getInstances();
     }
 }

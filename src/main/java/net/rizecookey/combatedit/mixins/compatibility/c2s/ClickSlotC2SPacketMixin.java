@@ -1,11 +1,11 @@
 package net.rizecookey.combatedit.mixins.compatibility.c2s;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.network.listener.ServerPlayPacketListener;
-import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
-import net.minecraft.screen.sync.ItemStackHash;
-import net.minecraft.screen.sync.TrackedSlot;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.network.HashedStack;
+import net.minecraft.network.protocol.game.ServerGamePacketListener;
+import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.inventory.RemoteSlot;
 import net.rizecookey.combatedit.extension.ServerCommonNetworkHandlerExtension;
 import net.rizecookey.combatedit.mixins.compatibility.ScreenHandlerAccessor;
 import org.spongepowered.asm.mixin.Final;
@@ -15,13 +15,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ClickSlotC2SPacket.class)
+@Mixin(ServerboundContainerClickPacket.class)
 public abstract class ClickSlotC2SPacketMixin {
-    @Shadow @Final private Int2ObjectMap<ItemStackHash> modifiedStacks;
+    @Shadow @Final private Int2ObjectMap<HashedStack> changedSlots;
 
-    @Inject(method = "apply(Lnet/minecraft/network/listener/ServerPlayPacketListener;)V", at = @At("HEAD"))
-    public void preApply(ServerPlayPacketListener serverPlayPacketListener, CallbackInfo ci) {
-        if (!(serverPlayPacketListener instanceof ServerPlayNetworkHandler networkHandler)) {
+    @Inject(method = "handle(Lnet/minecraft/network/protocol/game/ServerGamePacketListener;)V", at = @At("HEAD"))
+    public void preApply(ServerGamePacketListener serverPlayPacketListener, CallbackInfo ci) {
+        if (!(serverPlayPacketListener instanceof ServerGamePacketListenerImpl networkHandler)) {
             return;
         }
 
@@ -30,17 +30,17 @@ public abstract class ClickSlotC2SPacketMixin {
             return;
         }
 
-        ScreenHandlerAccessor handlerAccessor = (ScreenHandlerAccessor) networkHandler.player.currentScreenHandler;
-        for (int key : modifiedStacks.keySet()) {
-            TrackedSlot trackedSlot = handlerAccessor.getTrackedSlots().get(key);
+        ScreenHandlerAccessor handlerAccessor = (ScreenHandlerAccessor) networkHandler.player.containerMenu;
+        for (int key : changedSlots.keySet()) {
+            RemoteSlot trackedSlot = handlerAccessor.getRemoteSlots().get(key);
             trackedSlot.combatEdit$setCompareWithDisplayModified(true);
         }
-        handlerAccessor.getTrackedCursorSlot().combatEdit$setCompareWithDisplayModified(true);
+        handlerAccessor.getRemoteCarried().combatEdit$setCompareWithDisplayModified(true);
     }
 
-    @Inject(method = "apply(Lnet/minecraft/network/listener/ServerPlayPacketListener;)V", at = @At("RETURN"))
-    public void postApply(ServerPlayPacketListener serverPlayPacketListener, CallbackInfo ci) {
-        if (!(serverPlayPacketListener instanceof ServerPlayNetworkHandler networkHandler)) {
+    @Inject(method = "handle(Lnet/minecraft/network/protocol/game/ServerGamePacketListener;)V", at = @At("RETURN"))
+    public void postApply(ServerGamePacketListener serverPlayPacketListener, CallbackInfo ci) {
+        if (!(serverPlayPacketListener instanceof ServerGamePacketListenerImpl networkHandler)) {
             return;
         }
 
@@ -49,11 +49,11 @@ public abstract class ClickSlotC2SPacketMixin {
             return;
         }
 
-        ScreenHandlerAccessor handlerAccessor = (ScreenHandlerAccessor) networkHandler.player.currentScreenHandler;
-        for (int key : modifiedStacks.keySet()) {
-            TrackedSlot trackedSlot = handlerAccessor.getTrackedSlots().get(key);
+        ScreenHandlerAccessor handlerAccessor = (ScreenHandlerAccessor) networkHandler.player.containerMenu;
+        for (int key : changedSlots.keySet()) {
+            RemoteSlot trackedSlot = handlerAccessor.getRemoteSlots().get(key);
             trackedSlot.combatEdit$setCompareWithDisplayModified(false);
         }
-        handlerAccessor.getTrackedCursorSlot().combatEdit$setCompareWithDisplayModified(false);
+        handlerAccessor.getRemoteCarried().combatEdit$setCompareWithDisplayModified(false);
     }
 }

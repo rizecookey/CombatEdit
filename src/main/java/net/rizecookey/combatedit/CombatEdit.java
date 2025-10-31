@@ -7,16 +7,16 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.component.type.AttributeModifierSlot;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.resource.ResourceType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.item.Item;
 import net.rizecookey.combatedit.api.CombatEditApi;
 import net.rizecookey.combatedit.api.CombatEditInitListener;
 import net.rizecookey.combatedit.api.extension.ProfileExtensionProvider;
@@ -49,10 +49,10 @@ public class CombatEdit implements CombatEditApi {
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .setPrettyPrinting()
             .registerTypeAdapterFactory(new MutableConfigurationTypeAdapterFactory())
-            .registerTypeAdapter(Identifier.class, new IdentifierSerializer())
-            .registerTypeAdapter(AttributeModifierSlot.class, new AttributeModifierSlotSerializer())
-            .registerTypeAdapter(EntityAttributeModifier.Operation.class, new EntityAttributeModifier$OperationSerializer())
-            .registerTypeAdapter(Text.class, new TextSerializer())
+            .registerTypeAdapter(ResourceLocation.class, new IdentifierSerializer())
+            .registerTypeAdapter(EquipmentSlotGroup.class, new AttributeModifierSlotSerializer())
+            .registerTypeAdapter(AttributeModifier.Operation.class, new EntityAttributeModifier$OperationSerializer())
+            .registerTypeAdapter(Component.class, new TextSerializer())
             .create();
 
     private boolean modificationsEnabled;
@@ -142,8 +142,8 @@ public class CombatEdit implements CombatEditApi {
     public void registerListeners() {
         CommandRegistrationCallback.EVENT.register(new CombatEditCommand(this));
 
-        ResourceLoader.get(ResourceType.SERVER_DATA).registerReloader(
-                Identifier.of("combatedit", "server_configuration_provider"),
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloader(
+                ResourceLocation.fromNamespaceAndPath("combatedit", "server_configuration_provider"),
                 configurationManager);
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
@@ -183,7 +183,7 @@ public class CombatEdit implements CombatEditApi {
                         The following entity types do not have a dynamic default component and could therefore not be modified by CombatEdit:{}
                         Please report this incompatibility at https://www.github.com/rizecookey/CombatEdit/issues.""",
                 entities.stream()
-                        .map(entity -> System.lineSeparator() + "\t- " + Registries.ENTITY_TYPE.getId(entity))
+                        .map(entity -> System.lineSeparator() + "\t- " + BuiltInRegistries.ENTITY_TYPE.getKey(entity))
                         .collect(Collectors.joining()));
     }
 
@@ -192,7 +192,7 @@ public class CombatEdit implements CombatEditApi {
     }
 
     @Override
-    public void registerProfileExtension(Identifier profileId, ProfileExtensionProvider extensionProvider) {
+    public void registerProfileExtension(ResourceLocation profileId, ProfileExtensionProvider extensionProvider) {
         configurationManager.registerProfileExtension(profileId, extensionProvider);
     }
 }

@@ -7,20 +7,19 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import net.minecraft.component.type.AttributeModifierSlot;
-
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 
-public class AttributeModifierSlotSerializer implements JsonDeserializer<AttributeModifierSlot>, JsonSerializer<AttributeModifierSlot> {
+public class AttributeModifierSlotSerializer implements JsonDeserializer<EquipmentSlotGroup>, JsonSerializer<EquipmentSlotGroup> {
     @Override
-    public AttributeModifierSlot deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public EquipmentSlotGroup deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         if (!json.isJsonPrimitive()) {
             throw new JsonParseException("Expected %s to be a string representing a modifier slot, but was not".formatted(json.getAsString()));
         }
 
-        var result = Arrays.stream(AttributeModifierSlot.values())
-                .filter(slot -> slot.asString().matches(json.getAsString()))
+        var result = Arrays.stream(EquipmentSlotGroup.values())
+                .filter(slot -> slot.getSerializedName().matches(json.getAsString()))
                 .findFirst();
 
         if (result.isEmpty()) {
@@ -31,7 +30,7 @@ public class AttributeModifierSlotSerializer implements JsonDeserializer<Attribu
     }
 
     @Override
-    public JsonElement serialize(AttributeModifierSlot src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(src.asString());
+    public JsonElement serialize(EquipmentSlotGroup src, Type typeOfSrc, JsonSerializationContext context) {
+        return new JsonPrimitive(src.getSerializedName());
     }
 }

@@ -1,12 +1,12 @@
 package net.rizecookey.combatedit.mixins.extension;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.AttributeContainer;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.core.Holder;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.extension.AttributeContainerExtension;
 import org.spongepowered.asm.mixin.Final;
@@ -23,47 +23,47 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
-@Mixin(AttributeContainer.class)
+@Mixin(AttributeMap.class)
 public abstract class AttributeContainerMixin implements AttributeContainerExtension {
-    @Shadow @Final private Map<RegistryEntry<EntityAttribute>, EntityAttributeInstance> custom;
+    @Shadow @Final private Map<Holder<Attribute>, AttributeInstance> attributes;
 
-    @Shadow protected abstract void updateTrackedStatus(EntityAttributeInstance instance);
+    @Shadow protected abstract void onAttributeModified(AttributeInstance instance);
 
-    @Shadow @Final private DefaultAttributeContainer defaultAttributes;
+    @Shadow @Final private AttributeSupplier supplier;
     @Unique
     private boolean combatEdit$sendAllAttributes;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void setSendAllAttributes(DefaultAttributeContainer defaultAttributes, CallbackInfo ci) {
+    private void setSendAllAttributes(AttributeSupplier defaultAttributes, CallbackInfo ci) {
         combatEdit$sendAllAttributes = defaultAttributes.combatEdit$sendAllAttributes();
     }
 
-    @Inject(method = "getTracked", at = @At("HEAD"))
-    private void potentiallyAddAllRemainingAttributes(CallbackInfoReturnable<Set<EntityAttributeInstance>> cir) {
+    @Inject(method = "getAttributesToSync", at = @At("HEAD"))
+    private void potentiallyAddAllRemainingAttributes(CallbackInfoReturnable<Set<AttributeInstance>> cir) {
         if (!combatEdit$sendAllAttributes) {
             return;
         }
 
-        for (var instance : defaultAttributes.combatEdit$getInstances().values()) {
-            if (custom.containsKey(instance.getAttribute())) {
+        for (var instance : supplier.combatEdit$getInstances().values()) {
+            if (attributes.containsKey(instance.getAttribute())) {
                 continue;
             }
 
-            updateTrackedStatus(instance);
+            onAttributeModified(instance);
         }
 
         combatEdit$sendAllAttributes = false;
     }
 
-    @Inject(method = "getAttributesToSend", at = @At("HEAD"), cancellable = true)
-    private void possiblySendAllAttributes(CallbackInfoReturnable<Collection<EntityAttributeInstance>> cir) {
+    @Inject(method = "getSyncableAttributes", at = @At("HEAD"), cancellable = true)
+    private void possiblySendAllAttributes(CallbackInfoReturnable<Collection<AttributeInstance>> cir) {
         if (combatEdit$sendAllAttributes) {
             cir.setReturnValue(Stream
                     .concat(
-                            defaultAttributes.combatEdit$getInstances().values().stream()
-                                    .filter(instance -> !custom.containsKey(instance.getAttribute())),
-                            custom.values().stream())
-                    .filter(instance -> instance.getAttribute().value().isTracked())
+                            supplier.combatEdit$getInstances().values().stream()
+                                    .filter(instance -> !attributes.containsKey(instance.getAttribute())),
+                            attributes.values().stream())
+                    .filter(instance -> instance.getAttribute().value().isClientSyncable())
                     .toList());
             cir.cancel();
         }
@@ -75,14 +75,14 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
     }
 
     @Override
-    public void combatEdit$patchWithNewDefaults(EntityType<? extends LivingEntity> type, DefaultAttributeContainer previousDefaults) {
-        custom.forEach((attribute, instance) -> {
-            if (!this.defaultAttributes.has(attribute) || !previousDefaults.has(attribute)) {
+    public void combatEdit$patchWithNewDefaults(EntityType<? extends LivingEntity> type, AttributeSupplier previousDefaults) {
+        attributes.forEach((attribute, instance) -> {
+            if (!this.supplier.hasAttribute(attribute) || !previousDefaults.hasAttribute(attribute)) {
                 return;
             }
 
             double oldDefault = previousDefaults.getBaseValue(attribute);
-            double newDefault = defaultAttributes.getBaseValue(attribute);
+            double newDefault = supplier.getBaseValue(attribute);
 
             if (instance.getBaseValue() == oldDefault) {
                 combatEdit$sendAllAttributes = true;
@@ -92,22 +92,22 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
     }
 
     @Override
-    public AttributeContainer combatEdit$getWithOriginalDefaults(EntityType<? extends LivingEntity> type) {
-        DefaultAttributeContainer originalDefaults = configurationProvider().getModifier().entities()
+    public AttributeMap combatEdit$getWithOriginalDefaults(EntityType<? extends LivingEntity> type) {
+        AttributeSupplier originalDefaults = configurationProvider().getModifier().entities()
                 .getVanillaDefaultAttributes(type);
-        AttributeContainer copy = new AttributeContainer(defaultAttributes);
-        copy.setFrom(thisInstance());
-        custom.forEach((attribute, instance) -> {
-            if (!defaultAttributes.has(attribute) || !originalDefaults.has(attribute)) {
+        AttributeMap copy = new AttributeMap(supplier);
+        copy.assignAllValues(thisInstance());
+        attributes.forEach((attribute, instance) -> {
+            if (!supplier.hasAttribute(attribute) || !originalDefaults.hasAttribute(attribute)) {
                 return;
             }
 
-            EntityAttributeInstance copyInstance = copy.getCustomInstance(attribute);
+            AttributeInstance copyInstance = copy.getInstance(attribute);
             if (copyInstance == null) {
                 return;
             }
 
-            double newDefault = defaultAttributes.getBaseValue(attribute);
+            double newDefault = supplier.getBaseValue(attribute);
             double oldDefault = originalDefaults.getBaseValue(attribute);
             if (instance.getBaseValue() == newDefault) {
                 copyInstance.setBaseValue(oldDefault);
@@ -119,7 +119,7 @@ public abstract class AttributeContainerMixin implements AttributeContainerExten
     }
 
     @Unique
-    private AttributeContainer thisInstance() {
-        return (AttributeContainer) (Object) this;
+    private AttributeMap thisInstance() {
+        return (AttributeMap) (Object) this;
     }
 }

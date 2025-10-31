@@ -27,7 +27,7 @@ import me.shedaniel.clothconfig2.impl.builders.TextDescriptionBuilder;
 import me.shedaniel.clothconfig2.impl.builders.TextFieldBuilder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import net.rizecookey.clothconfig2.extension.api.ExtendedConfigEntryBuilder;
 import net.rizecookey.clothconfig2.extension.api.ObjectCellCreator;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectAdapter;
@@ -43,132 +43,132 @@ public class ExtendedConfigEntryBuilderImpl implements ExtendedConfigEntryBuilde
     }
 
     @Override
-    public <T> ObjectListBuilder<T> startObjectList(Text fieldName, List<T> values, ObjectCellCreator<T> createNewCell) {
+    public <T> ObjectListBuilder<T> startObjectList(Component fieldName, List<T> values, ObjectCellCreator<T> createNewCell) {
         return new ObjectListBuilder<>(fieldName, values, createNewCell, getResetButtonKey());
     }
 
     @Override
-    public <T> ObjectFieldBuilder<T> startObjectField(Text fieldName, List<AbstractConfigListEntry<?>> innerEntries, ObjectAdapter<T> adapter) {
+    public <T> ObjectFieldBuilder<T> startObjectField(Component fieldName, List<AbstractConfigListEntry<?>> innerEntries, ObjectAdapter<T> adapter) {
         return new ObjectFieldBuilder<>(fieldName, innerEntries, adapter, getResetButtonKey());
     }
 
     @Override
-    public Text getResetButtonKey() {
+    public Component getResetButtonKey() {
         return fallback.getResetButtonKey();
     }
 
     @Override
-    public ConfigEntryBuilder setResetButtonKey(Text text) {
+    public ConfigEntryBuilder setResetButtonKey(Component text) {
         return fallback.setResetButtonKey(text);
     }
 
     @Override
-    public IntListBuilder startIntList(Text text, List<Integer> list) {
+    public IntListBuilder startIntList(Component text, List<Integer> list) {
         return fallback.startIntList(text, list);
     }
 
     @Override
-    public LongListBuilder startLongList(Text text, List<Long> list) {
+    public LongListBuilder startLongList(Component text, List<Long> list) {
         return fallback.startLongList(text, list);
     }
 
     @Override
-    public FloatListBuilder startFloatList(Text text, List<Float> list) {
+    public FloatListBuilder startFloatList(Component text, List<Float> list) {
         return fallback.startFloatList(text, list);
     }
 
     @Override
-    public DoubleListBuilder startDoubleList(Text text, List<Double> list) {
+    public DoubleListBuilder startDoubleList(Component text, List<Double> list) {
         return fallback.startDoubleList(text, list);
     }
 
     @Override
-    public StringListBuilder startStrList(Text text, List<String> list) {
+    public StringListBuilder startStrList(Component text, List<String> list) {
         return fallback.startStrList(text, list);
     }
 
     @Override
-    public SubCategoryBuilder startSubCategory(Text text) {
+    public SubCategoryBuilder startSubCategory(Component text) {
         return fallback.startSubCategory(text);
     }
 
     @Override
-    public SubCategoryBuilder startSubCategory(Text text, List<AbstractConfigListEntry> list) {
+    public SubCategoryBuilder startSubCategory(Component text, List<AbstractConfigListEntry> list) {
         return fallback.startSubCategory(text, list);
     }
 
     @Override
-    public BooleanToggleBuilder startBooleanToggle(Text text, boolean b) {
+    public BooleanToggleBuilder startBooleanToggle(Component text, boolean b) {
         return fallback.startBooleanToggle(text, b);
     }
 
     @Override
-    public StringFieldBuilder startStrField(Text text, String s) {
+    public StringFieldBuilder startStrField(Component text, String s) {
         return fallback.startStrField(text, s);
     }
 
     @Override
-    public ColorFieldBuilder startColorField(Text text, int i) {
+    public ColorFieldBuilder startColorField(Component text, int i) {
         return fallback.startColorField(text, i);
     }
 
     @Override
-    public TextFieldBuilder startTextField(Text text, String s) {
+    public TextFieldBuilder startTextField(Component text, String s) {
         return fallback.startTextField(text, s);
     }
 
     @Override
-    public TextDescriptionBuilder startTextDescription(Text text) {
+    public TextDescriptionBuilder startTextDescription(Component text) {
         return fallback.startTextDescription(text);
     }
 
     @Override
-    public <T extends Enum<?>> EnumSelectorBuilder<T> startEnumSelector(Text text, Class<T> aClass, T t) {
+    public <T extends Enum<?>> EnumSelectorBuilder<T> startEnumSelector(Component text, Class<T> aClass, T t) {
         return fallback.startEnumSelector(text, aClass, t);
     }
 
     @Override
-    public <T> SelectorBuilder<T> startSelector(Text text, T[] ts, T t) {
+    public <T> SelectorBuilder<T> startSelector(Component text, T[] ts, T t) {
         return fallback.startSelector(text, ts, t);
     }
 
     @Override
-    public IntFieldBuilder startIntField(Text text, int i) {
+    public IntFieldBuilder startIntField(Component text, int i) {
         return fallback.startIntField(text, i);
     }
 
     @Override
-    public LongFieldBuilder startLongField(Text text, long l) {
+    public LongFieldBuilder startLongField(Component text, long l) {
         return fallback.startLongField(text, l);
     }
 
     @Override
-    public FloatFieldBuilder startFloatField(Text text, float v) {
+    public FloatFieldBuilder startFloatField(Component text, float v) {
         return fallback.startFloatField(text, v);
     }
 
     @Override
-    public DoubleFieldBuilder startDoubleField(Text text, double v) {
+    public DoubleFieldBuilder startDoubleField(Component text, double v) {
         return fallback.startDoubleField(text, v);
     }
 
     @Override
-    public IntSliderBuilder startIntSlider(Text text, int i, int i1, int i2) {
+    public IntSliderBuilder startIntSlider(Component text, int i, int i1, int i2) {
         return fallback.startIntSlider(text, i, i1, i2);
     }
 
     @Override
-    public LongSliderBuilder startLongSlider(Text text, long l, long l1, long l2) {
+    public LongSliderBuilder startLongSlider(Component text, long l, long l1, long l2) {
         return fallback.startLongSlider(text, l, l1, l2);
     }
 
     @Override
-    public KeyCodeBuilder startModifierKeyCodeField(Text text, ModifierKeyCode modifierKeyCode) {
+    public KeyCodeBuilder startModifierKeyCodeField(Component text, ModifierKeyCode modifierKeyCode) {
         return fallback.startModifierKeyCodeField(text, modifierKeyCode);
     }
 
     @Override
-    public <T> DropdownMenuBuilder<T> startDropdownMenu(Text text, DropdownBoxEntry.SelectionTopCellElement<T> selectionTopCellElement, DropdownBoxEntry.SelectionCellCreator<T> selectionCellCreator) {
+    public <T> DropdownMenuBuilder<T> startDropdownMenu(Component text, DropdownBoxEntry.SelectionTopCellElement<T> selectionTopCellElement, DropdownBoxEntry.SelectionCellCreator<T> selectionCellCreator) {
         return new DynamicDropdownMenuBuilder<>(getResetButtonKey(), text, selectionTopCellElement, selectionCellCreator);
     }
 }

@@ -7,26 +7,25 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
-public class EntityAttributeModifier$OperationSerializer implements JsonSerializer<EntityAttributeModifier.Operation>, JsonDeserializer<EntityAttributeModifier.Operation> {
+public class EntityAttributeModifier$OperationSerializer implements JsonSerializer<AttributeModifier.Operation>, JsonDeserializer<AttributeModifier.Operation> {
     @Override
-    public EntityAttributeModifier.Operation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public AttributeModifier.Operation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         if (!json.isJsonPrimitive()) {
             throw new JsonParseException("Expected a primitive to represent the operation id");
         }
 
-        return Arrays.stream(EntityAttributeModifier.Operation.values())
-                .filter(operation -> operation.asString().equals(json.getAsString()))
+        return Arrays.stream(AttributeModifier.Operation.values())
+                .filter(operation -> operation.getSerializedName().equals(json.getAsString()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Operation type %s does not exist".formatted(json.getAsString())));
     }
 
     @Override
-    public JsonElement serialize(EntityAttributeModifier.Operation src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(src.asString());
+    public JsonElement serialize(AttributeModifier.Operation src, Type typeOfSrc, JsonSerializationContext context) {
+        return new JsonPrimitive(src.getSerializedName());
     }
 }

@@ -1,21 +1,22 @@
 package net.rizecookey.combatedit.client.configscreen;
 
-import net.minecraft.client.gui.screen.WarningScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
-import net.minecraft.client.gui.widget.LayoutWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.layouts.Layout;
+import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.screens.multiplayer.WarningScreen;
+import net.minecraft.network.chat.Component;
 import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.client.CombatEditClient;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
 public class InvalidConfigScreen extends WarningScreen {
-    private static final Text TITLE = Text.translatable("error.combatedit.invalid_config.title");
-    private static final Text RESET_CONFIG = Text.translatable("button.combatedit.reset_config");
-    private static final Text CLOSE_GAME = Text.translatable("button.combatedit.exit");
+    private static final Component TITLE = Component.translatable("error.combatedit.invalid_config.title");
+    private static final Component RESET_CONFIG = Component.translatable("button.combatedit.reset_config");
+    private static final Component CLOSE_GAME = Component.translatable("button.combatedit.exit");
 
     private final Runnable onClose;
 
@@ -24,28 +25,28 @@ public class InvalidConfigScreen extends WarningScreen {
         this.onClose = onClose;
     }
 
-    private static Text getErrorText(InvalidConfigurationException exception) {
-        return Text.translatable("error.combatedit.invalid_config.description", exception.getMessage())
-                .styled(style -> style.withColor(Formatting.RED));
+    private static Component getErrorText(InvalidConfigurationException exception) {
+        return Component.translatable("error.combatedit.invalid_config.description", exception.getMessage())
+                .withStyle(style -> style.withColor(ChatFormatting.RED));
     }
 
     @Override
-    protected LayoutWidget getLayout() {
-        DirectionalLayoutWidget horizontalButtons = DirectionalLayoutWidget.horizontal().spacing(8);
-        horizontalButtons.add(ButtonWidget
+    protected @NotNull Layout addFooterButtons() {
+        LinearLayout horizontalButtons = LinearLayout.horizontal().spacing(8);
+        horizontalButtons.addChild(Button
                 .builder(RESET_CONFIG, button -> {
                     try {
                         CombatEdit.getInstance().resetSettings();
                     } catch (IOException e) {
-                        CombatEditClient.sendErrorNotification(this.client, "settings_save_error");
+                        CombatEditClient.sendErrorNotification(this.minecraft, "settings_save_error");
                     }
                     onClose.run();
                 })
                 .build());
-        horizontalButtons.add(ButtonWidget
+        horizontalButtons.addChild(Button
                 .builder(CLOSE_GAME, button -> {
-                    assert client != null;
-                    client.stop();
+                    assert minecraft != null;
+                    minecraft.destroy();
                 })
                 .build());
 

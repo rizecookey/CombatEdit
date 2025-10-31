@@ -1,10 +1,10 @@
 package net.rizecookey.combatedit.mixins.compatibility;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.sync.ComponentChangesHash;
-import net.minecraft.screen.sync.ItemStackHash;
-import net.minecraft.screen.sync.TrackedSlot;
+import net.minecraft.network.HashedPatchMap;
+import net.minecraft.network.HashedStack;
+import net.minecraft.world.inventory.RemoteSlot;
+import net.minecraft.world.item.ItemStack;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.extension.TrackedSlotExtension;
 import org.jetbrains.annotations.Nullable;
@@ -14,10 +14,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(TrackedSlot.Impl.class)
+@Mixin(RemoteSlot.Synchronized.class)
 public abstract class TrackedSlot$ImplMixin implements TrackedSlotExtension {
-    @Shadow private @Nullable ItemStackHash receivedHash;
-    @Shadow @Final private ComponentChangesHash.ComponentHasher hasher;
+    @Shadow private @Nullable HashedStack remoteHash;
+    @Shadow @Final private HashedPatchMap.HashGenerator hasher;
     @Unique private boolean compareWithDisplayModified;
 
     @Override
@@ -25,7 +25,7 @@ public abstract class TrackedSlot$ImplMixin implements TrackedSlotExtension {
         compareWithDisplayModified = value;
     }
 
-    @ModifyExpressionValue(method = "isInSync", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/sync/ItemStackHash;hashEquals(Lnet/minecraft/item/ItemStack;Lnet/minecraft/screen/sync/ComponentChangesHash$ComponentHasher;)Z"))
+    @ModifyExpressionValue(method = "matches", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/HashedStack;matches(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/network/HashedPatchMap$HashGenerator;)Z"))
     public boolean compareHashWithDisplayModified(boolean value, ItemStack actualStack) {
         if (!compareWithDisplayModified) {
             return value;
@@ -36,7 +36,7 @@ public abstract class TrackedSlot$ImplMixin implements TrackedSlotExtension {
             return value;
         }
 
-        assert this.receivedHash != null;
-        return this.receivedHash.hashEquals(displayModified, this.hasher);
+        assert this.remoteHash != null;
+        return this.remoteHash.matches(displayModified, this.hasher);
     }
 }

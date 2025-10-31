@@ -1,13 +1,12 @@
 package net.rizecookey.combatedit.extension;
 
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.registry.entry.RegistryEntry;
-
 import java.util.Map;
+import net.minecraft.core.Holder;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 
 public interface DefaultAttributeContainerInstancesProvider {
-    default Map<RegistryEntry<EntityAttribute>, EntityAttributeInstance> combatEdit$getInstances() {
+    default Map<Holder<Attribute>, AttributeInstance> combatEdit$getInstances() {
         throw new UnsupportedOperationException("Extension not applied correctly");
     }
 }

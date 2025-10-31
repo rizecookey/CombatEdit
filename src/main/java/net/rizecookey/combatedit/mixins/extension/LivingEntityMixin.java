@@ -1,8 +1,8 @@
 package net.rizecookey.combatedit.mixins.extension;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.extension.LivingEntityExtension;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,7 +17,7 @@ public class LivingEntityMixin implements LivingEntityExtension {
     private ConfigurationManager configurationManager;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void initConfigurationManagerReference(EntityType<? extends LivingEntity> entityType, World world, CallbackInfo ci) {
+    private void initConfigurationManagerReference(EntityType<? extends LivingEntity> entityType, Level world, CallbackInfo ci) {
         configurationManager = ConfigurationManager.getInstance();
     }
 

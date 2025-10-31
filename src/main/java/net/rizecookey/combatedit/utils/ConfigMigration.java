@@ -3,11 +3,10 @@ package net.rizecookey.combatedit.utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.item.Item;
-import net.minecraft.util.Identifier;
-
 import java.util.UUID;
 import java.util.stream.Collector;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 
 public final class ConfigMigration {
     private ConfigMigration() {}
@@ -89,16 +88,16 @@ public final class ConfigMigration {
         return result;
     }
 
-    private static Identifier transformUUID(UUID uuid) {
+    private static ResourceLocation transformUUID(UUID uuid) {
         if (UUID.fromString("cb3f55d3-645c-4f38-a497-9c13a33db5cf").equals(uuid)) {
-            return Item.BASE_ATTACK_DAMAGE_MODIFIER_ID;
+            return Item.BASE_ATTACK_DAMAGE_ID;
         }
 
         if (UUID.fromString("fa233e1c-4180-4865-b01b-bcce9785aca3").equals(uuid)) {
-            return Item.BASE_ATTACK_SPEED_MODIFIER_ID;
+            return Item.BASE_ATTACK_SPEED_ID;
         }
 
-        return Identifier.of("combatedit", "generated/" + uuid);
+        return ResourceLocation.fromNamespaceAndPath("combatedit", "generated/" + uuid);
     }
 
     private static JsonArray migrateItemAttributesAttributeIds(JsonArray itemAttributes) {
@@ -122,10 +121,10 @@ public final class ConfigMigration {
                 .map(JsonElement::getAsJsonObject)
                 .filter(modifier -> modifier.has("attribute")
                         && modifier.get("attribute").isJsonPrimitive()
-                        && Identifier.validate(modifier.get("attribute").getAsString()).isSuccess())
+                        && ResourceLocation.read(modifier.get("attribute").getAsString()).isSuccess())
                 .map(modifier -> {
                     JsonObject newModifier = modifier.getAsJsonObject().deepCopy();
-                    newModifier.addProperty("attribute", migrateAttributeId(Identifier.of(modifier.get("attribute").getAsString())).toString());
+                    newModifier.addProperty("attribute", migrateAttributeId(ResourceLocation.parse(modifier.get("attribute").getAsString())).toString());
                     return newModifier;
                 })
                 .collect(jsonArrayCollector()));
@@ -153,10 +152,10 @@ public final class ConfigMigration {
                 .map(JsonElement::getAsJsonObject)
                 .filter(baseValue -> baseValue.has("attribute")
                         && baseValue.get("attribute").isJsonPrimitive()
-                        && Identifier.validate(baseValue.get("attribute").getAsString()).isSuccess())
+                        && ResourceLocation.read(baseValue.get("attribute").getAsString()).isSuccess())
                 .map(baseValue -> {
                     JsonObject newBaseValue = baseValue.deepCopy();
-                    newBaseValue.addProperty("attribute", migrateAttributeId(Identifier.of(baseValue.get("attribute").getAsString())).toString());
+                    newBaseValue.addProperty("attribute", migrateAttributeId(ResourceLocation.parse(baseValue.get("attribute").getAsString())).toString());
                     return newBaseValue;
                 })
                 .collect(jsonArrayCollector()));
@@ -164,8 +163,8 @@ public final class ConfigMigration {
         return result;
     }
 
-    private static Identifier migrateAttributeId(Identifier previous) {
-        return Identifier.of(previous.getNamespace(),
+    private static ResourceLocation migrateAttributeId(ResourceLocation previous) {
+        return ResourceLocation.fromNamespaceAndPath(previous.getNamespace(),
                 previous.getPath()
                         .replaceFirst("^generic\\.", "")
                         .replaceFirst("^player\\.", ""));

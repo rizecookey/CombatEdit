@@ -4,7 +4,7 @@ import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectAdapter;
 import net.rizecookey.clothconfig2.extension.impl.builders.ExtendedConfigEntryBuilderImpl;
 import net.rizecookey.clothconfig2.extension.impl.builders.ObjectFieldBuilder;
@@ -18,8 +18,8 @@ public interface ExtendedConfigEntryBuilder extends ConfigEntryBuilder {
         return new ExtendedConfigEntryBuilderImpl(ConfigEntryBuilder.create());
     }
 
-    <T> ObjectListBuilder<T> startObjectList(Text fieldName, List<T> values, ObjectCellCreator<T> createNewCell);
+    <T> ObjectListBuilder<T> startObjectList(Component fieldName, List<T> values, ObjectCellCreator<T> createNewCell);
 
-    <T> ObjectFieldBuilder<T> startObjectField(Text fieldName, List<AbstractConfigListEntry<?>> innerEntries, ObjectAdapter<T> adapter);
+    <T> ObjectFieldBuilder<T> startObjectField(Component fieldName, List<AbstractConfigListEntry<?>> innerEntries, ObjectAdapter<T> adapter);
 
 }

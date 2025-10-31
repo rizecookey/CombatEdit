@@ -1,11 +1,11 @@
 package net.rizecookey.combatedit.api.extension;
 
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.type.AttributeModifiersComponent;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.item.Item;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public interface DefaultsSupplier {
     /**
@@ -27,18 +27,18 @@ public interface DefaultsSupplier {
          * Provides the default components for an item.
          *
          * @param item the {@link Item} for which to get the components
-         * @return a {@link ComponentMap} of the default item components for the specified item
+         * @return a {@link DataComponentMap} of the default item components for the specified item
          */
-        ComponentMap getVanillaComponents(Item item);
+        DataComponentMap getVanillaComponents(Item item);
 
         /**
          * Provides the default attribute modifiers for an item.
          *
          * @param item the {@link Item} for which to get the attribute modifiers
-         * @return an {@link AttributeModifiersComponent} object containing the default attribute modifiers for the specified
+         * @return an {@link ItemAttributeModifiers} object containing the default attribute modifiers for the specified
          * item
          */
-        AttributeModifiersComponent getVanillaAttributeModifiers(Item item);
+        ItemAttributeModifiers getVanillaAttributeModifiers(Item item);
     }
 
     interface Entities {
@@ -46,8 +46,8 @@ public interface DefaultsSupplier {
          * Provides the default entity attributes for a given entity type.
          *
          * @param entityType the {@link EntityType} for which to get the default entity attributes
-         * @return an {@link DefaultAttributeContainer} containing the default attributes for the specified entity type
+         * @return an {@link AttributeSupplier} containing the default attributes for the specified entity type
          */
-        DefaultAttributeContainer getVanillaDefaultAttributes(EntityType<? extends LivingEntity> entityType);
+        AttributeSupplier getVanillaDefaultAttributes(EntityType<? extends LivingEntity> entityType);
     }
 }

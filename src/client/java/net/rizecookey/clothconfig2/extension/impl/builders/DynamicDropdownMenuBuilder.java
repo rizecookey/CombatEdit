@@ -2,12 +2,12 @@ package net.rizecookey.clothconfig2.extension.impl.builders;
 
 import me.shedaniel.clothconfig2.gui.entries.DropdownBoxEntry;
 import me.shedaniel.clothconfig2.impl.builders.DropdownMenuBuilder;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import net.rizecookey.clothconfig2.extension.gui.entries.DynamicDropdownBoxEntry;
 import org.jetbrains.annotations.NotNull;
 
 public class DynamicDropdownMenuBuilder<T> extends DropdownMenuBuilder<T> {
-    public DynamicDropdownMenuBuilder(Text resetButtonKey, Text fieldNameKey, DropdownBoxEntry.SelectionTopCellElement<T> topCellElement, DropdownBoxEntry.SelectionCellCreator<T> cellCreator) {
+    public DynamicDropdownMenuBuilder(Component resetButtonKey, Component fieldNameKey, DropdownBoxEntry.SelectionTopCellElement<T> topCellElement, DropdownBoxEntry.SelectionCellCreator<T> cellCreator) {
         super(resetButtonKey, fieldNameKey, topCellElement, cellCreator);
     }
 

@@ -1,35 +1,35 @@
 package net.rizecookey.combatedit.mixins.misc;
 
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.PlayerLikeEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Avatar;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
 import net.rizecookey.combatedit.extension.LivingEntityExtension;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-@Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends PlayerLikeEntity implements LivingEntityExtension {
-    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
+@Mixin(Player.class)
+public abstract class PlayerEntityMixin extends Avatar implements LivingEntityExtension {
+    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, Level world) {
         super(entityType, world);
     }
 
     @ModifyVariable(method = "attack",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;sidedDamage(Lnet/minecraft/entity/damage/DamageSource;F)Z"), ordinal = 3)
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurtOrSimulate(Lnet/minecraft/world/damagesource/DamageSource;F)Z"), ordinal = 3)
     public boolean checkIfSweepEnchant(boolean bl4) {
-        if (getEntityWorld().isClient()) {
+        if (level().isClientSide()) {
             return bl4;
         }
         Configuration.MiscOptions miscOptions = combatEdit$configurationManager().getConfiguration().getMiscOptions();
-        var thisPlayer = (PlayerEntity) (Object) this;
-        var sweepingRegistryEntry = getEntityWorld().getRegistryManager().getOrThrow(Enchantments.SWEEPING_EDGE.getRegistryRef())
-                .getEntry(Enchantments.SWEEPING_EDGE.getValue()).orElseThrow();
-        if (EnchantmentHelper.getEquipmentLevel(sweepingRegistryEntry, thisPlayer) == 0
+        var thisPlayer = (Player) (Object) this;
+        var sweepingRegistryEntry = level().registryAccess().lookupOrThrow(Enchantments.SWEEPING_EDGE.registryKey())
+                .get(Enchantments.SWEEPING_EDGE.location()).orElseThrow();
+        if (EnchantmentHelper.getEnchantmentLevel(sweepingRegistryEntry, thisPlayer) == 0
                 && miscOptions.isSweepingWithoutEnchantmentDisabled().orElse(false)) {
             bl4 = false;
         }

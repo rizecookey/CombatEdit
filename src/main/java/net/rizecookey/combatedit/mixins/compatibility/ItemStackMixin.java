@@ -1,11 +1,11 @@
 package net.rizecookey.combatedit.mixins.compatibility;
 
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.ComponentType;
-import net.minecraft.component.MergedComponentMap;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.rizecookey.combatedit.extension.DynamicComponentMap;
 import net.rizecookey.combatedit.extension.ItemStackExtension;
 import org.spongepowered.asm.mixin.Final;
@@ -19,22 +19,22 @@ import java.util.Objects;
 public abstract class ItemStackMixin implements ItemStackExtension {
     @Mutable
     @Shadow @Final
-    MergedComponentMap components;
+    PatchedDataComponentMap components;
 
     @Shadow public abstract Item getItem();
 
     @SuppressWarnings("unchecked")
     @Override
     public void combatEdit$useOriginalComponentMapAsBase() {
-        ComponentMap baseComponents = this.getItem().getComponents();
+        DataComponentMap baseComponents = this.getItem().components();
         if (!(baseComponents instanceof DynamicComponentMap dynamicComponents)) {
             return;
         }
 
-        this.components = MergedComponentMap.create(dynamicComponents.getOriginal(), this.components.getChanges());
+        this.components = PatchedDataComponentMap.fromPatch(dynamicComponents.getOriginal(), this.components.asPatch());
 
-        for (ComponentType<?> componentType : Registries.DATA_COMPONENT_TYPE) {
-            if (components.hasChanged(componentType)) {
+        for (DataComponentType<?> componentType : BuiltInRegistries.DATA_COMPONENT_TYPE) {
+            if (components.hasNonDefault(componentType)) {
                 continue;
             }
 
@@ -44,7 +44,7 @@ public abstract class ItemStackMixin implements ItemStackExtension {
                 continue;
             }
 
-            components.set((ComponentType<Object>) componentType, exchangeableValue);
+            components.set((DataComponentType<Object>) componentType, exchangeableValue);
         }
     }
 }

@@ -6,23 +6,23 @@ import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.gui.entries.DropdownBoxEntry;
 import me.shedaniel.clothconfig2.gui.entries.EnumListEntry;
 import me.shedaniel.clothconfig2.impl.builders.DropdownMenuBuilder;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.component.ComponentType;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.AttributeModifierSlot;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.ChatFormatting;
+import net.minecraft.ResourceLocationException;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.locale.Language;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.StringNbtReader;
-import net.minecraft.registry.Registries;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.InvalidIdentifierException;
-import net.minecraft.util.Language;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Unit;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.rizecookey.clothconfig2.extension.api.ExtendedConfigEntryBuilder;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectAdapter;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectListEntry;
@@ -48,16 +48,17 @@ import java.util.function.Supplier;
 
 import static net.rizecookey.combatedit.client.CombatEditClient.LOGGER;
 
+@SuppressWarnings("UnstableApiUsage")
 public class ConfigurationScreenBuilder {
     private static final ExtendedConfigEntryBuilder ENTRY_BUILDER = ExtendedConfigEntryBuilder.create();
 
     public static Screen buildScreen(CombatEditClient combatEditClient, Screen parentScreen) {
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
         Settings settings = combatEditClient.getCurrentSettings().copy();
 
         var builder = ConfigBuilder.create()
                 .setParentScreen(parentScreen)
-                .setTitle(Text.translatable("title.combatedit.config"))
+                .setTitle(Component.translatable("title.combatedit.config"))
                 .setSavingRunnable(() -> {
                     try {
                         combatEditClient.saveSettings(settings);
@@ -67,10 +68,10 @@ public class ConfigurationScreenBuilder {
                         return;
                     }
 
-                    if (client.getNetworkHandler() != null && client.getNetworkHandler().getConnection().isLocal()) {
-                        var server = MinecraftClient.getInstance().getServer();
+                    if (client.getConnection() != null && client.getConnection().getConnection().isMemoryConnection()) {
+                        var server = Minecraft.getInstance().getSingleplayerServer();
                         assert server != null;
-                        server.reloadResources(server.getDataPackManager().getEnabledIds());
+                        server.reloadResources(server.getPackRepository().getSelectedIds());
                     }
                 });
 
@@ -86,29 +87,29 @@ public class ConfigurationScreenBuilder {
     }
 
     private static void addLocalWarning(ConfigCategory category) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.getNetworkHandler() == null || client.getNetworkHandler().getConnection().isLocal()) {
+        Minecraft client = Minecraft.getInstance();
+        if (client.getConnection() == null || client.getConnection().getConnection().isMemoryConnection()) {
             return;
         }
 
-        category.addEntry(ENTRY_BUILDER.startTextDescription(Text
+        category.addEntry(ENTRY_BUILDER.startTextDescription(Component
                 .translatable("option.combatedit.warn.local_only")
-                .styled(style -> style.withColor(Formatting.RED))).build());
+                .withStyle(style -> style.withColor(ChatFormatting.RED))).build());
     }
 
     private static void addIngameWarning(ConfigCategory category) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.getNetworkHandler() == null || !client.getNetworkHandler().getConnection().isLocal()) {
+        Minecraft client = Minecraft.getInstance();
+        if (client.getConnection() == null || !client.getConnection().getConnection().isMemoryConnection()) {
             return;
         }
 
-        category.addEntry(ENTRY_BUILDER.startTextDescription(Text
+        category.addEntry(ENTRY_BUILDER.startTextDescription(Component
                 .translatable("option.combatedit.warn.ingame")
-                .styled(style -> style.withColor(Formatting.RED))).build());
+                .withStyle(style -> style.withColor(ChatFormatting.RED))).build());
     }
 
     private static void createProfileCategory(Settings settings, ConfigBuilder builder) {
-        var category = builder.getOrCreateCategory(Text.translatable("category.combatedit.profile"));
+        var category = builder.getOrCreateCategory(Component.translatable("category.combatedit.profile"));
         addLocalWarning(category);
         addIngameWarning(category);
 
@@ -116,8 +117,8 @@ public class ConfigurationScreenBuilder {
                 .map(BaseProfile.IntegratedProfiles::getInfo)
                 .toList());
         var customProfile = new BaseProfile.Info(null,
-                Text.translatable("option.combatedit.profile.base_profile.custom.name"),
-                Text.translatable("option.combatedit.profile.base_profile.custom.description"));
+                Component.translatable("option.combatedit.profile.base_profile.custom.name"),
+                Component.translatable("option.combatedit.profile.base_profile.custom.description"));
         baseProfiles.add(customProfile);
 
         BaseProfile.Info currentSelected = baseProfiles.stream()
@@ -125,9 +126,9 @@ public class ConfigurationScreenBuilder {
                 .findFirst()
                 .orElse(customProfile);
 
-        var profileSelector = ENTRY_BUILDER.startSelector(Text.translatable("option.combatedit.profile.base_profile"), baseProfiles.toArray(new BaseProfile.Info[0]), currentSelected)
+        var profileSelector = ENTRY_BUILDER.startSelector(Component.translatable("option.combatedit.profile.base_profile"), baseProfiles.toArray(new BaseProfile.Info[0]), currentSelected)
                 .setNameProvider(BaseProfile.Info::name)
-                .setTooltipSupplier(info -> Optional.of(new Text[] { info.description() }))
+                .setTooltipSupplier(info -> Optional.of(new Component[] { info.description() }))
                 .setSaveConsumer(value -> {
                     if (value.id() != null) {
                         settings.setSelectedBaseProfile(value.id());
@@ -135,42 +136,42 @@ public class ConfigurationScreenBuilder {
                 })
                 .build();
         category.addEntry(profileSelector);
-        category.addEntry(ENTRY_BUILDER.startTextField(Text.translatable("option.combatedit.profile.custom_base_profile"), settings.getSelectedBaseProfile().toString())
+        category.addEntry(ENTRY_BUILDER.startTextField(Component.translatable("option.combatedit.profile.custom_base_profile"), settings.getSelectedBaseProfile().toString())
                 .setDisplayRequirement(() -> profileSelector.getValue().id() == null)
                 .setSaveConsumer(value -> {
                     if (profileSelector.getValue().id() == null) {
-                        settings.setSelectedBaseProfile(Identifier.of(value));
+                        settings.setSelectedBaseProfile(ResourceLocation.parse(value));
                     }
                 })
                 .setErrorSupplier(value -> {
                     try {
-                        Identifier.of(value);
-                    } catch (InvalidIdentifierException e) {
-                        return Optional.of(Text.translatable("error.combatedit.invalid_identifier"));
+                        ResourceLocation.parse(value);
+                    } catch (ResourceLocationException e) {
+                        return Optional.of(Component.translatable("error.combatedit.invalid_identifier"));
                     }
 
                     return Optional.empty();
                 })
                 .build());
-        category.addEntry(ENTRY_BUILDER.startTextDescription(Text
+        category.addEntry(ENTRY_BUILDER.startTextDescription(Component
                         .translatable("option.combatedit.profile.custom_base_profile.notice")
-                        .styled(style -> style.withColor(Formatting.RED)))
+                        .withStyle(style -> style.withColor(ChatFormatting.RED)))
                 .setDisplayRequirement(() -> profileSelector.getValue().id() == null)
                 .build());
     }
 
     private static void createClientCategory(Settings.ClientOnly clientOnly, ConfigBuilder builder) {
-        builder.getOrCreateCategory(Text.translatable("category.combatedit.client_only"))
-                .addEntry(ENTRY_BUILDER.startBooleanToggle(Text.translatable("option.combatedit.client_only.disable_new_tooltips"), clientOnly.shouldDisableNewTooltips())
+        builder.getOrCreateCategory(Component.translatable("category.combatedit.client_only"))
+                .addEntry(ENTRY_BUILDER.startBooleanToggle(Component.translatable("option.combatedit.client_only.disable_new_tooltips"), clientOnly.shouldDisableNewTooltips())
                         .setSaveConsumer(clientOnly::setDisableNewTooltips)
                         .build());
     }
 
     private static void createEntityCategory(List<EntityAttributes> entityAttributes, ConfigBuilder builder) {
-        var category = builder.getOrCreateCategory(Text.translatable("category.combatedit.entity"));
+        var category = builder.getOrCreateCategory(Component.translatable("category.combatedit.entity"));
         addLocalWarning(category);
         addIngameWarning(category);
-        category.addEntry(ENTRY_BUILDER.startObjectList(Text.translatable("option.combatedit.entity.entity_attributes"), entityAttributes, (value, list) -> createEntry(value != null ? value : EntityAttributes.getDefault(), list.getValue().size()))
+        category.addEntry(ENTRY_BUILDER.startObjectList(Component.translatable("option.combatedit.entity.entity_attributes"), entityAttributes, (value, list) -> createEntry(value != null ? value : EntityAttributes.getDefault(), list.getValue().size()))
                 .setSaveConsumer(value -> {
                     entityAttributes.clear();
                     entityAttributes.addAll(value);
@@ -178,17 +179,17 @@ public class ConfigurationScreenBuilder {
     }
 
     private static void createItemCategory(List<ItemAttributes> itemAttributes, List<ItemComponents> itemComponents, ConfigBuilder builder) {
-        var category = builder.getOrCreateCategory(Text.translatable("category.combatedit.item"));
+        var category = builder.getOrCreateCategory(Component.translatable("category.combatedit.item"));
         addLocalWarning(category);
         addIngameWarning(category);
-        category.addEntry(ENTRY_BUILDER.startObjectList(Text.translatable("option.combatedit.item.item_attributes"), itemAttributes, (value, list) -> createEntry(value != null ? value : ItemAttributes.getDefault(), list.getValue().size()))
+        category.addEntry(ENTRY_BUILDER.startObjectList(Component.translatable("option.combatedit.item.item_attributes"), itemAttributes, (value, list) -> createEntry(value != null ? value : ItemAttributes.getDefault(), list.getValue().size()))
                 .setSaveConsumer(value -> {
                     itemAttributes.clear();
                     itemAttributes.addAll(value);
                 })
                 .setExpanded(true)
                 .build());
-        category.addEntry(ENTRY_BUILDER.startObjectList(Text.translatable("option.combatedit.item.item_components"), itemComponents, (value, list) -> createEntry(value != null ? value : ItemComponents.getDefault(), list.getValue().size()))
+        category.addEntry(ENTRY_BUILDER.startObjectList(Component.translatable("option.combatedit.item.item_components"), itemComponents, (value, list) -> createEntry(value != null ? value : ItemComponents.getDefault(), list.getValue().size()))
                 .setSaveConsumer(value -> {
                     itemComponents.clear();
                     itemComponents.addAll(value);
@@ -197,7 +198,7 @@ public class ConfigurationScreenBuilder {
                 .build());
     }
 
-    private static EnumListEntry<?> optionalBooleanEntry(Text fieldName, Boolean initialValue, Consumer<Boolean> saveConsumer) {
+    private static EnumListEntry<?> optionalBooleanEntry(Component fieldName, Boolean initialValue, Consumer<Boolean> saveConsumer) {
         return ENTRY_BUILDER.startEnumSelector(fieldName, TriStateOption.class, TriStateOption.fromBoolean(initialValue))
                 .setSaveConsumer(value -> saveConsumer.accept(value.asBoolean()))
                 .setEnumNameProvider(anEnum -> ((TriStateOption) anEnum).getText())
@@ -205,43 +206,43 @@ public class ConfigurationScreenBuilder {
     }
 
     private static void createSoundCategory(MutableConfiguration configuration, ConfigBuilder builder) {
-        var category = builder.getOrCreateCategory(Text.translatable("category.combatedit.sounds"));
+        var category = builder.getOrCreateCategory(Component.translatable("category.combatedit.sounds"));
         addLocalWarning(category);
         for (var sound : Configuration.CONFIGURABLE_SOUNDS) {
             String translationKey = determineSoundTranslationKey(sound);
-            category.addEntry(optionalBooleanEntry(Text.translatable(translationKey), configuration.isSoundEnabled(sound.id()).orElse(null),
-                    value -> configuration.setSoundEnabled(sound.id(), value)));
+            category.addEntry(optionalBooleanEntry(Component.translatable(translationKey), configuration.isSoundEnabled(sound.location()).orElse(null),
+                    value -> configuration.setSoundEnabled(sound.location(), value)));
         }
     }
 
     private static void createMiscCategory(MutableConfiguration.MiscOptions miscOptions, ConfigBuilder builder) {
-        var category = builder.getOrCreateCategory(Text.translatable("category.combatedit.misc"));
+        var category = builder.getOrCreateCategory(Component.translatable("category.combatedit.misc"));
         addLocalWarning(category);
-        category.addEntry(optionalBooleanEntry(Text.translatable("option.combatedit.misc.enable_1_8_knockback"), miscOptions.is1_8KnockbackEnabled().orElse(null),
+        category.addEntry(optionalBooleanEntry(Component.translatable("option.combatedit.misc.enable_1_8_knockback"), miscOptions.is1_8KnockbackEnabled().orElse(null),
                 miscOptions::set1_8KnockbackEnabled));
-        category.addEntry(optionalBooleanEntry(Text.translatable("option.combatedit.misc.disable_sweeping_without_enchantment"), miscOptions.isSweepingWithoutEnchantmentDisabled().orElse(null),
+        category.addEntry(optionalBooleanEntry(Component.translatable("option.combatedit.misc.disable_sweeping_without_enchantment"), miscOptions.isSweepingWithoutEnchantmentDisabled().orElse(null),
                 miscOptions::setSweepingWithoutEnchantmentDisabled));
     }
 
     private static String determineSoundTranslationKey(SoundEvent sound) {
         Language language = Language.getInstance();
-        String key = "subtitles." + sound.id().getPath();
-        if (language.hasTranslation(key)) {
+        String key = "subtitles." + sound.location().getPath();
+        if (language.has(key)) {
             return key;
         }
 
-        return "combatedit.sound." + sound.id().getPath();
+        return "combatedit.sound." + sound.location().getPath();
     }
 
     private static ObjectListEntry<EntityAttributes> createEntry(EntityAttributes attributes, int entryIndex) {
         var copy = attributes.copy();
 
-        var entityTypeEntry = ENTRY_BUILDER.startDropdownMenu(Text.translatable("option.combatedit.entity.entity_attributes.entity"),
-                        ExtendedDropdownMenus.TopCellElementBuilder.ofRegistryIdentifier(Registries.ENTITY_TYPE, Registries.ENTITY_TYPE.get(attributes.getEntityId())),
-                        ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(Registries.ENTITY_TYPE))
-                .setSelections(Registries.ENTITY_TYPE.getIds())
+        var entityTypeEntry = ENTRY_BUILDER.startDropdownMenu(Component.translatable("option.combatedit.entity.entity_attributes.entity"),
+                        ExtendedDropdownMenus.TopCellElementBuilder.ofRegistryIdentifier(BuiltInRegistries.ENTITY_TYPE, BuiltInRegistries.ENTITY_TYPE.getValue(attributes.getEntityId())),
+                        ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(BuiltInRegistries.ENTITY_TYPE))
+                .setSelections(BuiltInRegistries.ENTITY_TYPE.keySet())
                 .build();
-        var attributeValueMap = ENTRY_BUILDER.startObjectList(Text.translatable("option.combatedit.entity.entity_attributes.attribute_entry"), List.copyOf(attributes.getBaseValues()),
+        var attributeValueMap = ENTRY_BUILDER.startObjectList(Component.translatable("option.combatedit.entity.entity_attributes.attribute_entry"), List.copyOf(attributes.getBaseValues()),
                         (value, list) -> createEntry(value != null ? value : EntityAttributes.AttributeBaseValue.getDefault()))
                 .setSaveConsumer(values -> {
                     attributes.getBaseValues().clear();
@@ -250,7 +251,7 @@ public class ConfigurationScreenBuilder {
                 .setExpanded(true)
                 .build();
 
-        return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.entity.entry"),
+        return ENTRY_BUILDER.startObjectField(Component.translatable("option.combatedit.entity.entry"),
                 List.of(
                         entityTypeEntry,
                         attributeValueMap
@@ -269,13 +270,13 @@ public class ConfigurationScreenBuilder {
 
     private static ObjectListEntry<EntityAttributes.AttributeBaseValue> createEntry(EntityAttributes.AttributeBaseValue baseValue) {
         var attributeEntry = ENTRY_BUILDER.startDropdownMenu(
-                Text.translatable("option.combatedit.entity.entity_attributes.attribute_entry.attribute"),
-                ExtendedDropdownMenus.TopCellElementBuilder.ofRegistryIdentifier(Registries.ATTRIBUTE, Registries.ATTRIBUTE.get(baseValue.attribute())),
-                ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(Registries.ATTRIBUTE)
-        ).setSelections(Registries.ATTRIBUTE.getIds()).build();
-        var baseValueEntry = ENTRY_BUILDER.startDoubleField(Text.translatable("option.combatedit.entity.entity_attributes.attribute_entry.base_value"), baseValue.baseValue())
+                Component.translatable("option.combatedit.entity.entity_attributes.attribute_entry.attribute"),
+                ExtendedDropdownMenus.TopCellElementBuilder.ofRegistryIdentifier(BuiltInRegistries.ATTRIBUTE, BuiltInRegistries.ATTRIBUTE.getValue(baseValue.attribute())),
+                ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(BuiltInRegistries.ATTRIBUTE)
+        ).setSelections(BuiltInRegistries.ATTRIBUTE.keySet()).build();
+        var baseValueEntry = ENTRY_BUILDER.startDoubleField(Component.translatable("option.combatedit.entity.entity_attributes.attribute_entry.base_value"), baseValue.baseValue())
                 .build();
-        return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.entity.entity_attributes.attribute_entry.entry"),
+        return ENTRY_BUILDER.startObjectField(Component.translatable("option.combatedit.entity.entity_attributes.attribute_entry.entry"),
                 List.of(
                         attributeEntry,
                         baseValueEntry
@@ -288,11 +289,11 @@ public class ConfigurationScreenBuilder {
                 .build();
     }
 
-    private static DropdownBoxEntry<Identifier> createItemEntry(Identifier currentItemId) {
-        return ENTRY_BUILDER.startDropdownMenu(Text.translatable("option.combatedit.item.item_attributes.item"),
-                        DropdownMenuBuilder.TopCellElementBuilder.ofItemIdentifier(Registries.ITEM.get(currentItemId)),
-                        ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(Registries.ITEM))
-                .setSelections(Registries.ITEM.getIds())
+    private static DropdownBoxEntry<ResourceLocation> createItemEntry(ResourceLocation currentItemId) {
+        return ENTRY_BUILDER.startDropdownMenu(Component.translatable("option.combatedit.item.item_attributes.item"),
+                        DropdownMenuBuilder.TopCellElementBuilder.ofItemIdentifier(BuiltInRegistries.ITEM.getValue(currentItemId)),
+                        ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(BuiltInRegistries.ITEM))
+                .setSelections(BuiltInRegistries.ITEM.keySet())
                 .build();
     }
 
@@ -300,7 +301,7 @@ public class ConfigurationScreenBuilder {
         var copy = new ItemAttributes(attributes.getItemId(), List.copyOf(attributes.getModifiers()), attributes.isOverrideDefault());
 
         var itemEntry = createItemEntry(attributes.getItemId());
-        var modifiersEntry = ENTRY_BUILDER.startObjectList(Text.translatable("option.combatedit.item.item_attributes.modifier_entry"),
+        var modifiersEntry = ENTRY_BUILDER.startObjectList(Component.translatable("option.combatedit.item.item_attributes.modifier_entry"),
                         List.copyOf(attributes.getModifiers()),
                         (value, list) -> createEntry(value != null ? value : ItemAttributes.ModifierEntry.getDefault()))
                 .setSaveConsumer(value -> {
@@ -309,11 +310,11 @@ public class ConfigurationScreenBuilder {
                 })
                 .setExpanded(true)
                 .build();
-        var overrideDefaultToggle = ENTRY_BUILDER.startBooleanToggle(Text.translatable("option.combatedit.item.item_attributes.override_defaults"), attributes.isOverrideDefault())
+        var overrideDefaultToggle = ENTRY_BUILDER.startBooleanToggle(Component.translatable("option.combatedit.item.item_attributes.override_defaults"), attributes.isOverrideDefault())
                 .setSaveConsumer(attributes::setOverrideDefault)
                 .build();
 
-        return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.item.entry"),
+        return ENTRY_BUILDER.startObjectField(Component.translatable("option.combatedit.item.entry"),
                 List.of(
                         itemEntry,
                         modifiersEntry,
@@ -336,28 +337,28 @@ public class ConfigurationScreenBuilder {
 
     private static ObjectListEntry<ItemAttributes.ModifierEntry> createEntry(ItemAttributes.ModifierEntry modifierEntry) {
         var attributeEntry = ENTRY_BUILDER.startDropdownMenu(
-                Text.translatable("option.combatedit.item.item_attributes.modifier_entry.attribute"),
-                ExtendedDropdownMenus.TopCellElementBuilder.ofRegistryIdentifier(Registries.ATTRIBUTE, Registries.ATTRIBUTE.get(modifierEntry.attribute())),
-                ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(Registries.ATTRIBUTE)
-        ).setSelections(Registries.ATTRIBUTE.getIds()).build();
-        var modifierIdEntry = ENTRY_BUILDER.startStrField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.modifier_id"), modifierEntry.modifierId() != null ? modifierEntry.modifierId().toString() : "")
+                Component.translatable("option.combatedit.item.item_attributes.modifier_entry.attribute"),
+                ExtendedDropdownMenus.TopCellElementBuilder.ofRegistryIdentifier(BuiltInRegistries.ATTRIBUTE, BuiltInRegistries.ATTRIBUTE.getValue(modifierEntry.attribute())),
+                ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(BuiltInRegistries.ATTRIBUTE)
+        ).setSelections(BuiltInRegistries.ATTRIBUTE.keySet()).build();
+        var modifierIdEntry = ENTRY_BUILDER.startStrField(Component.translatable("option.combatedit.item.item_attributes.modifier_entry.modifier_id"), modifierEntry.modifierId() != null ? modifierEntry.modifierId().toString() : "")
                 .setErrorSupplier(attributeModifierIdErrorSupplier())
-                .setTooltip(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.modifier_id.tooltip"))
+                .setTooltip(Component.translatable("option.combatedit.item.item_attributes.modifier_entry.modifier_id.tooltip"))
                 .build();
-        var valueEntry = ENTRY_BUILDER.startDoubleField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.value"), modifierEntry.value())
+        var valueEntry = ENTRY_BUILDER.startDoubleField(Component.translatable("option.combatedit.item.item_attributes.modifier_entry.value"), modifierEntry.value())
                 .build();
         var operationEntry = ENTRY_BUILDER.startDropdownMenu(
-                Text.translatable("option.combatedit.item.item_attributes.modifier_entry.operation"),
-                ExtendedDropdownMenus.TopCellElementBuilder.ofStringIdentifiable(EntityAttributeModifier.Operation.class, modifierEntry.operation()),
-                ExtendedDropdownMenus.CellCreatorBuilder.ofStringIdentifiableAutoWidth(EntityAttributeModifier.Operation.class)
-        ).setSelections(List.of(EntityAttributeModifier.Operation.values())).build();
+                Component.translatable("option.combatedit.item.item_attributes.modifier_entry.operation"),
+                ExtendedDropdownMenus.TopCellElementBuilder.ofStringIdentifiable(AttributeModifier.Operation.class, modifierEntry.operation()),
+                ExtendedDropdownMenus.CellCreatorBuilder.ofStringIdentifiableAutoWidth(AttributeModifier.Operation.class)
+        ).setSelections(List.of(AttributeModifier.Operation.values())).build();
         var slotEntry = ENTRY_BUILDER.startDropdownMenu(
-                Text.translatable("option.combatedit.item.item_attributes.modifier_entry.slot"),
-                ExtendedDropdownMenus.TopCellElementBuilder.ofStringIdentifiable(AttributeModifierSlot.class, modifierEntry.slot()),
-                ExtendedDropdownMenus.CellCreatorBuilder.ofStringIdentifiableAutoWidth(AttributeModifierSlot.class)
-        ).setSelections(List.of(AttributeModifierSlot.values())).build();
+                Component.translatable("option.combatedit.item.item_attributes.modifier_entry.slot"),
+                ExtendedDropdownMenus.TopCellElementBuilder.ofStringIdentifiable(EquipmentSlotGroup.class, modifierEntry.slot()),
+                ExtendedDropdownMenus.CellCreatorBuilder.ofStringIdentifiableAutoWidth(EquipmentSlotGroup.class)
+        ).setSelections(List.of(EquipmentSlotGroup.values())).build();
 
-        return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.item.item_attributes.modifier_entry.entry"),
+        return ENTRY_BUILDER.startObjectField(Component.translatable("option.combatedit.item.item_attributes.modifier_entry.entry"),
                 List.of(
                         attributeEntry,
                         modifierIdEntry,
@@ -367,7 +368,7 @@ public class ConfigurationScreenBuilder {
                 ),
                 ObjectAdapter.create(
                         () -> new ItemAttributes.ModifierEntry(attributeEntry.getValue(),
-                                !modifierIdEntry.getValue().isEmpty() ? Identifier.of(modifierIdEntry.getValue()) : null,
+                                !modifierIdEntry.getValue().isEmpty() ? ResourceLocation.parse(modifierIdEntry.getValue()) : null,
                                 valueEntry.getValue(),
                                 operationEntry.getValue(),
                                 slotEntry.getValue()),
@@ -379,7 +380,7 @@ public class ConfigurationScreenBuilder {
         var copy = new ItemComponents(components.getItemId(), List.copyOf(components.getChanges()));
 
         var itemEntry = createItemEntry(components.getItemId());
-        var componentsEntry = ENTRY_BUILDER.startObjectList(Text.translatable("option.combatedit.item.item_components.component_change_entry"),
+        var componentsEntry = ENTRY_BUILDER.startObjectList(Component.translatable("option.combatedit.item.item_components.component_change_entry"),
                         List.copyOf(components.getChanges()),
                         (value, list) -> createEntry(value != null ? value : ItemComponents.ComponentChangeEntry.getDefault()))
                 .setSaveConsumer(value -> {
@@ -389,7 +390,7 @@ public class ConfigurationScreenBuilder {
                 .setExpanded(true)
                 .build();
 
-        return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.item.entry"),
+        return ENTRY_BUILDER.startObjectField(Component.translatable("option.combatedit.item.entry"),
                         List.of(
                                 itemEntry,
                                 componentsEntry
@@ -410,26 +411,26 @@ public class ConfigurationScreenBuilder {
 
     private static ObjectListEntry<ItemComponents.ComponentChangeEntry> createEntry(ItemComponents.ComponentChangeEntry componentChangeEntry) {
         var componentTypeEntry = ENTRY_BUILDER.startDropdownMenu(
-                Text.translatable("option.combatedit.item.item_components.component_change_entry.component"),
-                        ExtendedDropdownMenus.TopCellElementBuilder.ofRegistryIdentifier(Registries.DATA_COMPONENT_TYPE, Registries.DATA_COMPONENT_TYPE.get(componentChangeEntry.componentType())),
-                        ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(Registries.DATA_COMPONENT_TYPE)
-                ).setSelections(Registries.DATA_COMPONENT_TYPE.getIds())
+                Component.translatable("option.combatedit.item.item_components.component_change_entry.component"),
+                        ExtendedDropdownMenus.TopCellElementBuilder.ofRegistryIdentifier(BuiltInRegistries.DATA_COMPONENT_TYPE, BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(componentChangeEntry.componentType())),
+                        ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(BuiltInRegistries.DATA_COMPONENT_TYPE)
+                ).setSelections(BuiltInRegistries.DATA_COMPONENT_TYPE.keySet())
                 .setErrorSupplier(ident -> {
-                    if (!DataComponentTypes.ATTRIBUTE_MODIFIERS.equals(Registries.DATA_COMPONENT_TYPE.get(ident))) {
+                    if (!DataComponents.ATTRIBUTE_MODIFIERS.equals(BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(ident))) {
                         return Optional.empty();
                     }
-                    return Optional.of(Text.translatable("option.combatedit.item.item_components.component_change_entry.component.attribute_modifiers_unsupported"));
+                    return Optional.of(Component.translatable("option.combatedit.item.item_components.component_change_entry.component.attribute_modifiers_unsupported"));
                 })
                 .build();
-        var changeTypeEntry = ENTRY_BUILDER.startEnumSelector(Text.translatable("option.combatedit.item.item_components.component_change_entry.change_type"), ItemComponents.ChangeType.class, componentChangeEntry.changeType())
+        var changeTypeEntry = ENTRY_BUILDER.startEnumSelector(Component.translatable("option.combatedit.item.item_components.component_change_entry.change_type"), ItemComponents.ChangeType.class, componentChangeEntry.changeType())
                 .setEnumNameProvider(anEnum -> ((ItemComponents.ChangeType) anEnum).getText())
                 .build();
-        var valueEntry = ENTRY_BUILDER.startStrField(Text.translatable("option.combatedit.item.item_components.component_change_entry.value"), componentChangeEntry.value())
+        var valueEntry = ENTRY_BUILDER.startStrField(Component.translatable("option.combatedit.item.item_components.component_change_entry.value"), componentChangeEntry.value())
                 .setTooltipSupplier(componentValueTooltipSupplier(componentTypeEntry, changeTypeEntry))
                 .setErrorSupplier(componentValueErrorSupplier(componentTypeEntry, changeTypeEntry))
                 .build();
 
-        return ENTRY_BUILDER.startObjectField(Text.translatable("option.combatedit.item.item_components.component_change_entry.entry"),
+        return ENTRY_BUILDER.startObjectField(Component.translatable("option.combatedit.item.item_components.component_change_entry.entry"),
                         List.of(
                                 componentTypeEntry,
                                 changeTypeEntry,
@@ -444,62 +445,62 @@ public class ConfigurationScreenBuilder {
                 .build();
     }
 
-    private static Function<String, Optional<Text>> attributeModifierIdErrorSupplier() {
+    private static Function<String, Optional<Component>> attributeModifierIdErrorSupplier() {
         return value -> {
             if (value.isEmpty()) {
                 return Optional.empty();
             }
-            Identifier id;
+            ResourceLocation id;
             try {
-                id = Identifier.of(value);
-            } catch (InvalidIdentifierException e) {
-                return Optional.of(Text.translatable("error.combatedit.invalid_identifier"));
+                id = ResourceLocation.parse(value);
+            } catch (ResourceLocationException e) {
+                return Optional.of(Component.translatable("error.combatedit.invalid_identifier"));
             }
             if (id.getNamespace().equals(ReservedIdentifiers.RESERVED_NAMESPACE)) {
-                return Optional.of(Text.translatable("error.combatedit.disallowed_namespace"));
+                return Optional.of(Component.translatable("error.combatedit.disallowed_namespace"));
             }
             return Optional.empty();
         };
     }
 
-    private static Supplier<Optional<Text[]>> componentValueTooltipSupplier(DropdownBoxEntry<Identifier> componentTypeEntry, EnumListEntry<ItemComponents.ChangeType> changeTypeEntry) {
+    private static Supplier<Optional<Component[]>> componentValueTooltipSupplier(DropdownBoxEntry<ResourceLocation> componentTypeEntry, EnumListEntry<ItemComponents.ChangeType> changeTypeEntry) {
         return () -> {
             if (changeTypeEntry.getValue().equals(ItemComponents.ChangeType.REMOVE)) {
-                return Optional.of(new Text[] {Text.translatable("option.combatedit.item.item_components.component_change_entry.value.remove_tooltip")});
+                return Optional.of(new Component[] {Component.translatable("option.combatedit.item.item_components.component_change_entry.value.remove_tooltip")});
             }
 
-            var componentType = Registries.DATA_COMPONENT_TYPE.get(componentTypeEntry.getValue());
+            var componentType = BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(componentTypeEntry.getValue());
             if (componentType == null) {
                 return Optional.empty();
             }
 
-            if (Unit.CODEC.equals(componentType.getCodec())) {
-                return Optional.of(new Text[] {Text.translatable("option.combatedit.item.item_components.component_change_entry.value.unit_tooltip")});
+            if (Unit.CODEC.equals(componentType.codec())) {
+                return Optional.of(new Component[] {Component.translatable("option.combatedit.item.item_components.component_change_entry.value.unit_tooltip")});
             }
 
             return Optional.empty();
         };
     }
 
-    private static Function<String, Optional<Text>> componentValueErrorSupplier(DropdownBoxEntry<Identifier> componentTypeEntry, EnumListEntry<ItemComponents.ChangeType> changeTypeEntry) {
+    private static Function<String, Optional<Component>> componentValueErrorSupplier(DropdownBoxEntry<ResourceLocation> componentTypeEntry, EnumListEntry<ItemComponents.ChangeType> changeTypeEntry) {
         return val -> {
             if (changeTypeEntry.getValue().equals(ItemComponents.ChangeType.REMOVE)) return Optional.empty();
 
-            ComponentType<?> type = Registries.DATA_COMPONENT_TYPE.get(componentTypeEntry.getValue());
+            DataComponentType<?> type = BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(componentTypeEntry.getValue());
             if (type == null) return Optional.empty();
-            if (Unit.CODEC.equals(type.getCodec())) return Optional.empty();
+            if (Unit.CODEC.equals(type.codec())) return Optional.empty();
 
-            var reader = StringNbtReader.fromOps(NbtOps.INSTANCE);
-            NbtElement element;
+            var reader = TagParser.create(NbtOps.INSTANCE);
+            Tag element;
             try {
-                element = reader.read(val);
+                element = reader.parseFully(val);
             } catch (CommandSyntaxException e) {
-                return Optional.of(Text.literal(e.getMessage()));
+                return Optional.of(Component.literal(e.getMessage()));
             }
-            var result = type.getCodecOrThrow().parse(NbtOps.INSTANCE, element);
+            var result = type.codecOrThrow().parse(NbtOps.INSTANCE, element);
             return result.mapOrElse(
                     ignored -> Optional.empty(),
-                    error -> Optional.of(Text.translatable("arguments.item.component.malformed",
+                    error -> Optional.of(Component.translatable("arguments.item.component.malformed",
                             componentTypeEntry.getValue(), error.message())));
         };
     }

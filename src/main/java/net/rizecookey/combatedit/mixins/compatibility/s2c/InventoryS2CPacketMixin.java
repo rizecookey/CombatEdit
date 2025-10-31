@@ -1,9 +1,9 @@
 package net.rizecookey.combatedit.mixins.compatibility.s2c;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.item.ItemStack;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.extension.AttributePatchable;
 import net.rizecookey.combatedit.utils.ItemStackAttributeHelper;
@@ -14,20 +14,20 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
 
-@Mixin(InventoryS2CPacket.class)
+@Mixin(ClientboundContainerSetContentPacket.class)
 public abstract class InventoryS2CPacketMixin implements AttributePatchable {
-    @Shadow @Final @Mutable private List<ItemStack> contents;
+    @Shadow @Final @Mutable private List<ItemStack> items;
 
-    @Shadow @Final @Mutable private ItemStack cursorStack;
+    @Shadow @Final @Mutable private ItemStack carriedItem;
 
     @Override
-    public void combatEdit$preSend(ServerPlayNetworkHandler networkHandler) {
+    public void combatEdit$preSend(ServerGamePacketListenerImpl networkHandler) {
         ItemStackAttributeHelper helper = ConfigurationManager.getInstance().getAttributeHelper();
-        List<ItemStack> modifiedSlotStackList = DefaultedList.ofSize(this.contents.size(), ItemStack.EMPTY);
-        for (ItemStack itemStack : this.contents) {
-            modifiedSlotStackList.set(this.contents.indexOf(itemStack), helper.getDisplayModified(itemStack));
+        List<ItemStack> modifiedSlotStackList = NonNullList.withSize(this.items.size(), ItemStack.EMPTY);
+        for (ItemStack itemStack : this.items) {
+            modifiedSlotStackList.set(this.items.indexOf(itemStack), helper.getDisplayModified(itemStack));
         }
-        this.contents = modifiedSlotStackList;
-        this.cursorStack = helper.getDisplayModified(this.cursorStack);
+        this.items = modifiedSlotStackList;
+        this.carriedItem = helper.getDisplayModified(this.carriedItem);
     }
 }

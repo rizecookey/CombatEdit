@@ -1,14 +1,14 @@
 package net.rizecookey.combatedit.modification.item;
 
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.type.AttributeModifiersComponent;
-import net.minecraft.item.Item;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public interface ItemModificationProvider {
-    AttributeModifiersComponent getAttributeModifiers(Identifier id, Item item, AttributeModifiersComponent originalDefaults);
-    boolean shouldModifyAttributes(Identifier id, Item item);
+    ItemAttributeModifiers getAttributeModifiers(ResourceLocation id, Item item, ItemAttributeModifiers originalDefaults);
+    boolean shouldModifyAttributes(ResourceLocation id, Item item);
 
-    ComponentMap getComponents(Identifier id, Item item, ComponentMap originalDefaults);
-    boolean shouldModifyDefaultComponents(Identifier id, Item item);
+    DataComponentMap getComponents(ResourceLocation id, Item item, DataComponentMap originalDefaults);
+    boolean shouldModifyDefaultComponents(ResourceLocation id, Item item);
 }

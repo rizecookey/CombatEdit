@@ -1,13 +1,13 @@
 package net.rizecookey.combatedit.mixins.sound;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.PlayerLikeEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.world.World;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Avatar;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
 import net.rizecookey.combatedit.extension.LivingEntityExtension;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,22 +15,22 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends PlayerLikeEntity implements LivingEntityExtension {
-    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
+@Mixin(Player.class)
+public abstract class PlayerEntityMixin extends Avatar implements LivingEntityExtension {
+    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, Level world) {
         super(entityType, world);
     }
 
-    @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/Entity;DDDLnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;)V"))
-    public void disableAttackSounds(World world, Entity entity, double x, double y, double z, SoundEvent sound, SoundCategory category) {
-        if (getEntityWorld().isClient() || shouldPlayAttackSound(sound)) {
+    @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/Entity;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;)V"))
+    public void disableAttackSounds(Level world, Entity entity, double x, double y, double z, SoundEvent sound, SoundSource category) {
+        if (level().isClientSide() || shouldPlayAttackSound(sound)) {
             world.playSound(entity, x, y, z, sound, category);
         }
     }
 
-    @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/Entity;DDDLnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FF)V"))
-    public void disableAttackSounds(World world, Entity entity, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch) {
-        if (getEntityWorld().isClient() || shouldPlayAttackSound(sound)) {
+    @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/Entity;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V"))
+    public void disableAttackSounds(Level world, Entity entity, double x, double y, double z, SoundEvent sound, SoundSource category, float volume, float pitch) {
+        if (level().isClientSide() || shouldPlayAttackSound(sound)) {
             world.playSound(entity, x, y, z, sound, category, volume, pitch);
         }
     }
@@ -42,6 +42,6 @@ public abstract class PlayerEntityMixin extends PlayerLikeEntity implements Livi
         }
 
         Configuration configuration = combatEdit$configurationManager().getConfiguration();
-        return configuration.isSoundEnabled(sound.id()).orElse(false);
+        return configuration.isSoundEnabled(sound.location()).orElse(false);
     }
 }

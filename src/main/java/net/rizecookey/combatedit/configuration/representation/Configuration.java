@@ -1,8 +1,8 @@
 package net.rizecookey.combatedit.configuration.representation;
 
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 
 import java.util.List;
@@ -19,12 +19,12 @@ import java.util.Optional;
  */
 public interface Configuration {
     List<SoundEvent> CONFIGURABLE_SOUNDS = List.of(
-            SoundEvents.ENTITY_PLAYER_ATTACK_NODAMAGE,
-            SoundEvents.ENTITY_PLAYER_ATTACK_KNOCKBACK,
-            SoundEvents.ENTITY_PLAYER_ATTACK_WEAK,
-            SoundEvents.ENTITY_PLAYER_ATTACK_STRONG,
-            SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP,
-            SoundEvents.ENTITY_PLAYER_ATTACK_CRIT
+            SoundEvents.PLAYER_ATTACK_NODAMAGE,
+            SoundEvents.PLAYER_ATTACK_KNOCKBACK,
+            SoundEvents.PLAYER_ATTACK_WEAK,
+            SoundEvents.PLAYER_ATTACK_STRONG,
+            SoundEvents.PLAYER_ATTACK_SWEEP,
+            SoundEvents.PLAYER_ATTACK_CRIT
     );
 
     /**
@@ -59,7 +59,7 @@ public interface Configuration {
      * @return whether an attack sound should be enabled, if this configuration
      * makes a decision about the specified sound, or an empty optional
      */
-    Optional<Boolean> isSoundEnabled(Identifier soundIdentifier);
+    Optional<Boolean> isSoundEnabled(ResourceLocation soundIdentifier);
 
     /**
      * Returns a map that, for each sound identifier for which the option is set,
@@ -67,7 +67,7 @@ public interface Configuration {
      *
      * @return the sound enablement map
      */
-    Map<Identifier, Boolean> getSoundMap();
+    Map<ResourceLocation, Boolean> getSoundMap();
 
     /**
      * Returns the miscellaneous options set by this configuration

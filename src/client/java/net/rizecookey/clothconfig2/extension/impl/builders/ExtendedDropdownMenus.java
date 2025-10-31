@@ -2,78 +2,77 @@ package net.rizecookey.clothconfig2.extension.impl.builders;
 
 import me.shedaniel.clothconfig2.gui.entries.DropdownBoxEntry;
 import me.shedaniel.clothconfig2.impl.builders.DropdownMenuBuilder;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.registry.Registry;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.InvalidIdentifierException;
-import net.minecraft.util.StringIdentifiable;
-
+import net.minecraft.ResourceLocationException;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.StringRepresentable;
 import java.util.Arrays;
 import java.util.function.Function;
 
 public class ExtendedDropdownMenus {
     public static int getMaxNeededWidth(Registry<?> registry) {
-        var textRenderer = MinecraftClient.getInstance().textRenderer;
-        return registry.getIds().stream()
-                .mapToInt(id -> textRenderer.getWidth(id.toString()))
+        var textRenderer = Minecraft.getInstance().font;
+        return registry.keySet().stream()
+                .mapToInt(id -> textRenderer.width(id.toString()))
                 .max()
                 .orElse(146);
     }
 
-    public static <T extends Enum<T> & StringIdentifiable> int getMaxNeededWidth(Class<T> enumClass) {
-        var textRenderer = MinecraftClient.getInstance().textRenderer;
+    public static <T extends Enum<T> & StringRepresentable> int getMaxNeededWidth(Class<T> enumClass) {
+        var textRenderer = Minecraft.getInstance().font;
         return Arrays.stream(enumClass.getEnumConstants())
-                .mapToInt(entry -> textRenderer.getWidth(entry.asString()))
+                .mapToInt(entry -> textRenderer.width(entry.getSerializedName()))
                 .max()
                 .orElse(146);
     }
 
     public static class TopCellElementBuilder {
-        private static <T> Function<String, Identifier> registryCheckedStringToIdentifier(Registry<T> registry) {
+        private static <T> Function<String, ResourceLocation> registryCheckedStringToIdentifier(Registry<T> registry) {
             return string -> {
-                Identifier identifier;
+                ResourceLocation identifier;
                 try {
-                    identifier = Identifier.of(string);
-                } catch (InvalidIdentifierException e) {
+                    identifier = ResourceLocation.parse(string);
+                } catch (ResourceLocationException e) {
                     identifier = null;
                 }
-                return registry.containsId(identifier) ? identifier : null;
+                return registry.containsKey(identifier) ? identifier : null;
             };
         }
 
-        public static <T> DropdownBoxEntry.SelectionTopCellElement<Identifier> ofRegistryIdentifier(Registry<T> registry, T initialValue) {
-            var id = registry.getId(initialValue);
+        public static <T> DropdownBoxEntry.SelectionTopCellElement<ResourceLocation> ofRegistryIdentifier(Registry<T> registry, T initialValue) {
+            var id = registry.getKey(initialValue);
             if (id == null) {
                 throw new IllegalArgumentException("Not a member of the specified registry");
             }
             return new DropdownBoxEntry.DefaultSelectionTopCellElement<>(
                     id,
                     registryCheckedStringToIdentifier(registry),
-                    identifier -> Text.literal(identifier.toString())
+                    identifier -> Component.literal(identifier.toString())
             );
         }
 
-        public static <T extends Enum<T> & StringIdentifiable> DropdownBoxEntry.SelectionTopCellElement<T> ofStringIdentifiable(Class<T> enumClass, T initialValue) {
+        public static <T extends Enum<T> & StringRepresentable> DropdownBoxEntry.SelectionTopCellElement<T> ofStringIdentifiable(Class<T> enumClass, T initialValue) {
             return new DropdownBoxEntry.DefaultSelectionTopCellElement<>(
                     initialValue,
                     string -> Arrays.stream(enumClass.getEnumConstants())
-                            .filter(entry -> entry.asString().equals(string))
+                            .filter(entry -> entry.getSerializedName().equals(string))
                             .findAny().orElse(null),
-                    entry -> Text.literal(entry.asString())
+                    entry -> Component.literal(entry.getSerializedName())
             );
         }
     }
 
     public static class CellCreatorBuilder {
-        public static <T extends Enum<T> & StringIdentifiable> DropdownBoxEntry.SelectionCellCreator<T> ofStringIdentifiableAutoWidth(Class<T> enumClass) {
+        public static <T extends Enum<T> & StringRepresentable> DropdownBoxEntry.SelectionCellCreator<T> ofStringIdentifiableAutoWidth(Class<T> enumClass) {
             var neededWidth = getMaxNeededWidth(enumClass) + 12;
-            return DropdownMenuBuilder.CellCreatorBuilder.ofWidth(neededWidth, entry -> Text.literal(entry.asString()));
+            return DropdownMenuBuilder.CellCreatorBuilder.ofWidth(neededWidth, entry -> Component.literal(entry.getSerializedName()));
         }
 
-        public static <T> DropdownBoxEntry.SelectionCellCreator<Identifier> ofRegistryIdentifier(Registry<T> registry) {
+        public static <T> DropdownBoxEntry.SelectionCellCreator<ResourceLocation> ofRegistryIdentifier(Registry<T> registry) {
             var neededWidth = getMaxNeededWidth(registry) + 12;
-            return DropdownMenuBuilder.CellCreatorBuilder.ofWidth(neededWidth, identifier -> Text.literal(identifier.toString()));
+            return DropdownMenuBuilder.CellCreatorBuilder.ofWidth(neededWidth, identifier -> Component.literal(identifier.toString()));
         }
     }
 }

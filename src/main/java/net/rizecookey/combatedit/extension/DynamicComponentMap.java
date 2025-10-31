@@ -1,45 +1,46 @@
 package net.rizecookey.combatedit.extension;
 
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.ComponentType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentType;
 
-public class DynamicComponentMap implements ComponentMap {
+public class DynamicComponentMap implements DataComponentMap {
     private static boolean USE_EXCHANGEABLE = false;
 
-    private final ComponentMap original;
-    private ComponentMap exchangeable;
+    private final DataComponentMap original;
+    private DataComponentMap exchangeable;
 
-    public DynamicComponentMap(ComponentMap original) {
+    public DynamicComponentMap(DataComponentMap original) {
         this.original = this.exchangeable = original;
     }
 
-    public ComponentMap getOriginal() {
+    public DataComponentMap getOriginal() {
         return original;
     }
 
-    public ComponentMap getExchangeable() {
+    public DataComponentMap getExchangeable() {
         return exchangeable;
     }
 
-    public void setExchangeable(ComponentMap exchangeable) {
+    public void setExchangeable(DataComponentMap exchangeable) {
         this.exchangeable = exchangeable;
     }
 
-    private ComponentMap getCurrent() {
+    private DataComponentMap getCurrent() {
         return USE_EXCHANGEABLE ? exchangeable : original;
     }
 
     @Override
-    public @Nullable <T> T get(ComponentType<? extends T> type) {
+    public @Nullable <T> T get(DataComponentType<? extends T> type) {
         return getCurrent().get(type);
     }
 
     @Override
-    public Set<ComponentType<?>> getTypes() {
-        return getCurrent().getTypes();
+    public @NotNull Set<DataComponentType<?>> keySet() {
+        return getCurrent().keySet();
     }
 
     public static boolean shouldUseExchangeable() {

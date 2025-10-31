@@ -1,16 +1,16 @@
 package net.rizecookey.combatedit.mixins.modification.item;
 
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.AttributeContainer;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.world.World;
+import net.minecraft.core.Holder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
 import net.rizecookey.combatedit.extension.LivingEntityExtension;
 import net.rizecookey.combatedit.utils.Pair;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,35 +30,35 @@ import java.util.function.BiConsumer;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements LivingEntityExtension {
-    @Shadow public abstract AttributeContainer getAttributes();
+    @Shadow public abstract AttributeMap getAttributes();
 
     @Unique
     private long lastKnownReload;
 
     @Unique
-    private List<Pair<RegistryEntry<EntityAttribute>, EntityAttributeModifier>> trackedModifiers;
+    private List<Pair<Holder<Attribute>, AttributeModifier>> trackedModifiers;
 
-    public LivingEntityMixin(EntityType<?> type, World world) {
+    public LivingEntityMixin(EntityType<?> type, Level world) {
         super(type, world);
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void initializeFields(EntityType<? extends LivingEntity> entityType, World world, CallbackInfo ci) {
-        if (world.isClient()) {
+    private void initializeFields(EntityType<? extends LivingEntity> entityType, Level world, CallbackInfo ci) {
+        if (world.isClientSide()) {
             return;
         }
         lastKnownReload = combatEdit$configurationManager().getLastAttributeReload();
         trackedModifiers = new ArrayList<>();
     }
 
-    @Inject(method = "getEquipmentChanges", at = @At("HEAD"))
+    @Inject(method = "collectEquipmentChanges", at = @At("HEAD"))
     private void clearAfterReload(CallbackInfoReturnable<Map<EquipmentSlot, ItemStack>> cir) {
         if (lastKnownReload >= combatEdit$configurationManager().getLastAttributeReload()) {
             return;
         }
 
         for (var trackedModifier : trackedModifiers) {
-            var instance = getAttributes().getCustomInstance(trackedModifier.first());
+            var instance = getAttributes().getInstance(trackedModifier.first());
             if (instance != null) {
                 instance.removeModifier(trackedModifier.second());
             }
@@ -66,33 +66,33 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityEx
 
         trackedModifiers.clear();
 
-        EnchantmentHelper.removeLocationBasedEffects(((LivingEntity) (Object) this));
+        EnchantmentHelper.stopLocationBasedEffects(((LivingEntity) (Object) this));
     }
 
-    @ModifyVariable(method = "getEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getEquippedStack(Lnet/minecraft/entity/EquipmentSlot;)Lnet/minecraft/item/ItemStack;"), ordinal = 0)
+    @ModifyVariable(method = "collectEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;"), ordinal = 0)
     private ItemStack useEmptyStackToForceModifierReload(ItemStack previous) {
         return lastKnownReload < combatEdit$configurationManager().getLastAttributeReload() ? ItemStack.EMPTY : previous;
     }
 
-    @ModifyArg(method = "onEquipmentRemoved", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;applyAttributeModifiers(Lnet/minecraft/entity/EquipmentSlot;Ljava/util/function/BiConsumer;)V", ordinal = 0))
-    private BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> removeOldItemModifiers(BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> attributeModifierConsumer) {
+    @ModifyArg(method = "stopLocationBasedEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;forEachModifier(Lnet/minecraft/world/entity/EquipmentSlot;Ljava/util/function/BiConsumer;)V", ordinal = 0))
+    private BiConsumer<Holder<Attribute>, AttributeModifier> removeOldItemModifiers(BiConsumer<Holder<Attribute>, AttributeModifier> attributeModifierConsumer) {
         return (entry, modifier) -> {
             trackedModifiers.remove(new Pair<>(entry, modifier));
             attributeModifierConsumer.accept(entry, modifier);
         };
     }
 
-    @ModifyArg(method = "getEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;applyAttributeModifiers(Lnet/minecraft/entity/EquipmentSlot;Ljava/util/function/BiConsumer;)V", ordinal = 0))
-    private BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> storeItemModifiers(BiConsumer<RegistryEntry<EntityAttribute>, EntityAttributeModifier> attributeModifierConsumer) {
+    @ModifyArg(method = "collectEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;forEachModifier(Lnet/minecraft/world/entity/EquipmentSlot;Ljava/util/function/BiConsumer;)V", ordinal = 0))
+    private BiConsumer<Holder<Attribute>, AttributeModifier> storeItemModifiers(BiConsumer<Holder<Attribute>, AttributeModifier> attributeModifierConsumer) {
         return (entry, modifier) -> {
             trackedModifiers.add(new Pair<>(entry, modifier));
             attributeModifierConsumer.accept(entry, modifier);
         };
     }
 
-    @Inject(method = "getEquipmentChanges", at = @At("RETURN"))
+    @Inject(method = "collectEquipmentChanges", at = @At("RETURN"))
     private void setLastKnownReload(CallbackInfoReturnable<Map<EquipmentSlot, ItemStack>> cir) {
-        if (getEntityWorld().isClient()) {
+        if (level().isClientSide()) {
             return;
         }
         lastKnownReload = combatEdit$configurationManager().getLastAttributeReload();

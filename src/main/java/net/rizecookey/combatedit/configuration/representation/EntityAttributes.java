@@ -1,8 +1,8 @@
 package net.rizecookey.combatedit.configuration.representation;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 
 import java.util.ArrayList;
@@ -13,11 +13,11 @@ import java.util.Objects;
  * Represents a list of overridden entity attribute base values for a given entity.
  */
 public class EntityAttributes {
-    private Identifier entityId;
+    private ResourceLocation entityId;
     private List<AttributeBaseValue> baseValues;
     private boolean overrideDefault;
 
-    public EntityAttributes(Identifier entityId, List<AttributeBaseValue> baseValues, boolean overrideDefault) {
+    public EntityAttributes(ResourceLocation entityId, List<AttributeBaseValue> baseValues, boolean overrideDefault) {
         this.entityId = entityId;
         this.baseValues = new ArrayList<>(baseValues);
         this.overrideDefault = overrideDefault;
@@ -29,11 +29,11 @@ public class EntityAttributes {
      * Returns the ID of the entity that this object overrides attribute base values for.
      * @return the id of the entity for which values are overridden
      */
-    public Identifier getEntityId() {
+    public ResourceLocation getEntityId() {
         return entityId;
     }
 
-    public void setEntityId(Identifier entityId) {
+    public void setEntityId(ResourceLocation entityId) {
         this.entityId = entityId;
     }
 
@@ -63,7 +63,7 @@ public class EntityAttributes {
     }
 
     public void validate() throws InvalidConfigurationException {
-        if (entityId == null || !Registries.ENTITY_TYPE.containsId(entityId)) {
+        if (entityId == null || !BuiltInRegistries.ENTITY_TYPE.containsKey(entityId)) {
             throw new InvalidConfigurationException("No entity with id %s found".formatted(entityId));
         }
 
@@ -77,17 +77,17 @@ public class EntityAttributes {
     }
 
     public static EntityAttributes getDefault() {
-        return new EntityAttributes(Registries.ENTITY_TYPE.getId(EntityType.CREEPER), List.of(), false);
+        return new EntityAttributes(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.CREEPER), List.of(), false);
     }
 
-    public record AttributeBaseValue(Identifier attribute, double baseValue) {
+    public record AttributeBaseValue(ResourceLocation attribute, double baseValue) {
         public static AttributeBaseValue getDefault() {
-            var attackDamageAttribute = net.minecraft.entity.attribute.EntityAttributes.ATTACK_DAMAGE;
-            return new AttributeBaseValue(Registries.ATTRIBUTE.getId(attackDamageAttribute.value()), 1);
+            var attackDamageAttribute = net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE;
+            return new AttributeBaseValue(BuiltInRegistries.ATTRIBUTE.getKey(attackDamageAttribute.value()), 1);
         }
 
         public void validate() throws InvalidConfigurationException {
-            if (attribute() == null || !Registries.ATTRIBUTE.containsId(attribute())) {
+            if (attribute() == null || !BuiltInRegistries.ATTRIBUTE.containsKey(attribute())) {
                 throw new InvalidConfigurationException("No attribute with id %s found".formatted(attribute()));
             }
         }

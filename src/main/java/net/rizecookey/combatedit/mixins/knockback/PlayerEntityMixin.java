@@ -1,11 +1,11 @@
 package net.rizecookey.combatedit.mixins.knockback;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.PlayerLikeEntity;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Avatar;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -16,12 +16,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Objects;
 
-@Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends PlayerLikeEntity {
+@Mixin(Player.class)
+public abstract class PlayerEntityMixin extends Avatar {
     @Unique
     private ConfigurationManager configurationProvider;
 
-    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
+    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, Level world) {
         super(entityType, world);
     }
 
@@ -30,14 +30,14 @@ public abstract class PlayerEntityMixin extends PlayerLikeEntity {
         configurationProvider = ConfigurationManager.getInstance();
     }
 
-    @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;takeKnockback(DDD)V"))
+    @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"))
     public void handleTakeKnockback(LivingEntity livingEntity, double speed, double xMovement, double zMovement) {
-        if (getEntityWorld().isClient() || !configurationProvider.getConfiguration().getMiscOptions().is1_8KnockbackEnabled().orElse(false)) {
-            livingEntity.takeKnockback(speed, xMovement, zMovement);
+        if (level().isClientSide() || !configurationProvider.getConfiguration().getMiscOptions().is1_8KnockbackEnabled().orElse(false)) {
+            livingEntity.knockback(speed, xMovement, zMovement);
             return;
         }
 
-        speed = (float) (speed * (1.0D - Objects.requireNonNull(livingEntity.getAttributeInstance(EntityAttributes.KNOCKBACK_RESISTANCE)).getValue()));
-        livingEntity.addVelocity(-(xMovement * speed), 0.1D, -(zMovement * speed));
+        speed = (float) (speed * (1.0D - Objects.requireNonNull(livingEntity.getAttribute(Attributes.KNOCKBACK_RESISTANCE)).getValue()));
+        livingEntity.push(-(xMovement * speed), 0.1D, -(zMovement * speed));
     }
 }

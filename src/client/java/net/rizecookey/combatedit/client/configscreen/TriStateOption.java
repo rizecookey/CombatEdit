@@ -1,20 +1,19 @@
 package net.rizecookey.combatedit.client.configscreen;
 
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-
 import java.util.Arrays;
 import java.util.Objects;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 
 public enum TriStateOption {
-    USE_DEFAULT(null, Text.translatable("option.combatedit.tristate.use_default")),
-    TRUE(true, Text.translatable("option.combatedit.tristate.true").styled(style -> style.withColor(Formatting.GREEN))),
-    FALSE(false, Text.translatable("option.combatedit.tristate.false").styled(style -> style.withColor(Formatting.RED))),;
+    USE_DEFAULT(null, Component.translatable("option.combatedit.tristate.use_default")),
+    TRUE(true, Component.translatable("option.combatedit.tristate.true").withStyle(style -> style.withColor(ChatFormatting.GREEN))),
+    FALSE(false, Component.translatable("option.combatedit.tristate.false").withStyle(style -> style.withColor(ChatFormatting.RED))),;
 
     private final Boolean booleanValue;
-    private final Text text;
+    private final Component text;
 
-    TriStateOption(Boolean booleanValue, Text text) {
+    TriStateOption(Boolean booleanValue, Component text) {
         this.booleanValue = booleanValue;
         this.text = text;
     }
@@ -23,7 +22,7 @@ public enum TriStateOption {
         return booleanValue;
     }
 
-    public Text getText() {
+    public Component getText() {
         return text;
     }
 

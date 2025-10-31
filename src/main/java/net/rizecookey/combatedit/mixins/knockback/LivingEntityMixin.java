@@ -1,11 +1,11 @@
 package net.rizecookey.combatedit.mixins.knockback;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -19,18 +19,18 @@ public abstract class LivingEntityMixin extends Entity {
     @Unique
     private ConfigurationManager configurationProvider;
 
-    public LivingEntityMixin(EntityType<?> type, World world) {
+    public LivingEntityMixin(EntityType<?> type, Level world) {
         super(type, world);
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void initCombatEditReference(EntityType<? extends LivingEntity> entityType, World world, CallbackInfo ci) {
+    private void initCombatEditReference(EntityType<? extends LivingEntity> entityType, Level world, CallbackInfo ci) {
         configurationProvider = ConfigurationManager.getInstance();
     }
 
-    @ModifyArg(method = "takeKnockback", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(DDD)V"), index = 1)
-    public double changeKnockbackY(double y, @Local(ordinal = 0, argsOnly = true) double strength, @Local(ordinal = 0) Vec3d vec3d) {
-        if (getEntityWorld().isClient() || !configurationProvider.getConfiguration().getMiscOptions().is1_8KnockbackEnabled().orElse(false)) {
+    @ModifyArg(method = "knockback", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;setDeltaMovement(DDD)V"), index = 1)
+    public double changeKnockbackY(double y, @Local(ordinal = 0, argsOnly = true) double strength, @Local(ordinal = 0) Vec3 vec3d) {
+        if (level().isClientSide() || !configurationProvider.getConfiguration().getMiscOptions().is1_8KnockbackEnabled().orElse(false)) {
             return y;
         }
 

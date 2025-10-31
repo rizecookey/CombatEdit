@@ -1,12 +1,12 @@
 package net.rizecookey.combatedit.client;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.toast.SystemToast;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.client.configscreen.InvalidConfigScreen;
 import net.rizecookey.combatedit.client.event.ClientEvents;
@@ -42,18 +42,18 @@ public class CombatEditClient extends CombatEdit {
     @Override
     public void warnAboutItemIncompatibility(List<Item> items) {
         super.warnAboutItemIncompatibility(items);
-        sendErrorNotification(MinecraftClient.getInstance(), "incompatibility_item");
+        sendErrorNotification(Minecraft.getInstance(), "incompatibility_item");
     }
 
     @Override
     public void warnAboutEntityIncompatibility(List<EntityType<? extends LivingEntity>> entities) {
         super.warnAboutEntityIncompatibility(entities);
-        sendErrorNotification(MinecraftClient.getInstance(), "incompatibility_entity");
+        sendErrorNotification(Minecraft.getInstance(), "incompatibility_entity");
     }
 
-    public static void sendErrorNotification(MinecraftClient client, String errorKey) {
-        SystemToast toast = SystemToast.create(client, SystemToast.Type.PACK_LOAD_FAILURE, Text.translatable("notification.combatedit.%s.title".formatted(errorKey)), Text.translatable("notification.combatedit.%s.description".formatted(errorKey)));
-        client.getToastManager().add(toast);
+    public static void sendErrorNotification(Minecraft client, String errorKey) {
+        SystemToast toast = SystemToast.multiline(client, SystemToast.SystemToastId.PACK_LOAD_FAILURE, Component.translatable("notification.combatedit.%s.title".formatted(errorKey)), Component.translatable("notification.combatedit.%s.description".formatted(errorKey)));
+        client.getToastManager().addToast(toast);
     }
 
     public static CombatEditClient getInstance() {

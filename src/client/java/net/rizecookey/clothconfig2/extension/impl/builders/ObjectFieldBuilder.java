@@ -4,7 +4,7 @@ import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.impl.builders.AbstractFieldBuilder;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectAdapter;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectListEntry;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ public class ObjectFieldBuilder<T> extends AbstractFieldBuilder<T, ObjectListEnt
     private final ObjectAdapter<T> adapter;
     private boolean expanded;
 
-    public ObjectFieldBuilder(Text fieldNameKey, List<AbstractConfigListEntry<?>> innerEntries, ObjectAdapter<T> adapter, Text resetButtonKey) {
+    public ObjectFieldBuilder(Component fieldNameKey, List<AbstractConfigListEntry<?>> innerEntries, ObjectAdapter<T> adapter, Component resetButtonKey) {
         super(resetButtonKey, fieldNameKey);
         this.innerEntries = List.copyOf(innerEntries != null ? innerEntries : List.of());
         if (adapter == null) {
