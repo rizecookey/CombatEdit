@@ -13,7 +13,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -21,7 +20,7 @@ import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.configuration.BaseProfile;
 import net.rizecookey.combatedit.configuration.Settings;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
-import net.rizecookey.combatedit.utils.TextUtils;
+import net.rizecookey.combatedit.utils.ComponentUtils;
 
 import java.io.IOException;
 import java.util.Set;
@@ -33,13 +32,13 @@ import static net.rizecookey.combatedit.CombatEdit.LOGGER;
 
 public class CombatEditCommand implements CommandRegistrationCallback {
     private static final DynamicCommandExceptionType INVALID_ID = new DynamicCommandExceptionType(
-            id -> TextUtils.fallBackToServerTranslation(Component.translatable("command.combatedit.profile.set.error.invalid_base_profile", id.toString()))
+            id -> ComponentUtils.fallBackToServerTranslation(Component.translatable("command.combatedit.profile.set.error.invalid_base_profile", id.toString()))
     );
     private static final DynamicCommandExceptionType ALREADY_SET = new DynamicCommandExceptionType(
-            id -> TextUtils.fallBackToServerTranslation(Component.translatable("command.combatedit.profile.set.error.already_enabled", id.toString()))
+            id -> ComponentUtils.fallBackToServerTranslation(Component.translatable("command.combatedit.profile.set.error.already_enabled", id.toString()))
     );
     private static final DynamicCommandExceptionType FAILED_TO_SAVE = new DynamicCommandExceptionType(
-            none -> TextUtils.fallBackToServerTranslation(Component.translatable("command.combatedit.profile.set.error.settings_save_failed"))
+            none -> ComponentUtils.fallBackToServerTranslation(Component.translatable("command.combatedit.profile.set.error.settings_save_failed"))
     );
 
     private final CombatEdit combatEdit;
@@ -69,7 +68,7 @@ public class CombatEditCommand implements CommandRegistrationCallback {
         var baseProfiles = configurationManager.getBaseProfiles();
         ctx.getSource().sendSuccess(() -> Component.translatable("command.combatedit.profile.list",
                 baseProfiles.size(),
-                ComponentUtils.formatList(baseProfiles.entrySet(), entry -> baseProfileToText(entry.getKey(), entry.getValue())
+                net.minecraft.network.chat.ComponentUtils.formatList(baseProfiles.entrySet(), entry -> baseProfileToText(entry.getKey(), entry.getValue())
         )), false);
         return 1;
     }

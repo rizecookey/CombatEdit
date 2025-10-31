@@ -19,7 +19,7 @@ public class ItemStackAttributeHelper {
     private static final String ORIGINAL_ATTRIBUTE_TAG = "combatedit:original_attribute_modifiers";
     private static final String IS_PACKET_MODIFIED_TAG = "combatedit:is_packet_modified";
 
-    private static final ResourceLocation SHARPNESS_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(ReservedIdentifiers.RESERVED_NAMESPACE, "sharpness_modifier");
+    private static final ResourceLocation SHARPNESS_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(ReservedResourceLocations.RESERVED_NAMESPACE, "sharpness_modifier");
 
     private final ConfigurationManager configurationProvider;
 
@@ -117,10 +117,10 @@ public class ItemStackAttributeHelper {
 
     private static ResourceLocation getSafeIdentifier(ResourceLocation identifier) {
         if (identifier.equals(Item.BASE_ATTACK_DAMAGE_ID)) {
-            return ReservedIdentifiers.ATTACK_DAMAGE_MODIFIER_ID_ALT;
+            return ReservedResourceLocations.ATTACK_DAMAGE_MODIFIER_ID_ALT;
         }
         if (identifier.equals(Item.BASE_ATTACK_SPEED_ID)) {
-            return ReservedIdentifiers.ATTACK_SPEED_MODIFIER_ID_ALT;
+            return ReservedResourceLocations.ATTACK_SPEED_MODIFIER_ID_ALT;
         }
 
         return identifier;

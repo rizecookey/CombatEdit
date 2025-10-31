@@ -24,13 +24,13 @@ import net.rizecookey.combatedit.command.CombatEditCommand;
 import net.rizecookey.combatedit.configuration.Settings;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
-import net.rizecookey.combatedit.extension.DynamicComponentMap;
-import net.rizecookey.combatedit.extension.DynamicDefaultAttributeContainer;
-import net.rizecookey.combatedit.utils.serializers.AttributeModifierSlotSerializer;
-import net.rizecookey.combatedit.utils.serializers.EntityAttributeModifier$OperationSerializer;
-import net.rizecookey.combatedit.utils.serializers.IdentifierSerializer;
+import net.rizecookey.combatedit.extension.DynamicDataComponentMap;
+import net.rizecookey.combatedit.extension.DynamicAttributeSupplier;
+import net.rizecookey.combatedit.utils.serializers.EquipmentSlotGroupSerializer;
+import net.rizecookey.combatedit.utils.serializers.AttributeModifier$OperationSerializer;
+import net.rizecookey.combatedit.utils.serializers.ResourceLocationSerializer;
 import net.rizecookey.combatedit.utils.serializers.MutableConfigurationTypeAdapterFactory;
-import net.rizecookey.combatedit.utils.serializers.TextSerializer;
+import net.rizecookey.combatedit.utils.serializers.ComponentSerializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -49,10 +49,10 @@ public class CombatEdit implements CombatEditApi {
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .setPrettyPrinting()
             .registerTypeAdapterFactory(new MutableConfigurationTypeAdapterFactory())
-            .registerTypeAdapter(ResourceLocation.class, new IdentifierSerializer())
-            .registerTypeAdapter(EquipmentSlotGroup.class, new AttributeModifierSlotSerializer())
-            .registerTypeAdapter(AttributeModifier.Operation.class, new EntityAttributeModifier$OperationSerializer())
-            .registerTypeAdapter(Component.class, new TextSerializer())
+            .registerTypeAdapter(ResourceLocation.class, new ResourceLocationSerializer())
+            .registerTypeAdapter(EquipmentSlotGroup.class, new EquipmentSlotGroupSerializer())
+            .registerTypeAdapter(AttributeModifier.Operation.class, new AttributeModifier$OperationSerializer())
+            .registerTypeAdapter(Component.class, new ComponentSerializer())
             .create();
 
     private boolean modificationsEnabled;
@@ -165,8 +165,8 @@ public class CombatEdit implements CombatEditApi {
 
     public void setModificationsEnabled(boolean enabled) {
         modificationsEnabled = enabled;
-        DynamicComponentMap.setUseExchangeable(enabled);
-        DynamicDefaultAttributeContainer.setUseExchangeable(enabled);
+        DynamicDataComponentMap.setUseExchangeable(enabled);
+        DynamicAttributeSupplier.setUseExchangeable(enabled);
     }
 
     public void warnAboutItemIncompatibility(List<Item> items) {

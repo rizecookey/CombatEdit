@@ -35,7 +35,7 @@ import net.rizecookey.combatedit.configuration.representation.EntityAttributes;
 import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
 import net.rizecookey.combatedit.configuration.representation.ItemComponents;
 import net.rizecookey.combatedit.configuration.representation.MutableConfiguration;
-import net.rizecookey.combatedit.utils.ReservedIdentifiers;
+import net.rizecookey.combatedit.utils.ReservedResourceLocations;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -456,7 +456,7 @@ public class ConfigurationScreenBuilder {
             } catch (ResourceLocationException e) {
                 return Optional.of(Component.translatable("error.combatedit.invalid_identifier"));
             }
-            if (id.getNamespace().equals(ReservedIdentifiers.RESERVED_NAMESPACE)) {
+            if (id.getNamespace().equals(ReservedResourceLocations.RESERVED_NAMESPACE)) {
                 return Optional.of(Component.translatable("error.combatedit.disallowed_namespace"));
             }
             return Optional.empty();

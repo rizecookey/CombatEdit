@@ -1,0 +1,4 @@
+package net.rizecookey.combatedit.extension;
+
+public interface AttributeSupplierExtensions extends AttributeSupplierCompatibilityExtension, AttributeSupplierInstancesProvider {
+}

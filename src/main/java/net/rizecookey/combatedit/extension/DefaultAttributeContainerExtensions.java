@@ -1,4 +1,0 @@
-package net.rizecookey.combatedit.extension;
-
-public interface DefaultAttributeContainerExtensions extends DefaultAttributeContainerCompatibilityExtension, DefaultAttributeContainerInstancesProvider {
-}

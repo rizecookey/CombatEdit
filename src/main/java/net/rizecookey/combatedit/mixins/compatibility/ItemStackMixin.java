@@ -6,7 +6,7 @@ import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.rizecookey.combatedit.extension.DynamicComponentMap;
+import net.rizecookey.combatedit.extension.DynamicDataComponentMap;
 import net.rizecookey.combatedit.extension.ItemStackExtension;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,7 +27,7 @@ public abstract class ItemStackMixin implements ItemStackExtension {
     @Override
     public void combatEdit$useOriginalComponentMapAsBase() {
         DataComponentMap baseComponents = this.getItem().components();
-        if (!(baseComponents instanceof DynamicComponentMap dynamicComponents)) {
+        if (!(baseComponents instanceof DynamicDataComponentMap dynamicComponents)) {
             return;
         }
 

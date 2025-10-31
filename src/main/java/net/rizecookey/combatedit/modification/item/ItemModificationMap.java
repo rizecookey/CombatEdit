@@ -16,7 +16,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.rizecookey.combatedit.api.extension.DefaultsSupplier;
 import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
 import net.rizecookey.combatedit.configuration.representation.ItemComponents;
-import net.rizecookey.combatedit.utils.ReservedIdentifiers;
+import net.rizecookey.combatedit.utils.ReservedResourceLocations;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -155,6 +155,6 @@ public class ItemModificationMap implements ItemModificationProvider {
     }
 
     public static ResourceLocation generateBasedOnIndex(int index) {
-        return ResourceLocation.fromNamespaceAndPath(ReservedIdentifiers.RESERVED_NAMESPACE, "generated/" + (index + 1));
+        return ResourceLocation.fromNamespaceAndPath(ReservedResourceLocations.RESERVED_NAMESPACE, "generated/" + (index + 1));
     }
 }

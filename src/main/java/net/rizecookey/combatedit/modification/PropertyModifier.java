@@ -16,9 +16,9 @@ import net.minecraft.world.level.entity.EntityTypeTest;
 import net.rizecookey.combatedit.api.extension.DefaultsSupplier;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
-import net.rizecookey.combatedit.extension.DefaultAttributeContainerExtensions;
-import net.rizecookey.combatedit.extension.DynamicComponentMap;
-import net.rizecookey.combatedit.extension.DynamicDefaultAttributeContainer;
+import net.rizecookey.combatedit.extension.AttributeSupplierExtensions;
+import net.rizecookey.combatedit.extension.DynamicDataComponentMap;
+import net.rizecookey.combatedit.extension.DynamicAttributeSupplier;
 import net.rizecookey.combatedit.modification.entity.EntityModificationMap;
 import net.rizecookey.combatedit.modification.entity.EntityModificationProvider;
 import net.rizecookey.combatedit.modification.item.ItemModificationMap;
@@ -95,11 +95,11 @@ public class PropertyModifier implements DefaultsSupplier {
         @Override
         public DataComponentMap getVanillaComponents(Item item) {
             var components = item.components();
-            if (!(components instanceof DynamicComponentMap dynamicComponentMap)) {
+            if (!(components instanceof DynamicDataComponentMap dynamicDataComponentMap)) {
                 return components;
             }
 
-            return dynamicComponentMap.getOriginal();
+            return dynamicDataComponentMap.getOriginal();
         }
 
         @Override
@@ -120,7 +120,7 @@ public class PropertyModifier implements DefaultsSupplier {
             for (Item item : BuiltInRegistries.ITEM) {
                 ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
                 DataComponentMap components = item.components();
-                if (!(components instanceof DynamicComponentMap dynamicComponents)) {
+                if (!(components instanceof DynamicDataComponentMap dynamicComponents)) {
                     if (!modificationProvider.shouldModifyAttributes(id, item) && !modificationProvider.shouldModifyDefaultComponents(id, item)) {
                         continue;
                     }
@@ -159,7 +159,7 @@ public class PropertyModifier implements DefaultsSupplier {
         @Override
         public AttributeSupplier getVanillaDefaultAttributes(EntityType<? extends LivingEntity> entityType) {
             var defaultAttributes = DefaultAttributes.getSupplier(entityType);
-            if (!(defaultAttributes instanceof DynamicDefaultAttributeContainer dynamicDefaults)) {
+            if (!(defaultAttributes instanceof DynamicAttributeSupplier dynamicDefaults)) {
                 return defaultAttributes;
             }
             return dynamicDefaults.getOriginal();
@@ -175,7 +175,7 @@ public class PropertyModifier implements DefaultsSupplier {
             for (EntityType<? extends LivingEntity> type : DefaultAttributes.SUPPLIERS.keySet()) {
                 ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
                 var defaults = DefaultAttributes.getSupplier(type);
-                if (!(defaults instanceof DynamicDefaultAttributeContainer entry)) {
+                if (!(defaults instanceof DynamicAttributeSupplier entry)) {
                     if (!modificationProvider.shouldModifyEntity(id, type)) {
                         continue;
                     }
@@ -186,7 +186,7 @@ public class PropertyModifier implements DefaultsSupplier {
                     continue;
                 }
 
-                var entryExt = (DefaultAttributeContainerExtensions) entry;
+                var entryExt = (AttributeSupplierExtensions) entry;
                 var previousDefaults = entry.getExchangeable();
                 if (!modificationProvider.shouldModifyEntity(id, type)) {
                     entry.setExchangeable(entry.getOriginal());

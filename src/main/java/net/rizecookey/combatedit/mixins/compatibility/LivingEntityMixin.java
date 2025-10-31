@@ -7,7 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.level.Level;
-import net.rizecookey.combatedit.extension.AttributeContainerExtension;
+import net.rizecookey.combatedit.extension.AttributeMapExtension;
 import net.rizecookey.combatedit.extension.LivingEntityExtension;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,7 +34,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityEx
     public Consumer<? super List<AttributeInstance.Packed>> useNewDefaults(Consumer<? super List<AttributeInstance.Packed>> action) {
         return list -> {
             action.accept(list);
-            if (!AttributeContainerExtension.IS_SAVE_CALL.get().getFirst()) {
+            if (!AttributeMapExtension.IS_SAVE_CALL.get().getFirst()) {
                 return;
             }
 
@@ -46,7 +46,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityEx
 
     @ModifyExpressionValue(method = "addAdditionalSaveData", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getAttributes()Lnet/minecraft/world/entity/ai/attributes/AttributeMap;"))
     private AttributeMap useOldDefaults(AttributeMap original) {
-        if (!AttributeContainerExtension.IS_SAVE_CALL.get().getFirst()) {
+        if (!AttributeMapExtension.IS_SAVE_CALL.get().getFirst()) {
             return original;
         }
 
