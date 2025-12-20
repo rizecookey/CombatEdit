@@ -94,6 +94,26 @@
         "override_default": true
       },
       {
+        "item_id": "minecraft:wooden_spear",
+        "modifiers": [
+          {
+            "attribute": "minecraft:attack_damage",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_damage",
+            "value": 1.0,
+            "operation": "add_value"
+          },
+          {
+            "attribute": "minecraft:attack_speed",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_speed",
+            "value": -18.46,
+            "operation": "add_value"
+          }
+        ],
+        "override_default": true
+      },
+      {
         "item_id": "minecraft:copper_sword",
         "modifiers": [
           {
@@ -153,6 +173,26 @@
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 3.0,
+            "operation": "add_value"
+          }
+        ],
+        "override_default": true
+      },
+      {
+        "item_id": "minecraft:copper_spear",
+        "modifiers": [
+          {
+            "attribute": "minecraft:attack_damage",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_damage",
+            "value": 2.0,
+            "operation": "add_value"
+          },
+          {
+            "attribute": "minecraft:attack_speed",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_speed",
+            "value": -18.82,
             "operation": "add_value"
           }
         ],
@@ -224,6 +264,26 @@
         "override_default": true
       },
       {
+        "item_id": "minecraft:stone_spear",
+        "modifiers": [
+          {
+            "attribute": "minecraft:attack_damage",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_damage",
+            "value": 2.0,
+            "operation": "add_value"
+          },
+          {
+            "attribute": "minecraft:attack_speed",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_speed",
+            "value": -18.67,
+            "operation": "add_value"
+          }
+        ],
+        "override_default": true
+      },
+      {
         "item_id": "minecraft:golden_sword",
         "modifiers": [
           {
@@ -283,6 +343,26 @@
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 2.0,
+            "operation": "add_value"
+          }
+        ],
+        "override_default": true
+      },
+      {
+        "item_id": "minecraft:golden_spear",
+        "modifiers": [
+          {
+            "attribute": "minecraft:attack_damage",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_damage",
+            "value": 1.0,
+            "operation": "add_value"
+          },
+          {
+            "attribute": "minecraft:attack_speed",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_speed",
+            "value": -18.95,
             "operation": "add_value"
           }
         ],
@@ -354,6 +434,26 @@
         "override_default": true
       },
       {
+        "item_id": "minecraft:iron_spear",
+        "modifiers": [
+          {
+            "attribute": "minecraft:attack_damage",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_damage",
+            "value": 3.0,
+            "operation": "add_value"
+          },
+          {
+            "attribute": "minecraft:attack_speed",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_speed",
+            "value": -18.95,
+            "operation": "add_value"
+          }
+        ],
+        "override_default": true
+      },
+      {
         "item_id": "minecraft:diamond_sword",
         "modifiers": [
           {
@@ -419,6 +519,26 @@
         "override_default": true
       },
       {
+        "item_id": "minecraft:diamond_spear",
+        "modifiers": [
+          {
+            "attribute": "minecraft:attack_damage",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_damage",
+            "value": 4.0,
+            "operation": "add_value"
+          },
+          {
+            "attribute": "minecraft:attack_speed",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_speed",
+            "value": -19.05,
+            "operation": "add_value"
+          }
+        ],
+        "override_default": true
+      },
+      {
         "item_id": "minecraft:netherite_sword",
         "modifiers": [
           {
@@ -478,6 +598,26 @@
             "slot": "mainhand",
             "modifier_id": "minecraft:base_attack_damage",
             "value": 6.0,
+            "operation": "add_value"
+          }
+        ],
+        "override_default": true
+      },
+      {
+        "item_id": "minecraft:netherite_spear",
+        "modifiers": [
+          {
+            "attribute": "minecraft:attack_damage",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_damage",
+            "value": 5.0,
+            "operation": "add_value"
+          },
+          {
+            "attribute": "minecraft:attack_speed",
+            "slot": "mainhand",
+            "modifier_id": "minecraft:base_attack_speed",
+            "value": -19.13,
             "operation": "add_value"
           }
         ],
