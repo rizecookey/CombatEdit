@@ -2,7 +2,7 @@ package net.rizecookey.combatedit.configuration.representation;
 
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,14 +25,14 @@ public class MutableConfiguration implements Configuration {
     private List<ItemAttributes> itemAttributes;
     private List<ItemComponents> itemComponents;
     private List<EntityAttributes> entityAttributes;
-    private Map<ResourceLocation, Boolean> enabledSounds;
+    private Map<Identifier, Boolean> enabledSounds;
     private MiscOptions miscOptions;
 
-    public MutableConfiguration(List<ItemAttributes> itemAttributes, List<EntityAttributes> entityAttributes, Map<ResourceLocation, Boolean> enabledSounds, MiscOptions miscOptions) {
+    public MutableConfiguration(List<ItemAttributes> itemAttributes, List<EntityAttributes> entityAttributes, Map<Identifier, Boolean> enabledSounds, MiscOptions miscOptions) {
         this(itemAttributes, List.of(), entityAttributes, enabledSounds, miscOptions);
     }
 
-    public MutableConfiguration(List<ItemAttributes> itemAttributes, List<ItemComponents> itemComponents, List<EntityAttributes> entityAttributes, Map<ResourceLocation, Boolean> enabledSounds, MiscOptions miscOptions) {
+    public MutableConfiguration(List<ItemAttributes> itemAttributes, List<ItemComponents> itemComponents, List<EntityAttributes> entityAttributes, Map<Identifier, Boolean> enabledSounds, MiscOptions miscOptions) {
         this.configurationVersion = CURRENT_VERSION;
         this.itemAttributes = itemAttributes != null ? new ArrayList<>(itemAttributes) : new ArrayList<>();
         this.itemComponents = itemComponents != null ? new ArrayList<>(itemComponents) : new ArrayList<>();
@@ -77,7 +77,7 @@ public class MutableConfiguration implements Configuration {
     }
 
     @Override
-    public Optional<Boolean> isSoundEnabled(ResourceLocation soundIdentifier) {
+    public Optional<Boolean> isSoundEnabled(Identifier soundIdentifier) {
         if (enabledSounds == null) {
             enabledSounds = new HashMap<>();
         }
@@ -86,7 +86,7 @@ public class MutableConfiguration implements Configuration {
     }
 
     @Override
-    public Map<ResourceLocation, Boolean> getSoundMap() {
+    public Map<Identifier, Boolean> getSoundMap() {
         if (enabledSounds == null) {
             enabledSounds = new HashMap<>();
         }
@@ -102,7 +102,7 @@ public class MutableConfiguration implements Configuration {
         return miscOptions;
     }
 
-    public void setSoundEnabled(ResourceLocation soundIdentifier, @Nullable Boolean enabled) {
+    public void setSoundEnabled(Identifier soundIdentifier, @Nullable Boolean enabled) {
         if (enabled == null) {
             enabledSounds.remove(soundIdentifier);
             return;

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
+import org.jspecify.annotations.NonNull;
 
 public class DynamicDataComponentMap implements DataComponentMap {
     private static boolean USE_EXCHANGEABLE = false;
@@ -34,7 +35,7 @@ public class DynamicDataComponentMap implements DataComponentMap {
     }
 
     @Override
-    public @Nullable <T> T get(DataComponentType<? extends T> type) {
+    public @Nullable <T> T get(@NonNull DataComponentType<? extends T> type) {
         return getCurrent().get(type);
     }
 

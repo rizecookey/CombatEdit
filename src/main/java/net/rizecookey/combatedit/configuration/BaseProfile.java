@@ -2,7 +2,7 @@ package net.rizecookey.combatedit.configuration;
 
 import com.google.gson.annotations.SerializedName;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 import net.rizecookey.combatedit.configuration.exception.ResourceLoadFailureException;
@@ -78,8 +78,8 @@ public class BaseProfile {
         getConfiguration().validate();
     }
 
-    public static Map<ResourceLocation, BaseProfile> find(ResourceManager manager) {
-        var baseProfiles = new HashMap<ResourceLocation, BaseProfile>();
+    public static Map<Identifier, BaseProfile> find(ResourceManager manager) {
+        var baseProfiles = new HashMap<Identifier, BaseProfile>();
         for (var entry : manager.listResources(BASE_PROFILE_PATH, id -> id.getPath().endsWith(BASE_PROFILE_ENDING)).entrySet()) {
             var shortId = getShortId(entry.getKey());
             try (var reader = entry.getValue().openAsReader()) {
@@ -96,13 +96,13 @@ public class BaseProfile {
         return baseProfiles;
     }
 
-    private static ResourceLocation getShortId(ResourceLocation longId) {
+    private static Identifier getShortId(Identifier longId) {
         var path = longId.getPath();
         if (!path.startsWith(BASE_PROFILE_PATH) || !path.endsWith(BASE_PROFILE_ENDING)) {
             throw new IllegalArgumentException("Not a valid base profile identifier");
         }
 
-        return ResourceLocation.fromNamespaceAndPath(longId.getNamespace(), path.substring(BASE_PROFILE_PATH.length() + 1, path.length() - BASE_PROFILE_ENDING.length()));
+        return Identifier.fromNamespaceAndPath(longId.getNamespace(), path.substring(BASE_PROFILE_PATH.length() + 1, path.length() - BASE_PROFILE_ENDING.length()));
     }
 
     @Override
@@ -120,11 +120,11 @@ public class BaseProfile {
                 && Objects.equals(getConfiguration(), profile.getConfiguration());
     }
 
-    public record Info(ResourceLocation id, Component name, Component description) {}
+    public record Info(Identifier id, Component name, Component description) {}
 
     public enum IntegratedProfiles {
-        VANILLA(new Info(ResourceLocation.fromNamespaceAndPath("combatedit", "vanilla"), Component.translatable("profile.combatedit.vanilla.name"), Component.translatable("profile.combatedit.vanilla.description"))),
-        OLD_1_8_COMBAT(new Info(ResourceLocation.fromNamespaceAndPath("combatedit", "1_8_combat"), Component.translatable("profile.combatedit.1_8_combat.name"), Component.translatable("profile.combatedit.1_8_combat.description")));
+        VANILLA(new Info(Identifier.fromNamespaceAndPath("combatedit", "vanilla"), Component.translatable("profile.combatedit.vanilla.name"), Component.translatable("profile.combatedit.vanilla.description"))),
+        OLD_1_8_COMBAT(new Info(Identifier.fromNamespaceAndPath("combatedit", "1_8_combat"), Component.translatable("profile.combatedit.1_8_combat.name"), Component.translatable("profile.combatedit.1_8_combat.description")));
 
         private final Info info;
 

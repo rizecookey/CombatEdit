@@ -9,7 +9,7 @@ import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.entity.EntityType;
@@ -28,7 +28,7 @@ import net.rizecookey.combatedit.extension.DynamicDataComponentMap;
 import net.rizecookey.combatedit.extension.DynamicAttributeSupplier;
 import net.rizecookey.combatedit.utils.serializers.EquipmentSlotGroupSerializer;
 import net.rizecookey.combatedit.utils.serializers.AttributeModifier$OperationSerializer;
-import net.rizecookey.combatedit.utils.serializers.ResourceLocationSerializer;
+import net.rizecookey.combatedit.utils.serializers.IdentifierSerializer;
 import net.rizecookey.combatedit.utils.serializers.MutableConfigurationTypeAdapterFactory;
 import net.rizecookey.combatedit.utils.serializers.ComponentSerializer;
 import org.apache.logging.log4j.LogManager;
@@ -42,21 +42,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CombatEdit implements CombatEditApi {
-    private static CombatEdit INSTANCE;
+    private static @Nullable CombatEdit INSTANCE;
     public static final Path DEFAULT_SETTINGS_PATH = FabricLoader.getInstance().getConfigDir().resolve("combatedit/settings.json");
     public static final Logger LOGGER = LogManager.getLogger(CombatEdit.class);
     public static final Gson GSON = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .setPrettyPrinting()
             .registerTypeAdapterFactory(new MutableConfigurationTypeAdapterFactory())
-            .registerTypeAdapter(ResourceLocation.class, new ResourceLocationSerializer())
+            .registerTypeAdapter(Identifier.class, new IdentifierSerializer())
             .registerTypeAdapter(EquipmentSlotGroup.class, new EquipmentSlotGroupSerializer())
             .registerTypeAdapter(AttributeModifier.Operation.class, new AttributeModifier$OperationSerializer())
             .registerTypeAdapter(Component.class, new ComponentSerializer())
             .create();
 
     private boolean modificationsEnabled;
-    private Settings settings;
+    private @Nullable Settings settings;
     private final ConfigurationManager configurationManager;
     private @Nullable MinecraftServer currentServer;
 
@@ -81,6 +81,9 @@ public class CombatEdit implements CombatEditApi {
     }
 
     public Settings getCurrentSettings() {
+        if (settings == null) {
+            throw new IllegalStateException("Settings are not loaded (yet)");
+        }
         return settings;
     }
 
@@ -143,7 +146,7 @@ public class CombatEdit implements CombatEditApi {
         CommandRegistrationCallback.EVENT.register(new CombatEditCommand(this));
 
         ResourceLoader.get(PackType.SERVER_DATA).registerReloader(
-                ResourceLocation.fromNamespaceAndPath("combatedit", "server_configuration_provider"),
+                Identifier.fromNamespaceAndPath("combatedit", "server_configuration_provider"),
                 configurationManager);
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
@@ -174,7 +177,7 @@ public class CombatEdit implements CombatEditApi {
                         The following items do not have a dynamic component map and could therefore not be modified by CombatEdit:{}
                         Please report this incompatibility at https://www.github.com/rizecookey/CombatEdit/issues.""",
                 items.stream()
-                        .map(item -> System.lineSeparator() + "\t- " + item.toString())
+                        .map(item -> System.lineSeparator() + "\t- " + item)
                         .collect(Collectors.joining()));
     }
 
@@ -188,11 +191,14 @@ public class CombatEdit implements CombatEditApi {
     }
 
     public static CombatEdit getInstance() {
+        if (INSTANCE == null) {
+            throw new IllegalStateException("CombatEdit has not been loaded yet");
+        }
         return INSTANCE;
     }
 
     @Override
-    public void registerProfileExtension(ResourceLocation profileId, ProfileExtensionProvider extensionProvider) {
+    public void registerProfileExtension(Identifier profileId, ProfileExtensionProvider extensionProvider) {
         configurationManager.registerProfileExtension(profileId, extensionProvider);
     }
 }

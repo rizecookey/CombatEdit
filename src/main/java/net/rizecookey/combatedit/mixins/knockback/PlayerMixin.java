@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,6 +19,9 @@ import java.util.Objects;
 
 @Mixin(Player.class)
 public abstract class PlayerMixin extends Avatar {
+    @Shadow
+    public abstract float getSpeed();
+
     @Unique
     private ConfigurationManager configurationProvider;
 
@@ -30,7 +34,7 @@ public abstract class PlayerMixin extends Avatar {
         configurationProvider = ConfigurationManager.getInstance();
     }
 
-    @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"))
+    @Redirect(method = "causeExtraKnockback", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"))
     public void handleTakeKnockback(LivingEntity livingEntity, double speed, double xMovement, double zMovement) {
         if (level().isClientSide() || !configurationProvider.getConfiguration().getMiscOptions().is1_8KnockbackEnabled().orElse(false)) {
             livingEntity.knockback(speed, xMovement, zMovement);

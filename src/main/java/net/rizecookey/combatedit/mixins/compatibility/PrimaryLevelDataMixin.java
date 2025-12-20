@@ -15,12 +15,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PrimaryLevelData.class)
 public class PrimaryLevelDataMixin {
     @Inject(method = "parse", at = @At("HEAD"))
-    private static <T> void setSaveCall(Dynamic<T> dynamic, LevelSettings info, PrimaryLevelData.SpecialWorldProperty specialProperty, WorldOptions generatorOptions, Lifecycle lifecycle, CallbackInfoReturnable<PrimaryLevelData> cir) {
+    private static <T> void setSaveCall(Dynamic<T> dynamic, LevelSettings levelSettings, PrimaryLevelData.SpecialWorldProperty specialWorldProperty, WorldOptions worldOptions, Lifecycle lifecycle, CallbackInfoReturnable<PrimaryLevelData> cir) {
         AttributeMapExtension.IS_SAVE_CALL.get().push(true);
     }
 
     @Inject(method = "parse", at = @At("RETURN"))
-    private static <T> void unsetSaveCall(Dynamic<T> dynamic, LevelSettings info, PrimaryLevelData.SpecialWorldProperty specialProperty, WorldOptions generatorOptions, Lifecycle lifecycle, CallbackInfoReturnable<PrimaryLevelData> cir) {
+    private static <T> void unsetSaveCall(Dynamic<T> dynamic, LevelSettings levelSettings, PrimaryLevelData.SpecialWorldProperty specialWorldProperty, WorldOptions worldOptions, Lifecycle lifecycle, CallbackInfoReturnable<PrimaryLevelData> cir) {
         AttributeMapExtension.IS_SAVE_CALL.get().pop();
     }
 }

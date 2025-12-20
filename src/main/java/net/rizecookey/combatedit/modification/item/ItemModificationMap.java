@@ -8,7 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
@@ -16,7 +16,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.rizecookey.combatedit.api.extension.DefaultsSupplier;
 import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
 import net.rizecookey.combatedit.configuration.representation.ItemComponents;
-import net.rizecookey.combatedit.utils.ReservedResourceLocations;
+import net.rizecookey.combatedit.utils.ReservedIdentifiers;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -37,22 +37,22 @@ public class ItemModificationMap implements ItemModificationProvider {
     }
 
     @Override
-    public ItemAttributeModifiers getAttributeModifiers(ResourceLocation id, Item item, ItemAttributeModifiers originalDefaults) {
+    public ItemAttributeModifiers getAttributeModifiers(Identifier id, Item item, ItemAttributeModifiers originalDefaults) {
         return attributeMap.getOrDefault(item, originalDefaults);
     }
 
     @Override
-    public boolean shouldModifyAttributes(ResourceLocation id, Item item) {
+    public boolean shouldModifyAttributes(Identifier id, Item item) {
         return attributeMap.containsKey(item);
     }
 
     @Override
-    public DataComponentMap getComponents(ResourceLocation id, Item item, DataComponentMap originalDefaults) {
+    public DataComponentMap getComponents(Identifier id, Item item, DataComponentMap originalDefaults) {
         return componentMap.getOrDefault(item, originalDefaults);
     }
 
     @Override
-    public boolean shouldModifyDefaultComponents(ResourceLocation id, Item item) {
+    public boolean shouldModifyDefaultComponents(Identifier id, Item item) {
         return componentMap.containsKey(item);
     }
 
@@ -154,7 +154,7 @@ public class ItemModificationMap implements ItemModificationProvider {
         return Map.entry(item, builder.build());
     }
 
-    public static ResourceLocation generateBasedOnIndex(int index) {
-        return ResourceLocation.fromNamespaceAndPath(ReservedResourceLocations.RESERVED_NAMESPACE, "generated/" + (index + 1));
+    public static Identifier generateBasedOnIndex(int index) {
+        return Identifier.fromNamespaceAndPath(ReservedIdentifiers.RESERVED_NAMESPACE, "generated/" + (index + 1));
     }
 }

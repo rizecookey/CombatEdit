@@ -1,7 +1,7 @@
 package net.rizecookey.combatedit.modification.entity;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -23,12 +23,12 @@ public class EntityModificationMap implements EntityModificationProvider {
     }
 
     @Override
-    public boolean shouldModifyEntity(ResourceLocation id, EntityType<? extends LivingEntity> type) {
+    public boolean shouldModifyEntity(Identifier id, EntityType<? extends LivingEntity> type) {
         return attributeMap.containsKey(type);
     }
 
     @Override
-    public AttributeSupplier getModifiers(ResourceLocation id, EntityType<? extends LivingEntity> type, AttributeSupplier originalDefaults) {
+    public AttributeSupplier getModifiers(Identifier id, EntityType<? extends LivingEntity> type, AttributeSupplier originalDefaults) {
         return attributeMap.get(type);
     }
 

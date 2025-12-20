@@ -9,7 +9,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.Items;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class ItemComponents {
-    private ResourceLocation itemId;
+    private Identifier itemId;
     private List<ComponentChangeEntry> changes;
 
-    public ItemComponents(ResourceLocation itemId, List<ComponentChangeEntry> changes) {
+    public ItemComponents(Identifier itemId, List<ComponentChangeEntry> changes) {
         this.itemId = itemId;
         this.changes = new ArrayList<>(changes);
     }
@@ -34,11 +34,11 @@ public class ItemComponents {
      * Returns the identifier of the item to be modified.
      * @return the identifier of the item to be modified
      */
-    public ResourceLocation getItemId() {
+    public Identifier getItemId() {
         return itemId;
     }
 
-    public void setItemId(ResourceLocation itemId) {
+    public void setItemId(Identifier itemId) {
         this.itemId = itemId;
     }
 
@@ -94,8 +94,8 @@ public class ItemComponents {
      * @param changeType the change type for this component entry
      * @param value the value to use for this component, or an empty string if the component type has no values or the component is to be removed
      */
-    public record ComponentChangeEntry(ResourceLocation componentType, ChangeType changeType, String value) {
-        public ComponentChangeEntry(ResourceLocation componentType, @Nullable ChangeType changeType, @Nullable String value) {
+    public record ComponentChangeEntry(Identifier componentType, ChangeType changeType, String value) {
+        public ComponentChangeEntry(Identifier componentType, @Nullable ChangeType changeType, @Nullable String value) {
             this.componentType = componentType;
             this.changeType = changeType != null ? changeType : ChangeType.SET;
             this.value = value != null ? value : "";

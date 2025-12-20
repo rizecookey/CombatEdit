@@ -7,7 +7,7 @@ import me.shedaniel.clothconfig2.gui.entries.DropdownBoxEntry;
 import me.shedaniel.clothconfig2.gui.entries.EnumListEntry;
 import me.shedaniel.clothconfig2.impl.builders.DropdownMenuBuilder;
 import net.minecraft.ChatFormatting;
-import net.minecraft.ResourceLocationException;
+import net.minecraft.IdentifierException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.component.DataComponentType;
@@ -18,7 +18,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Unit;
 import net.minecraft.world.entity.EquipmentSlotGroup;
@@ -35,7 +35,7 @@ import net.rizecookey.combatedit.configuration.representation.EntityAttributes;
 import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
 import net.rizecookey.combatedit.configuration.representation.ItemComponents;
 import net.rizecookey.combatedit.configuration.representation.MutableConfiguration;
-import net.rizecookey.combatedit.utils.ReservedResourceLocations;
+import net.rizecookey.combatedit.utils.ReservedIdentifiers;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -140,13 +140,13 @@ public class ConfigurationScreenBuilder {
                 .setDisplayRequirement(() -> profileSelector.getValue().id() == null)
                 .setSaveConsumer(value -> {
                     if (profileSelector.getValue().id() == null) {
-                        settings.setSelectedBaseProfile(ResourceLocation.parse(value));
+                        settings.setSelectedBaseProfile(Identifier.parse(value));
                     }
                 })
                 .setErrorSupplier(value -> {
                     try {
-                        ResourceLocation.parse(value);
-                    } catch (ResourceLocationException e) {
+                        Identifier.parse(value);
+                    } catch (IdentifierException e) {
                         return Optional.of(Component.translatable("error.combatedit.invalid_identifier"));
                     }
 
@@ -289,7 +289,7 @@ public class ConfigurationScreenBuilder {
                 .build();
     }
 
-    private static DropdownBoxEntry<ResourceLocation> createItemEntry(ResourceLocation currentItemId) {
+    private static DropdownBoxEntry<Identifier> createItemEntry(Identifier currentItemId) {
         return ENTRY_BUILDER.startDropdownMenu(Component.translatable("option.combatedit.item.item_attributes.item"),
                         DropdownMenuBuilder.TopCellElementBuilder.ofItemIdentifier(BuiltInRegistries.ITEM.getValue(currentItemId)),
                         ExtendedDropdownMenus.CellCreatorBuilder.ofRegistryIdentifier(BuiltInRegistries.ITEM))
@@ -368,7 +368,7 @@ public class ConfigurationScreenBuilder {
                 ),
                 ObjectAdapter.create(
                         () -> new ItemAttributes.ModifierEntry(attributeEntry.getValue(),
-                                !modifierIdEntry.getValue().isEmpty() ? ResourceLocation.parse(modifierIdEntry.getValue()) : null,
+                                !modifierIdEntry.getValue().isEmpty() ? Identifier.parse(modifierIdEntry.getValue()) : null,
                                 valueEntry.getValue(),
                                 operationEntry.getValue(),
                                 slotEntry.getValue()),
@@ -450,20 +450,20 @@ public class ConfigurationScreenBuilder {
             if (value.isEmpty()) {
                 return Optional.empty();
             }
-            ResourceLocation id;
+            Identifier id;
             try {
-                id = ResourceLocation.parse(value);
-            } catch (ResourceLocationException e) {
+                id = Identifier.parse(value);
+            } catch (IdentifierException e) {
                 return Optional.of(Component.translatable("error.combatedit.invalid_identifier"));
             }
-            if (id.getNamespace().equals(ReservedResourceLocations.RESERVED_NAMESPACE)) {
+            if (id.getNamespace().equals(ReservedIdentifiers.RESERVED_NAMESPACE)) {
                 return Optional.of(Component.translatable("error.combatedit.disallowed_namespace"));
             }
             return Optional.empty();
         };
     }
 
-    private static Supplier<Optional<Component[]>> componentValueTooltipSupplier(DropdownBoxEntry<ResourceLocation> componentTypeEntry, EnumListEntry<ItemComponents.ChangeType> changeTypeEntry) {
+    private static Supplier<Optional<Component[]>> componentValueTooltipSupplier(DropdownBoxEntry<Identifier> componentTypeEntry, EnumListEntry<ItemComponents.ChangeType> changeTypeEntry) {
         return () -> {
             if (changeTypeEntry.getValue().equals(ItemComponents.ChangeType.REMOVE)) {
                 return Optional.of(new Component[] {Component.translatable("option.combatedit.item.item_components.component_change_entry.value.remove_tooltip")});
@@ -482,7 +482,7 @@ public class ConfigurationScreenBuilder {
         };
     }
 
-    private static Function<String, Optional<Component>> componentValueErrorSupplier(DropdownBoxEntry<ResourceLocation> componentTypeEntry, EnumListEntry<ItemComponents.ChangeType> changeTypeEntry) {
+    private static Function<String, Optional<Component>> componentValueErrorSupplier(DropdownBoxEntry<Identifier> componentTypeEntry, EnumListEntry<ItemComponents.ChangeType> changeTypeEntry) {
         return val -> {
             if (changeTypeEntry.getValue().equals(ItemComponents.ChangeType.REMOVE)) return Optional.empty();
 

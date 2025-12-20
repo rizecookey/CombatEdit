@@ -20,6 +20,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,7 +84,7 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
             inner.setScreen(listListEntry.getConfigScreen());
             inner.render(drawContext, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isSelected, delta);
             if (this.selected) {
-                drawContext.submitOutline(x - 16, y - 1, entryWidth + 17, entryHeight - 2, Color.ofRGB(127, 127, 127).getColor());
+                drawContext.renderOutline(x - 16, y - 1, entryWidth + 17, entryHeight - 2, Color.ofRGB(127, 127, 127).getColor());
             }
 
             inner.lateRender(drawContext, mouseX, mouseY, delta);
@@ -106,17 +107,17 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
         }
 
         @Override
-        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        public boolean mouseClicked(@NonNull MouseButtonEvent event, boolean doubleClick) {
             return inner.mouseClicked(event, doubleClick);
         }
 
         @Override
-        public boolean mouseReleased(MouseButtonEvent event) {
+        public boolean mouseReleased(@NonNull MouseButtonEvent event) {
             return inner.mouseReleased(event);
         }
 
         @Override
-        public boolean mouseDragged(MouseButtonEvent event, double f, double g) {
+        public boolean mouseDragged(@NonNull MouseButtonEvent event, double f, double g) {
             return inner.mouseDragged(event, f, g);
         }
 
@@ -126,17 +127,17 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
         }
 
         @Override
-        public boolean keyReleased(KeyEvent event) {
+        public boolean keyReleased(@NonNull KeyEvent event) {
             return inner.keyReleased(event);
         }
 
         @Override
-        public boolean keyPressed(KeyEvent event) {
+        public boolean keyPressed(@NonNull KeyEvent event) {
             return inner.keyPressed(event);
         }
 
         @Override
-        public boolean charTyped(CharacterEvent event) {
+        public boolean charTyped(@NonNull CharacterEvent event) {
             return inner.charTyped(event);
         }
 
@@ -161,7 +162,7 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
         }
 
         @Override
-        public void updateNarration(NarrationElementOutput builder) {
+        public void updateNarration(@NonNull NarrationElementOutput builder) {
             inner.updateNarration(builder);
         }
 
@@ -213,7 +214,7 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
 
         @Nullable
         @Override
-        public ComponentPath nextFocusPath(FocusNavigationEvent navigation) {
+        public ComponentPath nextFocusPath(@NonNull FocusNavigationEvent navigation) {
             return inner.nextFocusPath(navigation);
         }
 

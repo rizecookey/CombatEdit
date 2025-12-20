@@ -2,11 +2,11 @@ package net.rizecookey.clothconfig2.extension.impl.builders;
 
 import me.shedaniel.clothconfig2.gui.entries.DropdownBoxEntry;
 import me.shedaniel.clothconfig2.impl.builders.DropdownMenuBuilder;
-import net.minecraft.ResourceLocationException;
+import net.minecraft.IdentifierException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
 import java.util.Arrays;
 import java.util.function.Function;
@@ -29,19 +29,19 @@ public class ExtendedDropdownMenus {
     }
 
     public static class TopCellElementBuilder {
-        private static <T> Function<String, ResourceLocation> registryCheckedStringToIdentifier(Registry<T> registry) {
+        private static <T> Function<String, Identifier> registryCheckedStringToIdentifier(Registry<T> registry) {
             return string -> {
-                ResourceLocation identifier;
+                Identifier identifier;
                 try {
-                    identifier = ResourceLocation.parse(string);
-                } catch (ResourceLocationException e) {
+                    identifier = Identifier.parse(string);
+                } catch (IdentifierException e) {
                     identifier = null;
                 }
-                return registry.containsKey(identifier) ? identifier : null;
+                return identifier != null && registry.containsKey(identifier) ? identifier : null;
             };
         }
 
-        public static <T> DropdownBoxEntry.SelectionTopCellElement<ResourceLocation> ofRegistryIdentifier(Registry<T> registry, T initialValue) {
+        public static <T> DropdownBoxEntry.SelectionTopCellElement<Identifier> ofRegistryIdentifier(Registry<T> registry, T initialValue) {
             var id = registry.getKey(initialValue);
             if (id == null) {
                 throw new IllegalArgumentException("Not a member of the specified registry");
@@ -70,7 +70,7 @@ public class ExtendedDropdownMenus {
             return DropdownMenuBuilder.CellCreatorBuilder.ofWidth(neededWidth, entry -> Component.literal(entry.getSerializedName()));
         }
 
-        public static <T> DropdownBoxEntry.SelectionCellCreator<ResourceLocation> ofRegistryIdentifier(Registry<T> registry) {
+        public static <T> DropdownBoxEntry.SelectionCellCreator<Identifier> ofRegistryIdentifier(Registry<T> registry) {
             var neededWidth = getMaxNeededWidth(registry) + 12;
             return DropdownMenuBuilder.CellCreatorBuilder.ofWidth(neededWidth, identifier -> Component.literal(identifier.toString()));
         }

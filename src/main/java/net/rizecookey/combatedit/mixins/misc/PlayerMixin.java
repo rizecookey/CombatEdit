@@ -28,7 +28,7 @@ public abstract class PlayerMixin extends Avatar implements LivingEntityExtensio
         Configuration.MiscOptions miscOptions = combatEdit$configurationManager().getConfiguration().getMiscOptions();
         var thisPlayer = (Player) (Object) this;
         var sweepingRegistryEntry = level().registryAccess().lookupOrThrow(Enchantments.SWEEPING_EDGE.registryKey())
-                .get(Enchantments.SWEEPING_EDGE.location()).orElseThrow();
+                .get(Enchantments.SWEEPING_EDGE.identifier()).orElseThrow();
         if (EnchantmentHelper.getEnchantmentLevel(sweepingRegistryEntry, thisPlayer) == 0
                 && miscOptions.isSweepingWithoutEnchantmentDisabled().orElse(false)) {
             bl4 = false;

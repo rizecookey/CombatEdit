@@ -1,7 +1,7 @@
 package net.rizecookey.combatedit.configuration.representation;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -18,11 +18,11 @@ import java.util.Objects;
  * Represents a list of additional item modifiers for a given item.
  */
 public class ItemAttributes {
-    private ResourceLocation itemId;
+    private Identifier itemId;
     private List<ModifierEntry> modifiers;
     private boolean overrideDefault;
 
-    public ItemAttributes(ResourceLocation itemId, List<ModifierEntry> modifiers, boolean overrideDefault) {
+    public ItemAttributes(Identifier itemId, List<ModifierEntry> modifiers, boolean overrideDefault) {
         this.itemId = itemId;
         this.modifiers = new ArrayList<>(modifiers);
         this.overrideDefault = overrideDefault;
@@ -34,11 +34,11 @@ public class ItemAttributes {
      * Returns the identifier of the item to be modified.
      * @return the identifier of the item to be modified
      */
-    public ResourceLocation getItemId() {
+    public Identifier getItemId() {
         return itemId;
     }
 
-    public void setItemId(ResourceLocation itemId) {
+    public void setItemId(Identifier itemId) {
         this.itemId = itemId;
     }
 
@@ -85,7 +85,7 @@ public class ItemAttributes {
         return new ItemAttributes(BuiltInRegistries.ITEM.getKey(Items.WOODEN_SWORD), List.of(), false);
     }
 
-    public record ModifierEntry(ResourceLocation attribute, @Nullable ResourceLocation modifierId, double value, AttributeModifier.Operation operation, EquipmentSlotGroup slot) {
+    public record ModifierEntry(Identifier attribute, @Nullable Identifier modifierId, double value, AttributeModifier.Operation operation, EquipmentSlotGroup slot) {
         public static ModifierEntry getDefault() {
             return new ModifierEntry(BuiltInRegistries.ATTRIBUTE.getKey(Attributes.ATTACK_DAMAGE.value()), Item.BASE_ATTACK_DAMAGE_ID, 1, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.MAINHAND);
         }

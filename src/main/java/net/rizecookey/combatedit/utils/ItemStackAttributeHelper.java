@@ -3,7 +3,7 @@ package net.rizecookey.combatedit.utils;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -19,7 +19,7 @@ public class ItemStackAttributeHelper {
     private static final String ORIGINAL_ATTRIBUTE_TAG = "combatedit:original_attribute_modifiers";
     private static final String IS_PACKET_MODIFIED_TAG = "combatedit:is_packet_modified";
 
-    private static final ResourceLocation SHARPNESS_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(ReservedResourceLocations.RESERVED_NAMESPACE, "sharpness_modifier");
+    private static final Identifier SHARPNESS_MODIFIER_ID = Identifier.fromNamespaceAndPath(ReservedIdentifiers.RESERVED_NAMESPACE, "sharpness_modifier");
 
     private final ConfigurationManager configurationProvider;
 
@@ -30,25 +30,25 @@ public class ItemStackAttributeHelper {
     public ItemAttributeModifiers getDisplayModifiers(ItemStack itemStack) {
         var itemModifiers = configurationProvider.getModifier().items().modificationProvider();
         Item item = itemStack.getItem();
-        ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
+        Identifier id = BuiltInRegistries.ITEM.getKey(item);
         if (!itemModifiers.shouldModifyAttributes(id, item)) {
             return null;
         }
 
-        ItemAttributeModifiers modifiers = itemStack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, null);
+        ItemAttributeModifiers modifiers = itemStack.get(DataComponents.ATTRIBUTE_MODIFIERS);
         if (modifiers == null) {
             return null;
         }
 
         var sharpnessRegistryEntry = configurationProvider.getCurrentServer().overworld().registryAccess()
-                .lookupOrThrow(Enchantments.SHARPNESS.registryKey()).get(Enchantments.SHARPNESS.location()).orElseThrow();
+                .lookupOrThrow(Enchantments.SHARPNESS.registryKey()).get(Enchantments.SHARPNESS.identifier()).orElseThrow();
         int sharpnessLevel = EnchantmentHelper.getItemEnchantmentLevel(sharpnessRegistryEntry, itemStack);
         double sharpnessDamage = 1 + (sharpnessLevel - 1) * 0.5;
         boolean shouldAddSharpnessModifier = sharpnessLevel > 0;
 
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
         for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
-            ResourceLocation modifierId = getSafeIdentifier(entry.modifier().id());
+            Identifier modifierId = getSafeIdentifier(entry.modifier().id());
             if (shouldAddSharpnessModifier && entry.attribute().equals(Attributes.ATTACK_DAMAGE) && entry.slot().equals(EquipmentSlotGroup.MAINHAND) && entry.modifier().operation().equals(AttributeModifier.Operation.ADD_VALUE)) {
                 // add sharpness damage display modifier onto this modifier (vanilla doesn't add sharpness to the display on its own)
                 shouldAddSharpnessModifier = false;
@@ -68,7 +68,7 @@ public class ItemStackAttributeHelper {
     public ItemStack getDisplayModified(ItemStack itemStack) {
         var itemModifiers = configurationProvider.getModifier().items().modificationProvider();
         Item item = itemStack.getItem();
-        ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
+        Identifier id = BuiltInRegistries.ITEM.getKey(item);
         boolean shouldModifyAttributes = itemModifiers.shouldModifyAttributes(id, item);
         boolean shouldModifyComponents = itemModifiers.shouldModifyDefaultComponents(id, item);
         if (!shouldModifyAttributes && !shouldModifyComponents) {
@@ -115,12 +115,12 @@ public class ItemStackAttributeHelper {
         return reversed;
     }
 
-    private static ResourceLocation getSafeIdentifier(ResourceLocation identifier) {
+    private static Identifier getSafeIdentifier(Identifier identifier) {
         if (identifier.equals(Item.BASE_ATTACK_DAMAGE_ID)) {
-            return ReservedResourceLocations.ATTACK_DAMAGE_MODIFIER_ID_ALT;
+            return ReservedIdentifiers.ATTACK_DAMAGE_MODIFIER_ID_ALT;
         }
         if (identifier.equals(Item.BASE_ATTACK_SPEED_ID)) {
-            return ReservedResourceLocations.ATTACK_SPEED_MODIFIER_ID_ALT;
+            return ReservedIdentifiers.ATTACK_SPEED_MODIFIER_ID_ALT;
         }
 
         return identifier;

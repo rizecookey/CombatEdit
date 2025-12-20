@@ -12,12 +12,13 @@ import net.rizecookey.combatedit.client.configscreen.InvalidConfigScreen;
 import net.rizecookey.combatedit.client.event.ClientEvents;
 import net.rizecookey.combatedit.configuration.Settings;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
 
 public class CombatEditClient extends CombatEdit {
-    private static CombatEditClient INSTANCE;
+    private static @Nullable CombatEditClient INSTANCE;
 
     public CombatEditClient() {
         super();
@@ -27,7 +28,7 @@ public class CombatEditClient extends CombatEdit {
     @Override
     protected void onSettingsLoadError(InvalidConfigurationException exception) {
         LOGGER.error("Settings validation failed", exception);
-        setCurrentSettings(null);
+        setCurrentSettings(Settings.loadDefault());
         ClientLifecycleEvents.CLIENT_STARTED.register(client -> client.combatEdit$addInitScreen(onClose -> new InvalidConfigScreen(exception, onClose)));
     }
 
@@ -57,6 +58,9 @@ public class CombatEditClient extends CombatEdit {
     }
 
     public static CombatEditClient getInstance() {
+        if (INSTANCE == null) {
+            throw new IllegalStateException("CombatEdit client has not been loaded yet");
+        }
         return INSTANCE;
     }
 }

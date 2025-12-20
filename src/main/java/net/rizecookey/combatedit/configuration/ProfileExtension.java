@@ -1,7 +1,7 @@
 package net.rizecookey.combatedit.configuration;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
@@ -77,7 +77,7 @@ public class ProfileExtension {
         return Objects.hash(getPriority(), getConfigurationOverrides());
     }
 
-    public static List<ProfileExtension> findForProfile(ResourceManager resourceManager, ResourceLocation baseProfile) {
+    public static List<ProfileExtension> findForProfile(ResourceManager resourceManager, Identifier baseProfile) {
         var profileExtensions = resourceManager.listResources(
                 PROFILE_EXTENSIONS_PATH + "/" + baseProfile.getNamespace() + "/" + baseProfile.getPath(),
                 identifier -> identifier.getPath().endsWith(PROFILE_EXTENSIONS_ENDING)

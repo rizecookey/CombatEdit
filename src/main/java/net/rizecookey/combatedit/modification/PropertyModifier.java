@@ -4,7 +4,7 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -118,7 +118,7 @@ public class PropertyModifier implements DefaultsSupplier {
         private void modify() {
             List<Item> incompatibles = null;
             for (Item item : BuiltInRegistries.ITEM) {
-                ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
+                Identifier id = BuiltInRegistries.ITEM.getKey(item);
                 DataComponentMap components = item.components();
                 if (!(components instanceof DynamicDataComponentMap dynamicComponents)) {
                     if (!modificationProvider.shouldModifyAttributes(id, item) && !modificationProvider.shouldModifyDefaultComponents(id, item)) {
@@ -173,7 +173,7 @@ public class PropertyModifier implements DefaultsSupplier {
         private void modify() {
             List<EntityType<? extends LivingEntity>> incompatibles = null;
             for (EntityType<? extends LivingEntity> type : DefaultAttributes.SUPPLIERS.keySet()) {
-                ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+                Identifier id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
                 var defaults = DefaultAttributes.getSupplier(type);
                 if (!(defaults instanceof DynamicAttributeSupplier entry)) {
                     if (!modificationProvider.shouldModifyEntity(id, type)) {

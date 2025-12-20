@@ -1,7 +1,7 @@
 package net.rizecookey.combatedit.custom_extensions;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class OldCombatModCompatibilityExtension implements CombatEditInitListener {
     @Override
     public void onCombatEditInit(CombatEditApi combatEditApi) {
-        combatEditApi.registerProfileExtension(ResourceLocation.fromNamespaceAndPath("combatedit", "1_8_combat"), this::provideExtension);
+        combatEditApi.registerProfileExtension(Identifier.fromNamespaceAndPath("combatedit", "1_8_combat"), this::provideExtension);
     }
 
     /**
@@ -49,7 +49,7 @@ public class OldCombatModCompatibilityExtension implements CombatEditInitListene
                     List<ItemAttributes.ModifierEntry> newEntries = component.modifiers().stream()
                             .filter(entry -> !entry.attribute().equals(Attributes.ATTACK_SPEED))
                             .map(entry -> new ItemAttributes.ModifierEntry(
-                                    entry.attribute().unwrapKey().orElseThrow().location(),
+                                    entry.attribute().unwrapKey().orElseThrow().identifier(),
                                     entry.modifier().id(),
                                     entry.modifier().amount(),
                                     entry.modifier().operation(),

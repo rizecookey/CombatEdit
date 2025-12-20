@@ -1,6 +1,6 @@
 package net.rizecookey.combatedit.configuration.representation;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 
 import java.util.Collection;
@@ -53,13 +53,13 @@ public class ConfigurationView implements Configuration {
     }
 
     @Override
-    public Optional<Boolean> isSoundEnabled(ResourceLocation soundIdentifier) {
+    public Optional<Boolean> isSoundEnabled(Identifier soundIdentifier) {
         return firstPresent(configurations, config -> config.isSoundEnabled(soundIdentifier));
     }
 
     @Override
-    public Map<ResourceLocation, Boolean> getSoundMap() {
-        Map<ResourceLocation, Boolean> map = new HashMap<>();
+    public Map<Identifier, Boolean> getSoundMap() {
+        Map<Identifier, Boolean> map = new HashMap<>();
         configurations.stream()
                 .flatMap(config -> config.getSoundMap().keySet().stream())
                 .filter(id -> isSoundEnabled(id).isPresent())

@@ -11,16 +11,18 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.permissions.Permissions;
 import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.configuration.BaseProfile;
 import net.rizecookey.combatedit.configuration.Settings;
 import net.rizecookey.combatedit.configuration.provider.ConfigurationManager;
 import net.rizecookey.combatedit.utils.ComponentUtils;
+import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
 import java.util.Set;
@@ -50,16 +52,16 @@ public class CombatEditCommand implements CommandRegistrationCallback {
     }
 
     @Override
-    public void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {
+    public void register(CommandDispatcher<CommandSourceStack> dispatcher, @NonNull CommandBuildContext registryAccess, Commands.@NonNull CommandSelection environment) {
         dispatcher.register(literal("combatedit")
-                .requires(source -> source.hasPermission(2))
+                .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
                 .then(literal("profile")
                         .then(literal("list")
                                 .executes(this::executeList))
                         .then(literal("get")
                                 .executes(this::executeGet))
                         .then(literal("set")
-                                .then(argument("profile", ResourceLocationArgument.id())
+                                .then(argument("profile", IdentifierArgument.id())
                                         .suggests(this::provideSuggestions)
                                         .executes(this::executeSet)))));
     }
@@ -82,7 +84,7 @@ public class CombatEditCommand implements CommandRegistrationCallback {
     }
 
     private CompletableFuture<Suggestions> provideSuggestions(CommandContext<CommandSourceStack> ctx, SuggestionsBuilder builder) {
-        Set<ResourceLocation> validIds = configurationManager.getBaseProfiles().keySet();
+        Set<Identifier> validIds = configurationManager.getBaseProfiles().keySet();
         validIds.stream()
                 .filter(id -> id.toString().startsWith(builder.getRemaining()) || (id.getNamespace().equals("minecraft") && id.getPath().startsWith(builder.getRemaining())))
                 .forEach(id -> builder.suggest(id.toString()));
@@ -91,7 +93,7 @@ public class CombatEditCommand implements CommandRegistrationCallback {
     }
 
     private int executeSet(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        ResourceLocation id = ctx.getArgument("profile", ResourceLocation.class);
+        Identifier id = ctx.getArgument("profile", Identifier.class);
         Settings settings = combatEdit.getCurrentSettings().copy();
         if (settings.getSelectedBaseProfile().equals(id)) {
             throw ALREADY_SET.create(id);
@@ -118,7 +120,7 @@ public class CombatEditCommand implements CommandRegistrationCallback {
         return 1;
     }
 
-    private static Component baseProfileToText(ResourceLocation id, BaseProfile baseProfile) {
+    private static Component baseProfileToText(Identifier id, BaseProfile baseProfile) {
         return Component.literal(id.toString())
                 .withStyle(style -> style.withColor(ChatFormatting.GREEN)
                         .withHoverEvent(new HoverEvent.ShowText(Component.empty()

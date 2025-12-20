@@ -1,9 +1,7 @@
 package net.rizecookey.combatedit.mixins.sound;
 
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Avatar;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -11,27 +9,38 @@ import net.minecraft.world.level.Level;
 import net.rizecookey.combatedit.configuration.representation.Configuration;
 import net.rizecookey.combatedit.extension.LivingEntityExtension;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(Player.class)
 public abstract class PlayerMixin extends Avatar implements LivingEntityExtension {
+    @Shadow
+    protected abstract void playServerSideSound(SoundEvent par1);
+
     protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level world) {
         super(entityType, world);
     }
 
-    @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/Entity;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;)V"))
-    public void disableAttackSounds(Level world, Entity entity, double x, double y, double z, SoundEvent sound, SoundSource category) {
-        if (level().isClientSide() || shouldPlayAttackSound(sound)) {
-            world.playSound(entity, x, y, z, sound, category);
+    @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;playServerSideSound(Lnet/minecraft/sounds/SoundEvent;)V"))
+    public void disableAttackSounds(Player instance, SoundEvent soundEvent) {
+        if (level().isClientSide() || shouldPlayAttackSound(soundEvent)) {
+            playServerSideSound(soundEvent);
         }
     }
 
-    @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/Entity;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V"))
-    public void disableAttackSounds(Level world, Entity entity, double x, double y, double z, SoundEvent sound, SoundSource category, float volume, float pitch) {
-        if (level().isClientSide() || shouldPlayAttackSound(sound)) {
-            world.playSound(entity, x, y, z, sound, category, volume, pitch);
+    @Redirect(method = "doSweepAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;playServerSideSound(Lnet/minecraft/sounds/SoundEvent;)V"))
+    public void disableSweepAttackSounds(Player instance, SoundEvent soundEvent) {
+        if (level().isClientSide() || shouldPlayAttackSound(soundEvent)) {
+            playServerSideSound(soundEvent);
+        }
+    }
+
+    @Redirect(method = "attackVisualEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;playServerSideSound(Lnet/minecraft/sounds/SoundEvent;)V"))
+    public void disableSpecialAttackSounds(Player instance, SoundEvent soundEvent) {
+        if (level().isClientSide() || shouldPlayAttackSound(soundEvent)) {
+            playServerSideSound(soundEvent);
         }
     }
 

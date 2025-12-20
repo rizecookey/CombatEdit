@@ -1,6 +1,6 @@
 package net.rizecookey.combatedit.configuration.representation;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
@@ -59,7 +59,7 @@ public interface Configuration {
      * @return whether an attack sound should be enabled, if this configuration
      * makes a decision about the specified sound, or an empty optional
      */
-    Optional<Boolean> isSoundEnabled(ResourceLocation soundIdentifier);
+    Optional<Boolean> isSoundEnabled(Identifier soundIdentifier);
 
     /**
      * Returns a map that, for each sound identifier for which the option is set,
@@ -67,7 +67,7 @@ public interface Configuration {
      *
      * @return the sound enablement map
      */
-    Map<ResourceLocation, Boolean> getSoundMap();
+    Map<Identifier, Boolean> getSoundMap();
 
     /**
      * Returns the miscellaneous options set by this configuration
