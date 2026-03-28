@@ -3,7 +3,7 @@ package net.rizecookey.clothconfig2.extension.gui.entries;
 import com.google.common.collect.ImmutableList;
 import me.shedaniel.clothconfig2.gui.entries.DropdownBoxEntry;
 import me.shedaniel.math.Rectangle;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +25,7 @@ public class DynamicDropdownBoxEntry<T> extends DropdownBoxEntry<T> {
         }
 
         @Override
-        public void lateRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        public void lateRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
             if (getCellCreator().getCellWidth() > lastRectangle.getWidth()) {
                 lastRectangle.x -= getCellCreator().getCellWidth() - lastRectangle.getWidth();
             }

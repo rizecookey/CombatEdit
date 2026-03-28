@@ -145,7 +145,7 @@ public class CombatEdit implements CombatEditApi {
     public void registerListeners() {
         CommandRegistrationCallback.EVENT.register(new CombatEditCommand(this));
 
-        ResourceLoader.get(PackType.SERVER_DATA).registerReloader(
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
                 Identifier.fromNamespaceAndPath("combatedit", "server_configuration_provider"),
                 configurationManager);
 

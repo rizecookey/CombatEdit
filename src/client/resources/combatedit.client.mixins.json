@@ -1,13 +1,12 @@
 {
   "required": true,
   "package": "net.rizecookey.combatedit.client.mixins",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "injectors": {
     "defaultRequire": 1
   },
   "client": [
     "MinecraftMixin",
-    "compatibility.IntegratedPlayerListMixin",
     "tooltips.ItemAttributeModifiers$Display$DefaultMixin"
   ]
 }

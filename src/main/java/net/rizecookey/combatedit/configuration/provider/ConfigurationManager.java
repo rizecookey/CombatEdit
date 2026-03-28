@@ -1,6 +1,6 @@
 package net.rizecookey.combatedit.configuration.provider;
 
-import net.fabricmc.fabric.api.resource.v1.reloader.SimpleResourceReloader;
+import net.fabricmc.fabric.api.resource.v1.reloader.SimpleReloadListener;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 import static net.rizecookey.combatedit.CombatEdit.LOGGER;
 
-public class ConfigurationManager extends SimpleResourceReloader<ConfigurationManager.LoadResult> {
+public class ConfigurationManager extends SimpleReloadListener<ConfigurationManager.LoadResult> {
     private static ConfigurationManager INSTANCE;
 
     private final CombatEdit combatEdit;
