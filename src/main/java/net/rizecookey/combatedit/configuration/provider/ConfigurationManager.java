@@ -37,9 +37,9 @@ public class ConfigurationManager extends SimpleReloadListener<ConfigurationMana
     private Configuration configuration;
     private final ItemStackAttributeHelper attributeHelper;
     private final PropertyModifier propertyModifier;
-    private final Map<Identifier, List<ProfileExtensionProvider>> registeredProfileExtensions;
+    private final Map<Identifier, List<ProfileExtensionProvider>> registeredProfileExtensionProviders;
 
-    private Map<Identifier, BaseProfile> baseProfiles;
+    private LoadResult reloadData;
 
     private List<EntityAttributes> oldEntityAttributes;
     private List<ItemAttributes> oldItemAttributes;
@@ -50,7 +50,7 @@ public class ConfigurationManager extends SimpleReloadListener<ConfigurationMana
         this.combatEdit = combatEdit;
         this.propertyModifier = new PropertyModifier(this);
         this.attributeHelper = new ItemStackAttributeHelper(this);
-        this.registeredProfileExtensions = new HashMap<>();
+        this.registeredProfileExtensionProviders = new HashMap<>();
 
         INSTANCE = this;
     }
@@ -82,23 +82,7 @@ public class ConfigurationManager extends SimpleReloadListener<ConfigurationMana
             return;
         }
 
-        baseProfiles = prepared.baseProfiles();
-
-        List<ProfileExtension> withCustom = new ArrayList<>(prepared.profileExtensions());
-        registeredProfileExtensions.getOrDefault(prepared.settings().getSelectedBaseProfile(), new ArrayList<>())
-                .forEach(provider -> withCustom.add(provider.provideExtension(
-                        prepared.baseProfiles().get(prepared.settings().getSelectedBaseProfile()),
-                        getModifier()
-                )));
-
-        updateConfiguration(new LoadResult(prepared.settings(), prepared.baseProfiles(), withCustom));
-        boolean modificationsChanged = !Objects.equals(oldItemAttributes, configuration.getItemAttributes())
-                || !Objects.equals(oldEntityAttributes, configuration.getEntityAttributes())
-                || !Objects.equals(oldItemComponents, configuration.getItemComponents());
-
-        if (modificationsChanged) {
-            adjustModifications();
-        }
+        reloadData = prepared;
     }
 
     public record LoadResult(Settings settings, Map<Identifier, BaseProfile> baseProfiles, List<ProfileExtension> profileExtensions) {}
@@ -124,7 +108,7 @@ public class ConfigurationManager extends SimpleReloadListener<ConfigurationMana
     }
 
     public Map<Identifier, BaseProfile> getBaseProfiles() {
-        return baseProfiles;
+        return reloadData.baseProfiles();
     }
 
     public long getLastAttributeReload() {
@@ -151,6 +135,24 @@ public class ConfigurationManager extends SimpleReloadListener<ConfigurationMana
         LOGGER.info("Found {} base profile extensions for {}", result.size(), baseProfileSelected.toString());
 
         return result;
+    }
+
+    public void applyReloadData() {
+        List<ProfileExtension> withCustom = new ArrayList<>(reloadData.profileExtensions());
+        registeredProfileExtensionProviders.getOrDefault(reloadData.settings().getSelectedBaseProfile(), new ArrayList<>())
+                .forEach(provider -> withCustom.add(provider.provideExtension(
+                        reloadData.baseProfiles().get(reloadData.settings().getSelectedBaseProfile()),
+                        getModifier()
+                )));
+
+        updateConfiguration(new LoadResult(reloadData.settings(), reloadData.baseProfiles(), withCustom));
+        boolean modificationsChanged = !Objects.equals(oldItemAttributes, configuration.getItemAttributes())
+                || !Objects.equals(oldEntityAttributes, configuration.getEntityAttributes())
+                || !Objects.equals(oldItemComponents, configuration.getItemComponents());
+
+        if (modificationsChanged) {
+            adjustModifications();
+        }
     }
 
     private void updateConfiguration(LoadResult data) {
@@ -182,7 +184,7 @@ public class ConfigurationManager extends SimpleReloadListener<ConfigurationMana
     }
 
     public void registerProfileExtension(Identifier profileId, ProfileExtensionProvider extensionProvider) {
-        this.registeredProfileExtensions.computeIfAbsent(profileId, key -> new ArrayList<>()).add(extensionProvider);
+        this.registeredProfileExtensionProviders.computeIfAbsent(profileId, key -> new ArrayList<>()).add(extensionProvider);
     }
 
     public static ConfigurationManager getInstance() {

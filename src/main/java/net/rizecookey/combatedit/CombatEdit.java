@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.fabricmc.loader.api.FabricLoader;
@@ -148,6 +149,7 @@ public class CombatEdit implements CombatEditApi {
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
                 Identifier.fromNamespaceAndPath("combatedit", "server_configuration_provider"),
                 configurationManager);
+        CommonLifecycleEvents.TAGS_LOADED.register((_, _) -> configurationManager.applyReloadData());
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             this.currentServer = server;
@@ -155,7 +157,7 @@ public class CombatEdit implements CombatEditApi {
             LOGGER.info("Turned on modifications.");
         });
 
-        ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
+        ServerLifecycleEvents.SERVER_STOPPED.register(_ -> {
             setModificationsEnabled(false);
             this.currentServer = null;
             LOGGER.info("Turned off modifications.");
