@@ -36,7 +36,11 @@
     "misc.PlayerMixin",
     "modification.entity.DefaultAttributesMixin",
     "modification.item.DataComponentMap$BuilderMixin",
+    "modification.item.Holder$ReferenceMixin",
     "modification.item.LivingEntityMixin",
     "sound.PlayerMixin"
-  ]
+  ],
+  "mixinextras": {
+    "minVersion": "0.5.3"
+  }
 }

@@ -11,27 +11,31 @@ import org.jspecify.annotations.NonNull;
 public class DynamicDataComponentMap implements DataComponentMap {
     private static boolean USE_EXCHANGEABLE = false;
 
-    private final DataComponentMap original;
-    private DataComponentMap exchangeable;
+    private DataComponentMap original;
+    private DataComponentMap modified;
 
     public DynamicDataComponentMap(DataComponentMap original) {
-        this.original = this.exchangeable = original;
+        this.original = this.modified = original;
     }
 
     public DataComponentMap getOriginal() {
         return original;
     }
 
-    public DataComponentMap getExchangeable() {
-        return exchangeable;
+    public void setOriginal(DataComponentMap original) {
+        this.original = original;
     }
 
-    public void setExchangeable(DataComponentMap exchangeable) {
-        this.exchangeable = exchangeable;
+    public DataComponentMap getModified() {
+        return modified;
+    }
+
+    public void setModified(DataComponentMap modified) {
+        this.modified = modified;
     }
 
     private DataComponentMap getCurrent() {
-        return USE_EXCHANGEABLE ? exchangeable : original;
+        return USE_EXCHANGEABLE ? modified : original;
     }
 
     @Override

@@ -39,7 +39,7 @@ public abstract class ItemStackMixin implements ItemStackExtension {
             }
 
             Object originalValue = dynamicComponents.getOriginal().get(componentType);
-            Object exchangeableValue = dynamicComponents.getExchangeable().get(componentType);
+            Object exchangeableValue = dynamicComponents.getModified().get(componentType);
             if (Objects.equals(originalValue, exchangeableValue)) {
                 continue;
             }

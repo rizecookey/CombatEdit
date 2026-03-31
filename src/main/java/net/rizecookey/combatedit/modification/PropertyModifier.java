@@ -140,7 +140,7 @@ public class PropertyModifier implements DefaultsSupplier {
                     builder.set(DataComponents.ATTRIBUTE_MODIFIERS, modifiers);
                 }
 
-                dynamicComponents.setExchangeable(builder.build());
+                dynamicComponents.setModified(builder.build());
             }
 
             if (incompatibles != null) {
