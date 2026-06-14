@@ -89,5 +89,7 @@
   "button.combatedit.exit": "Close Minecraft",
   "button.combatedit.reset_config": "Reset configuration",
 
+  "screen.combatedit.component_initialization": "Initializing components...",
+
   "combatedit.sound.entity.player.attack.nodamage": "No damage attack"
 }
