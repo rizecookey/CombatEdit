@@ -25,7 +25,10 @@
       "net.rizecookey.combatedit.client.CombatEditClientInitializer"
     ],
     "modmenu": [ "net.rizecookey.combatedit.client.configscreen.ModMenuApiImpl" ],
-    "combatedit": [ "net.rizecookey.combatedit.custom_extensions.OldCombatModCompatibilityExtension" ]
+    "combatedit": [
+      "net.rizecookey.combatedit.custom_extensions.OldCombatModCompatibilityExtension",
+      "net.rizecookey.combatedit.custom_extensions.SwordBlockingExtension"
+    ]
   },
   "mixins": [
     "combatedit.mixins.json",

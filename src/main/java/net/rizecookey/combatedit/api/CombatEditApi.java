@@ -13,4 +13,10 @@ public interface CombatEditApi {
      * @param extensionProvider An extension provider that provides the extension during resource reloads
      */
     void registerProfileExtension(Identifier profileId, ProfileExtensionProvider extensionProvider);
+
+    /**
+     * Registers a profile extension for all base profiles.
+     * @param extensionProvider An extension provider that provides the extension during resource reloads
+     */
+    void registerProfileExtension(ProfileExtensionProvider extensionProvider);
 }

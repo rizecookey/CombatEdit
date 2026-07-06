@@ -203,4 +203,9 @@ public class CombatEdit implements CombatEditApi {
     public void registerProfileExtension(Identifier profileId, ProfileExtensionProvider extensionProvider) {
         configurationManager.registerProfileExtension(profileId, extensionProvider);
     }
+
+    @Override
+    public void registerProfileExtension(ProfileExtensionProvider extensionProvider) {
+        configurationManager.registerProfileExtension(extensionProvider);
+    }
 }

@@ -22,12 +22,14 @@ public class Settings {
 
     private int settingsVersion;
     private Identifier selectedBaseProfile;
+    private boolean enableSwordBlocking;
     private ClientOnly client;
     private MutableConfiguration configurationOverrides;
 
-    public Settings(int settingsVersion, Identifier selectedBaseProfile, ClientOnly client, MutableConfiguration configurationOverrides) {
+    public Settings(int settingsVersion, Identifier selectedBaseProfile, boolean enableSwordBlocking, ClientOnly client, MutableConfiguration configurationOverrides) {
         this.settingsVersion = settingsVersion;
         this.selectedBaseProfile = selectedBaseProfile;
+        this.enableSwordBlocking = enableSwordBlocking;
         this.client = client;
         this.configurationOverrides = configurationOverrides;
     }
@@ -43,6 +45,10 @@ public class Settings {
 
     public Identifier getSelectedBaseProfile() {
         return selectedBaseProfile;
+    }
+
+    public boolean isSwordBlockingEnabled() {
+        return enableSwordBlocking;
     }
 
     public MutableConfiguration getConfigurationOverrides() {
@@ -69,6 +75,10 @@ public class Settings {
         this.selectedBaseProfile = selectedBaseProfile;
     }
 
+    public void setEnableSwordBlocking(boolean enableSwordBlocking) {
+        this.enableSwordBlocking = enableSwordBlocking;
+    }
+
     public void validate() throws InvalidConfigurationException {
         if (settingsVersion > CURRENT_VERSION) {
             throw new InvalidConfigurationException("Configuration claims to be of a higher version than the current one");
@@ -92,7 +102,7 @@ public class Settings {
     }
 
     public Settings copy() {
-        return new Settings(settingsVersion, selectedBaseProfile, client != null ? client.copy() : null, configurationOverrides != null ? configurationOverrides.copy() : null);
+        return new Settings(settingsVersion, selectedBaseProfile, enableSwordBlocking, client != null ? client.copy() : null, configurationOverrides != null ? configurationOverrides.copy() : null);
     }
 
     public static Settings load(Path path) throws IOException, InvalidConfigurationException {

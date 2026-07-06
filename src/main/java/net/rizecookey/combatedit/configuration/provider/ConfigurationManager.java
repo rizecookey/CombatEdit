@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static net.rizecookey.combatedit.CombatEdit.LOGGER;
 
@@ -38,7 +39,8 @@ public class ConfigurationManager extends SimpleReloadListener<ConfigurationMana
     private Configuration configuration;
     private final ItemStackAttributeHelper attributeHelper;
     private final PropertyModifier propertyModifier;
-    private final Map<Identifier, List<ProfileExtensionProvider>> registeredProfileExtensionProviders;
+    private final Map<Identifier, List<ProfileExtensionProvider>> registeredBaseProfileExtensionProviders;
+    private final List<ProfileExtensionProvider> registeredIndependentProfileExtensionProviders;
 
     private LoadResult reloadData;
 
@@ -51,7 +53,8 @@ public class ConfigurationManager extends SimpleReloadListener<ConfigurationMana
         this.combatEdit = combatEdit;
         this.propertyModifier = new PropertyModifier(this);
         this.attributeHelper = new ItemStackAttributeHelper(this);
-        this.registeredProfileExtensionProviders = new HashMap<>();
+        this.registeredBaseProfileExtensionProviders = new HashMap<>();
+        this.registeredIndependentProfileExtensionProviders = new ArrayList<>();
 
         INSTANCE = this;
     }
@@ -140,8 +143,10 @@ public class ConfigurationManager extends SimpleReloadListener<ConfigurationMana
 
     public void applyReloadData(RegistryAccess regAccess) {
         List<ProfileExtension> withCustom = new ArrayList<>(reloadData.profileExtensions());
-        registeredProfileExtensionProviders.getOrDefault(reloadData.settings().getSelectedBaseProfile(), new ArrayList<>())
-                .forEach(provider -> withCustom.add(provider.provideExtension(
+        Stream.concat(
+                registeredBaseProfileExtensionProviders.getOrDefault(reloadData.settings().getSelectedBaseProfile(), new ArrayList<>()).stream(),
+                registeredIndependentProfileExtensionProviders.stream()
+        ).forEach(provider -> withCustom.add(provider.provideExtension(
                         reloadData.baseProfiles().get(reloadData.settings().getSelectedBaseProfile()),
                         getModifier()
                 )));
@@ -185,7 +190,11 @@ public class ConfigurationManager extends SimpleReloadListener<ConfigurationMana
     }
 
     public void registerProfileExtension(Identifier profileId, ProfileExtensionProvider extensionProvider) {
-        this.registeredProfileExtensionProviders.computeIfAbsent(profileId, key -> new ArrayList<>()).add(extensionProvider);
+        this.registeredBaseProfileExtensionProviders.computeIfAbsent(profileId, _ -> new ArrayList<>()).add(extensionProvider);
+    }
+
+    public void registerProfileExtension(ProfileExtensionProvider extensionProvider) {
+        this.registeredIndependentProfileExtensionProviders.add(extensionProvider);
     }
 
     public static ConfigurationManager getInstance() {
