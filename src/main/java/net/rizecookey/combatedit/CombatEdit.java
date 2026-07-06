@@ -149,7 +149,7 @@ public class CombatEdit implements CombatEditApi {
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
                 Identifier.fromNamespaceAndPath("combatedit", "server_configuration_provider"),
                 configurationManager);
-        CommonLifecycleEvents.TAGS_LOADED.register((_, _) -> configurationManager.applyReloadData());
+        CommonLifecycleEvents.TAGS_LOADED.register((access, _) -> configurationManager.applyReloadData(access));
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             this.currentServer = server;

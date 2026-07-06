@@ -1,6 +1,7 @@
 package net.rizecookey.combatedit.configuration.provider;
 
 import net.fabricmc.fabric.api.resource.v1.reloader.SimpleReloadListener;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -137,7 +138,7 @@ public class ConfigurationManager extends SimpleReloadListener<ConfigurationMana
         return result;
     }
 
-    public void applyReloadData() {
+    public void applyReloadData(RegistryAccess regAccess) {
         List<ProfileExtension> withCustom = new ArrayList<>(reloadData.profileExtensions());
         registeredProfileExtensionProviders.getOrDefault(reloadData.settings().getSelectedBaseProfile(), new ArrayList<>())
                 .forEach(provider -> withCustom.add(provider.provideExtension(
@@ -151,7 +152,7 @@ public class ConfigurationManager extends SimpleReloadListener<ConfigurationMana
                 || !Objects.equals(oldItemComponents, configuration.getItemComponents());
 
         if (modificationsChanged) {
-            adjustModifications();
+            adjustModifications(regAccess);
         }
     }
 
@@ -173,8 +174,8 @@ public class ConfigurationManager extends SimpleReloadListener<ConfigurationMana
         LOGGER.info("Configuration updated.");
     }
 
-    private void adjustModifications() {
-        propertyModifier.makeModifications();
+    private void adjustModifications(RegistryAccess regAccess) {
+        propertyModifier.makeModifications(regAccess);
 
         oldItemAttributes = List.copyOf(configuration.getItemAttributes());
         oldEntityAttributes = List.copyOf(configuration.getEntityAttributes());

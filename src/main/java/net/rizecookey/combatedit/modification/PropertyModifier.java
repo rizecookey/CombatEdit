@@ -1,5 +1,6 @@
 package net.rizecookey.combatedit.modification;
 
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -40,16 +41,16 @@ public class PropertyModifier implements DefaultsSupplier {
         this.entities = new Entities();
     }
 
-    public void makeModifications() {
-        reloadModificationProviders();
+    public void makeModifications(RegistryAccess regAccess) {
+        reloadModificationProviders(regAccess);
         items.modify();
         entities.modify();
         updateAttributesToClients();
     }
 
-    public void reloadModificationProviders() {
+    public void reloadModificationProviders(RegistryAccess regAccess) {
         entities.reloadModificationProvider();
-        items.reloadModificationProvider();
+        items.reloadModificationProvider(regAccess);
     }
 
     private void updateEntitiesAttributeContainers(EntityType<? extends LivingEntity> type, AttributeSupplier previousDefaults) {
@@ -109,9 +110,9 @@ public class PropertyModifier implements DefaultsSupplier {
                     ItemAttributeModifiers.EMPTY);
         }
 
-        private void reloadModificationProvider() {
+        private void reloadModificationProvider(RegistryAccess regAccess) {
             Configuration configuration = configurationProvider.getConfiguration();
-            modificationProvider = ItemModificationMap.fromConfiguration(configuration.getItemAttributes(), configuration.getItemComponents(), items);
+            modificationProvider = ItemModificationMap.fromConfiguration(configuration.getItemAttributes(), configuration.getItemComponents(), items, regAccess);
         }
 
         @SuppressWarnings("unchecked")

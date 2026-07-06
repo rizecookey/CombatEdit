@@ -1,6 +1,7 @@
 package net.rizecookey.combatedit.modification.item;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -56,7 +57,7 @@ public class ItemModificationMap implements ItemModificationProvider {
         return componentMap.containsKey(item);
     }
 
-    public static ItemModificationMap fromConfiguration(List<ItemAttributes> itemAttributes, List<ItemComponents> itemComponents, DefaultsSupplier.Items itemDefaultsSupplier) {
+    public static ItemModificationMap fromConfiguration(List<ItemAttributes> itemAttributes, List<ItemComponents> itemComponents, DefaultsSupplier.Items itemDefaultsSupplier, RegistryAccess regAccess) {
         Map<Item, ItemAttributeModifiers> attributeModifiers = new HashMap<>();
         Map<Item, DataComponentMap> componentMap = new HashMap<>();
         Function<Item, ItemAttributeModifiers> defaultProvider = item -> {
@@ -75,7 +76,7 @@ public class ItemModificationMap implements ItemModificationProvider {
         }
 
         for (var components : itemComponents) {
-            var result = fromConfigurationEntry(components, itemDefaultsSupplier::getVanillaComponents);
+            var result = fromConfigurationEntry(components, itemDefaultsSupplier::getVanillaComponents, regAccess);
             if (result != null) {
                 componentMap.put(result.getKey(), result.getValue());
             }
@@ -112,7 +113,7 @@ public class ItemModificationMap implements ItemModificationProvider {
     }
 
     @SuppressWarnings("unchecked")
-    private static @Nullable Map.Entry<Item, DataComponentMap> fromConfigurationEntry(ItemComponents components, Function<Item, DataComponentMap> originalDefaults) {
+    private static @Nullable Map.Entry<Item, DataComponentMap> fromConfigurationEntry(ItemComponents components, Function<Item, DataComponentMap> originalDefaults, RegistryAccess regAccess) {
         if (!BuiltInRegistries.ITEM.containsKey(components.getItemId())) {
             LOGGER.warn("No item with id {} found, skipping all component specifications", components.getItemId());
             return null;
@@ -120,6 +121,7 @@ public class ItemModificationMap implements ItemModificationProvider {
 
         var item = BuiltInRegistries.ITEM.getValue(components.getItemId());
         var builder = DataComponentMap.builder().combatEdit$preventDynamicWrap();
+        var registryOps = regAccess.createSerializationContext(NbtOps.INSTANCE);
         originalDefaults.apply(item).forEach(component -> builder.set((DataComponentType<Object>) component.type(), component.value()));
         for (var entry : components.getChanges()) {
             if (!BuiltInRegistries.DATA_COMPONENT_TYPE.containsKey(entry.componentType())) {
@@ -145,7 +147,7 @@ public class ItemModificationMap implements ItemModificationProvider {
             }
             try {
                 Tag nbtValue = TagParser.create(NbtOps.INSTANCE).parseFully(entry.value());
-                builder.set((DataComponentType<Object>) componentType, componentType.codecOrThrow().parse(NbtOps.INSTANCE, nbtValue).getOrThrow());
+                builder.set((DataComponentType<Object>) componentType, componentType.codecOrThrow().parse(registryOps, nbtValue).getOrThrow());
             } catch (CommandSyntaxException e) {
                 throw new IllegalStateException("Error parsing component for type %s".formatted(entry.componentType()), e);
             }
