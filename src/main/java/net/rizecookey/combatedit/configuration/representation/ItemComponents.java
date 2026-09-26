@@ -132,11 +132,11 @@ public class ItemComponents {
     }
 
     public ItemComponents copy() {
-        return new ItemComponents(itemId, List.copyOf(changes));
+        return new ItemComponents(itemId, new ArrayList<>(changes));
     }
 
     public static ItemComponents getDefault() {
-        return new ItemComponents(BuiltInRegistries.ITEM.getKey(Items.WOODEN_SWORD), List.of());
+        return new ItemComponents(BuiltInRegistries.ITEM.getKey(Items.WOODEN_SWORD), new ArrayList<>());
     }
 
     @Override

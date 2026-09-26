@@ -73,11 +73,11 @@ public class EntityAttributes {
     }
 
     public EntityAttributes copy() {
-        return new EntityAttributes(entityId, List.copyOf(baseValues), overrideDefault);
+        return new EntityAttributes(entityId, new ArrayList<>(baseValues), overrideDefault);
     }
 
     public static EntityAttributes getDefault() {
-        return new EntityAttributes(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.CREEPER), List.of(), false);
+        return new EntityAttributes(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.CREEPER), new ArrayList<>(), false);
     }
 
     public record AttributeBaseValue(Identifier attribute, double baseValue) {

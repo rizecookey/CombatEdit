@@ -78,11 +78,11 @@ public class ItemAttributes {
     }
 
     public ItemAttributes copy() {
-        return new ItemAttributes(itemId, List.copyOf(modifiers), overrideDefault);
+        return new ItemAttributes(itemId, new ArrayList<>(modifiers), overrideDefault);
     }
 
     public static ItemAttributes getDefault() {
-        return new ItemAttributes(BuiltInRegistries.ITEM.getKey(Items.WOODEN_SWORD), List.of(), false);
+        return new ItemAttributes(BuiltInRegistries.ITEM.getKey(Items.WOODEN_SWORD), new ArrayList<>(), false);
     }
 
     public record ModifierEntry(Identifier attribute, @Nullable Identifier modifierId, double value, AttributeModifier.Operation operation, EquipmentSlotGroup slot) {
