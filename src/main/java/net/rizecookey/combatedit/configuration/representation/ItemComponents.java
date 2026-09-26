@@ -2,9 +2,11 @@ package net.rizecookey.combatedit.configuration.representation;
 
 import com.google.gson.annotations.SerializedName;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.serialization.DynamicOps;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
@@ -108,6 +110,9 @@ public class ItemComponents {
      * @param value the value to use for this component, or an empty string if the component type has no values or the component is to be removed
      */
     public record ComponentChangeEntry(Identifier componentType, ChangeType changeType, String value) {
+        private static final DynamicOps<Tag> TAG_OPS = VanillaRegistries.createLookup().createSerializationContext(NbtOps.INSTANCE);
+        private static final TagParser<Tag> TAG_PARSER = TagParser.create(TAG_OPS);
+
         public ComponentChangeEntry(Identifier componentType, @Nullable ChangeType changeType, @Nullable String value) {
             this.componentType = componentType;
             this.changeType = changeType != null ? changeType : ChangeType.SET;
@@ -126,12 +131,8 @@ public class ItemComponents {
             return new ComponentChangeEntry(componentType(), changeType(), value);
         }
 
-        public void validate() throws InvalidConfigurationException {
-            if (componentType == null || !BuiltInRegistries.DATA_COMPONENT_TYPE.containsKey(componentType)) {
-                throw new InvalidConfigurationException("Unknown component id");
-            }
-
-            if (ChangeType.REMOVE.equals(changeType)) {
+        public void validateValue() throws InvalidConfigurationException {
+            if (ChangeType.REMOVE.equals(changeType())) {
                 return;
             }
 
@@ -141,15 +142,22 @@ public class ItemComponents {
                 return; // value irrelevant
             }
 
-            var reader = TagParser.create(NbtOps.INSTANCE);
             Tag element;
             try {
-                element = reader.parseFully(value);
+                element = TAG_PARSER.parseFully(value());
             } catch (CommandSyntaxException e) {
-                throw new InvalidConfigurationException("Could not read value for component %s".formatted(componentType), e);
+                throw new InvalidConfigurationException("Could not read value for component %s".formatted(componentType()), e);
             }
-            type.codecOrThrow().parse(NbtOps.INSTANCE, element)
+            type.codecOrThrow().parse(TAG_OPS, element)
                     .getOrThrow(error -> new InvalidConfigurationException("Error parsing component: " + error));
+        }
+
+        public void validate() throws InvalidConfigurationException {
+            if (componentType == null || !BuiltInRegistries.DATA_COMPONENT_TYPE.containsKey(componentType)) {
+                throw new InvalidConfigurationException("Unknown component id");
+            }
+
+            validateValue();
         }
 
         public static ComponentChangeEntry getDefault() {
