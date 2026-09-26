@@ -2,7 +2,7 @@ package net.rizecookey.combatedit.mixins.extension;
 
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.rizecookey.combatedit.extension.TranslatableContentsExtension;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;

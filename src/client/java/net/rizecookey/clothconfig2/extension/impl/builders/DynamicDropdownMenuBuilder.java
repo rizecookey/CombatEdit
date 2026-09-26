@@ -4,7 +4,7 @@ import me.shedaniel.clothconfig2.gui.entries.DropdownBoxEntry;
 import me.shedaniel.clothconfig2.impl.builders.DropdownMenuBuilder;
 import net.minecraft.network.chat.Component;
 import net.rizecookey.clothconfig2.extension.gui.entries.DynamicDropdownBoxEntry;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class DynamicDropdownMenuBuilder<T> extends DropdownMenuBuilder<T> {
     public DynamicDropdownMenuBuilder(Component resetButtonKey, Component fieldNameKey, DropdownBoxEntry.SelectionTopCellElement<T> topCellElement, DropdownBoxEntry.SelectionCellCreator<T> cellCreator) {
@@ -12,7 +12,7 @@ public class DynamicDropdownMenuBuilder<T> extends DropdownMenuBuilder<T> {
     }
 
     @Override
-    public @NotNull DropdownBoxEntry<T> build() {
+    public @NonNull DropdownBoxEntry<T> build() {
         DropdownBoxEntry<T> entry = new DynamicDropdownBoxEntry<>(getFieldNameKey(), getResetButtonKey(), null, isRequireRestart(), defaultValue, saveConsumer, selections, topCellElement, cellCreator);
         entry.setTooltipSupplier(() -> tooltipSupplier.apply(entry.getValue()));
         if (errorSupplier != null)

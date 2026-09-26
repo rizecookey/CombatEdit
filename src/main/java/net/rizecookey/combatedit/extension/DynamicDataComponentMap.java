@@ -1,12 +1,10 @@
 package net.rizecookey.combatedit.extension;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Set;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class DynamicDataComponentMap implements DataComponentMap {
     private static boolean USE_EXCHANGEABLE = false;
@@ -44,7 +42,7 @@ public class DynamicDataComponentMap implements DataComponentMap {
     }
 
     @Override
-    public @NotNull Set<DataComponentType<?>> keySet() {
+    public @NonNull Set<DataComponentType<?>> keySet() {
         return getCurrent().keySet();
     }
 

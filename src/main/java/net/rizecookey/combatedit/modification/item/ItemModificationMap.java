@@ -18,7 +18,7 @@ import net.rizecookey.combatedit.api.extension.DefaultsSupplier;
 import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
 import net.rizecookey.combatedit.configuration.representation.ItemComponents;
 import net.rizecookey.combatedit.utils.ReservedIdentifiers;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -85,7 +85,7 @@ public class ItemModificationMap implements ItemModificationProvider {
         return new ItemModificationMap(attributeModifiers, componentMap);
     }
 
-    private static @Nullable Map.Entry<Item, ItemAttributeModifiers> fromConfigurationEntry(ItemAttributes attributes, Function<Item, ItemAttributeModifiers> originalDefaults) {
+    private static Map.@Nullable Entry<Item, ItemAttributeModifiers> fromConfigurationEntry(ItemAttributes attributes, Function<Item, ItemAttributeModifiers> originalDefaults) {
         var builder = ItemAttributeModifiers.builder();
         if (!BuiltInRegistries.ITEM.containsKey(attributes.getItemId())) {
             LOGGER.warn("No item with id {} found, skipping all attribute specifications", attributes.getItemId());
@@ -113,7 +113,7 @@ public class ItemModificationMap implements ItemModificationProvider {
     }
 
     @SuppressWarnings("unchecked")
-    private static @Nullable Map.Entry<Item, DataComponentMap> fromConfigurationEntry(ItemComponents components, Function<Item, DataComponentMap> originalDefaults, RegistryAccess regAccess) {
+    private static Map.@Nullable Entry<Item, DataComponentMap> fromConfigurationEntry(ItemComponents components, Function<Item, DataComponentMap> originalDefaults, RegistryAccess regAccess) {
         if (!BuiltInRegistries.ITEM.containsKey(components.getItemId())) {
             LOGGER.warn("No item with id {} found, skipping all component specifications", components.getItemId());
             return null;

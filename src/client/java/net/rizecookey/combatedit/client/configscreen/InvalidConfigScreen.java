@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.client.CombatEditClient;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
 
@@ -31,7 +31,7 @@ public class InvalidConfigScreen extends WarningScreen {
     }
 
     @Override
-    protected @NotNull Layout addFooterButtons() {
+    protected @NonNull Layout addFooterButtons() {
         LinearLayout horizontalButtons = LinearLayout.horizontal().spacing(8);
         horizontalButtons.addChild(Button
                 .builder(RESET_CONFIG, button -> {

@@ -12,7 +12,7 @@ import net.rizecookey.combatedit.client.configscreen.InvalidConfigScreen;
 import net.rizecookey.combatedit.client.event.ClientEvents;
 import net.rizecookey.combatedit.configuration.Settings;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;

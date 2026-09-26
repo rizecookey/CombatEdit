@@ -18,9 +18,8 @@ import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -102,7 +101,7 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
         }
 
         @Override
-        public @NotNull Optional<GuiEventListener> getChildAt(double mouseX, double mouseY) {
+        public @NonNull Optional<GuiEventListener> getChildAt(double mouseX, double mouseY) {
             return inner.getChildAt(mouseX, mouseY);
         }
 
@@ -167,12 +166,12 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
         }
 
         @Override
-        public @NotNull List<? extends GuiEventListener> children() {
+        public @NonNull List<? extends GuiEventListener> children() {
             return Collections.singletonList(inner);
         }
 
         @Override
-        public @NotNull NarrationPriority narrationPriority() {
+        public @NonNull NarrationPriority narrationPriority() {
             return inner.narrationPriority();
         }
 
@@ -219,7 +218,7 @@ public class ObjectListListEntry<T> extends AbstractListListEntry<T, ObjectListL
         }
 
         @Override
-        public @NotNull ScreenRectangle getRectangle() {
+        public @NonNull ScreenRectangle getRectangle() {
             return inner.getRectangle();
         }
 

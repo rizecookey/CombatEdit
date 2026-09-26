@@ -6,7 +6,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.network.chat.Component;
 import net.rizecookey.clothconfig2.extension.api.ObjectCellCreator;
 import net.rizecookey.clothconfig2.extension.gui.entries.ObjectListListEntry;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class ObjectListBuilder<T> extends AbstractListBuilder<T, ObjectListListE
     }
 
     @Override
-    public @NotNull ObjectListListEntry<T> build() {
+    public @NonNull ObjectListListEntry<T> build() {
         return new ObjectListListEntry<>(
                 getFieldNameKey(),
                 value,

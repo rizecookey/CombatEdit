@@ -5,8 +5,8 @@ import me.shedaniel.clothconfig2.gui.entries.DropdownBoxEntry;
 import me.shedaniel.math.Rectangle;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -14,13 +14,13 @@ import java.util.function.Supplier;
 
 public class DynamicDropdownBoxEntry<T> extends DropdownBoxEntry<T> {
     @SuppressWarnings({"deprecation", "UnstableApiUsage"})
-    public DynamicDropdownBoxEntry(Component fieldName, @NotNull Component resetButtonKey, @Nullable Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart, @Nullable Supplier<T> defaultValue, @Nullable Consumer<T> saveConsumer, @Nullable Iterable<T> selections, @NotNull DropdownBoxEntry.SelectionTopCellElement<T> topRenderer, @NotNull DropdownBoxEntry.SelectionCellCreator<T> cellCreator) {
+    public DynamicDropdownBoxEntry(Component fieldName, @NonNull Component resetButtonKey, @Nullable Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart, @Nullable Supplier<T> defaultValue, @Nullable Consumer<T> saveConsumer, @Nullable Iterable<T> selections, DropdownBoxEntry.@NonNull SelectionTopCellElement<T> topRenderer, DropdownBoxEntry.@NonNull SelectionCellCreator<T> cellCreator) {
         super(fieldName, resetButtonKey, tooltipSupplier, requiresRestart, defaultValue, saveConsumer, selections, topRenderer, cellCreator);
         this.selectionElement = new SelectionElement<>(this, new Rectangle(0, 0, 150, 20), new DynamicDropdownMenuElement<>(selections == null ? ImmutableList.of() : ImmutableList.copyOf(selections)), topRenderer, cellCreator);
     }
 
     public static class DynamicDropdownMenuElement<U> extends DefaultDropdownMenuElement<U> {
-        public DynamicDropdownMenuElement(@NotNull ImmutableList<U> selections) {
+        public DynamicDropdownMenuElement(@NonNull ImmutableList<U> selections) {
             super(selections);
         }
 
