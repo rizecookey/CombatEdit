@@ -42,6 +42,12 @@ public class ItemAttributes {
         this.itemId = itemId;
     }
 
+    public ItemAttributes withItemId(Identifier itemId) {
+        ItemAttributes copy = copy();
+        copy.setItemId(itemId);
+        return copy;
+    }
+
     /**
      * Returns all additional item modifiers to be added for the specified item.
      * @return a list of additional item modifiers
@@ -51,6 +57,13 @@ public class ItemAttributes {
             modifiers = new ArrayList<>();
         }
         return modifiers;
+    }
+
+    public ItemAttributes withModifiers(List<ModifierEntry> modifiers) {
+        ItemAttributes copy = copy();
+        copy.getModifiers().clear();
+        copy.getModifiers().addAll(modifiers);
+        return copy;
     }
 
     /**
@@ -65,6 +78,12 @@ public class ItemAttributes {
 
     public void setOverrideDefault(boolean overrideDefault) {
         this.overrideDefault = overrideDefault;
+    }
+
+    public ItemAttributes withOverrideDefault(boolean overrideDefault) {
+        ItemAttributes copy = copy();
+        copy.setOverrideDefault(overrideDefault);
+        return copy;
     }
 
     public void validate() throws InvalidConfigurationException {
@@ -86,6 +105,26 @@ public class ItemAttributes {
     }
 
     public record ModifierEntry(Identifier attribute, @Nullable Identifier modifierId, double value, AttributeModifier.Operation operation, EquipmentSlotGroup slot) {
+        public ModifierEntry withAttribute(Identifier attribute) {
+            return new ModifierEntry(attribute, modifierId(), value(), operation(), slot());
+        }
+
+        public ModifierEntry withModifierId(@Nullable Identifier modifierId) {
+            return new ModifierEntry(attribute(), modifierId, value(), operation(), slot());
+        }
+
+        public ModifierEntry withValue(double value) {
+            return new ModifierEntry(attribute(), modifierId(), value, operation(), slot());
+        }
+
+        public ModifierEntry withOperation(AttributeModifier.Operation operation) {
+            return new ModifierEntry(attribute(), modifierId(), value(), operation, slot());
+        }
+
+        public ModifierEntry withSlot(EquipmentSlotGroup slot) {
+            return new ModifierEntry(attribute(), modifierId(), value(), operation(), slot);
+        }
+
         public static ModifierEntry getDefault() {
             return new ModifierEntry(BuiltInRegistries.ATTRIBUTE.getKey(Attributes.ATTACK_DAMAGE.value()), Item.BASE_ATTACK_DAMAGE_ID, 1, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.MAINHAND);
         }

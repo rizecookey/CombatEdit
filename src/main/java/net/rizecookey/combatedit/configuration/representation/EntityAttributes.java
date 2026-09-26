@@ -37,6 +37,12 @@ public class EntityAttributes {
         this.entityId = entityId;
     }
 
+    public EntityAttributes withEntityId(Identifier entityId) {
+        EntityAttributes copy = copy();
+        copy.setEntityId(entityId);
+        return copy;
+    }
+
     /**
      * Returns a list of pairs of attributes and base values that should be overridden for this entity.
      * @return the list of attributes alongside base values overrides for this entity
@@ -47,6 +53,13 @@ public class EntityAttributes {
         }
 
         return baseValues;
+    }
+
+    public EntityAttributes withBaseValues(List<AttributeBaseValue> values) {
+        EntityAttributes copy = copy();
+        copy.getBaseValues().clear();
+        copy.getBaseValues().addAll(values);
+        return copy;
     }
 
     /**
@@ -60,6 +73,12 @@ public class EntityAttributes {
 
     public void setOverrideDefault(boolean overrideDefault) {
         this.overrideDefault = overrideDefault;
+    }
+
+    public EntityAttributes withOverrideDefault(boolean overrideDefault) {
+        EntityAttributes copy = copy();
+        copy.setOverrideDefault(overrideDefault);
+        return copy;
     }
 
     public void validate() throws InvalidConfigurationException {
@@ -81,6 +100,14 @@ public class EntityAttributes {
     }
 
     public record AttributeBaseValue(Identifier attribute, double baseValue) {
+        public AttributeBaseValue withAttribute(Identifier attribute) {
+            return new AttributeBaseValue(attribute, baseValue());
+        }
+
+        public AttributeBaseValue withBaseValue(double baseValue) {
+            return new AttributeBaseValue(attribute(), baseValue);
+        }
+
         public static AttributeBaseValue getDefault() {
             var attackDamageAttribute = net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE;
             return new AttributeBaseValue(BuiltInRegistries.ATTRIBUTE.getKey(attackDamageAttribute.value()), 1);

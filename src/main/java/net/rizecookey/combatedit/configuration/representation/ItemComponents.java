@@ -42,6 +42,12 @@ public class ItemComponents {
         this.itemId = itemId;
     }
 
+    public ItemComponents withItemId(Identifier itemId) {
+        ItemComponents copy = copy();
+        copy.setItemId(itemId);
+        return copy;
+    }
+
     /**
      * Returns a list of component changes to be made to the specified item.
      * @return a list of component changes to be made to the specified item
@@ -52,6 +58,13 @@ public class ItemComponents {
         }
 
         return changes;
+    }
+
+    public ItemComponents withChanges(List<ComponentChangeEntry> changes) {
+        ItemComponents copy = copy();
+        copy.getChanges().clear();
+        copy.getChanges().addAll(changes);
+        return copy;
     }
 
     public void validate() throws InvalidConfigurationException {
@@ -100,6 +113,19 @@ public class ItemComponents {
             this.changeType = changeType != null ? changeType : ChangeType.SET;
             this.value = value != null ? value : "";
         }
+
+        public ComponentChangeEntry withComponentType(Identifier componentType) {
+            return new ComponentChangeEntry(componentType, changeType(), value());
+        }
+
+        public ComponentChangeEntry withChangeType(@Nullable ChangeType changeType) {
+            return new ComponentChangeEntry(componentType(), changeType, value());
+        }
+
+        public ComponentChangeEntry withValue(@Nullable String value) {
+            return new ComponentChangeEntry(componentType(), changeType(), value);
+        }
+
         public void validate() throws InvalidConfigurationException {
             if (componentType == null || !BuiltInRegistries.DATA_COMPONENT_TYPE.containsKey(componentType)) {
                 throw new InvalidConfigurationException("Unknown component id");
