@@ -179,7 +179,16 @@ public final class YACLConfigurationScreenBuilder {
                 customProfileSelector.requestSet(opt.pendingValue().id().toString());
             }
         });
-        return category.build();
+        return category
+                .option(Option.<Boolean>createBuilder()
+                        .name(Component.translatable("option.combatedit.enable_sword_blocking"))
+                        .binding(
+                                DEFAULTS.isSwordBlockingEnabled(),
+                                settings::isSwordBlockingEnabled,
+                                settings::setEnableSwordBlocking
+                        ).controller(TickBoxControllerBuilder::create)
+                        .build())
+                .build();
     }
 
     private static ConfigCategory createClientCategory(Settings.ClientOnly clientOnly) {
