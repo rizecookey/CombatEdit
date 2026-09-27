@@ -22,7 +22,7 @@ public abstract class ServerGamePacketListenerImplMixin extends ServerCommonPack
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void decideOnPatching(MinecraftServer server, Connection connection, ServerPlayer player, CommonListenerCookie clientData, CallbackInfo ci) {
+    private void decideOnPatching(MinecraftServer server, Connection connection, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
         this.combatEdit$setAttributePatchingEnabled(shouldPatchAttributes());
     }
 

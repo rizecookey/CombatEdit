@@ -29,7 +29,7 @@ public class CombatEditClient extends CombatEdit {
     protected void onSettingsLoadError(InvalidConfigurationException exception) {
         LOGGER.error("Settings validation failed", exception);
         setCurrentSettings(Settings.loadDefault());
-        ClientLifecycleEvents.CLIENT_STARTED.register(client -> client.combatEdit$addInitScreen(onClose -> new InvalidConfigScreen(exception, onClose)));
+        ClientLifecycleEvents.CLIENT_STARTED.register(client -> client.gui.combatEdit$addInitScreen(onClose -> new InvalidConfigScreen(exception, onClose)));
     }
 
     @Override
@@ -53,8 +53,11 @@ public class CombatEditClient extends CombatEdit {
     }
 
     public static void sendErrorNotification(Minecraft client, String errorKey) {
-        SystemToast toast = SystemToast.multiline(client, SystemToast.SystemToastId.PACK_LOAD_FAILURE, Component.translatable("notification.combatedit.%s.title".formatted(errorKey)), Component.translatable("notification.combatedit.%s.description".formatted(errorKey)));
-        client.getToastManager().addToast(toast);
+        SystemToast toast = new SystemToast(
+                SystemToast.SystemToastId.PACK_LOAD_FAILURE,
+                Component.translatable("notification.combatedit.%s.title".formatted(errorKey)),
+                Component.translatable("notification.combatedit.%s.description".formatted(errorKey)));
+        client.gui.toastManager().addToast(toast);
     }
 
     public static CombatEditClient getInstance() {

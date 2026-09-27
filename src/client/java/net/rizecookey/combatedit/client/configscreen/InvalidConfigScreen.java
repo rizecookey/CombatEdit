@@ -44,9 +44,7 @@ public class InvalidConfigScreen extends WarningScreen {
                 })
                 .build());
         horizontalButtons.addChild(Button
-                .builder(CLOSE_GAME, button -> {
-                    minecraft.destroy();
-                })
+                .builder(CLOSE_GAME, _ -> minecraft.exitWorldAndClose())
                 .build());
 
 

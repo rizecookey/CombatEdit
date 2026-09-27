@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(ServerPlayer.class)
 public class ServerPlayerMixin {
-    @ModifyVariable(method = "sendSystemMessage(Lnet/minecraft/network/chat/Component;Z)V", at = @At("HEAD"), argsOnly = true, ordinal = 0)
-    private Component addFallback(Component value) {
-        return ComponentUtils.fallBackToServerTranslation(value);
+    @ModifyVariable(method = "sendSystemMessage(Lnet/minecraft/network/chat/Component;Z)V", at = @At("HEAD"), argsOnly = true, name = "message")
+    private Component addFallback(Component message) {
+        return ComponentUtils.fallBackToServerTranslation(message);
     }
 }

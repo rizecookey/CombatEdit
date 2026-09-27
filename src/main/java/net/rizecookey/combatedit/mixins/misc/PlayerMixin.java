@@ -20,10 +20,10 @@ public abstract class PlayerMixin extends Avatar implements LivingEntityExtensio
     }
 
     @ModifyVariable(method = "attack",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurtOrSimulate(Lnet/minecraft/world/damagesource/DamageSource;F)Z"), ordinal = 3)
-    public boolean checkIfSweepEnchant(boolean bl4) {
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;hurtOrSimulate(Lnet/minecraft/world/damagesource/DamageSource;F)Z"), name = "sweepAttack")
+    public boolean checkIfSweepEnchant(boolean sweepAttack) {
         if (level().isClientSide()) {
-            return bl4;
+            return sweepAttack;
         }
         Configuration.MiscOptions miscOptions = combatEdit$configurationManager().getConfiguration().getMiscOptions();
         var thisPlayer = (Player) (Object) this;
@@ -31,9 +31,9 @@ public abstract class PlayerMixin extends Avatar implements LivingEntityExtensio
                 .get(Enchantments.SWEEPING_EDGE.identifier()).orElseThrow();
         if (EnchantmentHelper.getEnchantmentLevel(sweepingRegistryEntry, thisPlayer) == 0
                 && miscOptions.isSweepingWithoutEnchantmentDisabled().orElse(false)) {
-            bl4 = false;
+            sweepAttack = false;
         }
-        return bl4;
+        return sweepAttack;
     }
 
 }

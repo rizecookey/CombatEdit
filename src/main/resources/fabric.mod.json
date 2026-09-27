@@ -53,14 +53,14 @@
       "net/minecraft/server/network/ServerCommonPacketListenerImpl": ["net/rizecookey/combatedit/extension/ServerCommonPacketListenerImplExtension"],
       "net/minecraft/world/inventory/RemoteSlot": ["net/rizecookey/combatedit/extension/RemoteSlotExtension"],
       "net/minecraft/network/chat/contents/TranslatableContents": ["net/rizecookey/combatedit/extension/TranslatableContentsExtension"],
-      "net/minecraft/client/Minecraft": ["net/rizecookey/combatedit/client/extension/MinecraftExtension"],
+      "net/minecraft/client/gui/Gui": ["net/rizecookey/combatedit/client/extension/GuiExtension"],
       "net/minecraft/core/component/DataComponentMap\u0024Builder": ["net/rizecookey/combatedit/extension/DataComponentMapBuilderExtension"]
     }
   },
 
   "depends": {
     "fabricloader": ">=0.18.5",
-    "minecraft": ">=26.1 <26.2",
+    "minecraft": ">=26.2 <26.3",
     "java": ">=25"
   }
 }

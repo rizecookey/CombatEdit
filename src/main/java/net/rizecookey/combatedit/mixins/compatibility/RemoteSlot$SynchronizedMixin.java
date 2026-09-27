@@ -26,13 +26,13 @@ public abstract class RemoteSlot$SynchronizedMixin implements RemoteSlotExtensio
     }
 
     @ModifyExpressionValue(method = "matches", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/HashedStack;matches(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/network/HashedPatchMap$HashGenerator;)Z"))
-    public boolean compareHashWithDisplayModified(boolean value, ItemStack actualStack) {
+    public boolean compareHashWithDisplayModified(boolean value, ItemStack local) {
         if (!compareWithDisplayModified) {
             return value;
         }
 
-        ItemStack displayModified = ConfigurationManager.getInstance().getAttributeHelper().getDisplayModified(actualStack);
-        if (displayModified == actualStack) {
+        ItemStack displayModified = ConfigurationManager.getInstance().getAttributeHelper().getDisplayModified(local);
+        if (displayModified == local) {
             return value;
         }
 

@@ -27,7 +27,7 @@ public class DefaultAttributesMixin {
     }
 
     @ModifyReturnValue(method = "getSupplier", at = @At("RETURN"))
-    private static AttributeSupplier useDynamic(AttributeSupplier defaultAttributeContainer, @Local(argsOnly = true) EntityType<? extends LivingEntity> type) {
+    private static AttributeSupplier useDynamic(AttributeSupplier defaultAttributeContainer, @Local(argsOnly = true, name = "type") EntityType<? extends LivingEntity> type) {
         return DYNAMIC_DEFAULT_ATTRIBUTE_REGISTRY.computeIfAbsent(type, key -> new DynamicAttributeSupplier(defaultAttributeContainer));
     }
 }

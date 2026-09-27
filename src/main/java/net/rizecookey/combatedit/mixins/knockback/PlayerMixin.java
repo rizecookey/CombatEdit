@@ -1,5 +1,6 @@
 package net.rizecookey.combatedit.mixins.knockback;
 
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,14 +35,14 @@ public abstract class PlayerMixin extends Avatar {
         configurationProvider = ConfigurationManager.getInstance();
     }
 
-    @Redirect(method = "causeExtraKnockback", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"))
-    public void handleTakeKnockback(LivingEntity livingEntity, double speed, double xMovement, double zMovement) {
+    @Redirect(method = "causeExtraKnockback", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDDLnet/minecraft/world/damagesource/DamageSource;FZ)V"))
+    public void handleTakeKnockback(LivingEntity instance, double power, double xd, double zd, DamageSource source, float damage, boolean comesFromEffect) {
         if (level().isClientSide() || !configurationProvider.getConfiguration().getMiscOptions().is1_8KnockbackEnabled().orElse(false)) {
-            livingEntity.knockback(speed, xMovement, zMovement);
+            instance.knockback(power, xd, zd, source, damage, comesFromEffect);
             return;
         }
 
-        speed = (float) (speed * (1.0D - Objects.requireNonNull(livingEntity.getAttribute(Attributes.KNOCKBACK_RESISTANCE)).getValue()));
-        livingEntity.push(-(xMovement * speed), 0.1D, -(zMovement * speed));
+        power = (float) (power * (1.0D - Objects.requireNonNull(instance.getAttribute(Attributes.KNOCKBACK_RESISTANCE)).getValue()));
+        instance.push(-(xd * power), 0.1D, -(zd * power));
     }
 }

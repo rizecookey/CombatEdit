@@ -20,12 +20,12 @@ public abstract class ServerboundContainerClickPacketMixin {
     @Shadow @Final private Int2ObjectMap<HashedStack> changedSlots;
 
     @Inject(method = "handle(Lnet/minecraft/network/protocol/game/ServerGamePacketListener;)V", at = @At("HEAD"))
-    public void preApply(ServerGamePacketListener serverPlayPacketListener, CallbackInfo ci) {
-        if (!(serverPlayPacketListener instanceof ServerGamePacketListenerImpl networkHandler)) {
+    public void preApply(ServerGamePacketListener listener, CallbackInfo ci) {
+        if (!(listener instanceof ServerGamePacketListenerImpl networkHandler)) {
             return;
         }
 
-        var handlerExt = (ServerCommonPacketListenerImplExtension) serverPlayPacketListener;
+        var handlerExt = (ServerCommonPacketListenerImplExtension) listener;
         if (!handlerExt.combatEdit$isAttributePatchingEnabled()) {
             return;
         }
@@ -39,8 +39,8 @@ public abstract class ServerboundContainerClickPacketMixin {
     }
 
     @Inject(method = "handle(Lnet/minecraft/network/protocol/game/ServerGamePacketListener;)V", at = @At("RETURN"))
-    public void postApply(ServerGamePacketListener serverPlayPacketListener, CallbackInfo ci) {
-        if (!(serverPlayPacketListener instanceof ServerGamePacketListenerImpl networkHandler)) {
+    public void postApply(ServerGamePacketListener listener, CallbackInfo ci) {
+        if (!(listener instanceof ServerGamePacketListenerImpl networkHandler)) {
             return;
         }
 

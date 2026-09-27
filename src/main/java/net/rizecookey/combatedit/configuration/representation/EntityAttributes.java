@@ -2,7 +2,7 @@ package net.rizecookey.combatedit.configuration.representation;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 
 import java.util.ArrayList;
@@ -96,7 +96,7 @@ public class EntityAttributes {
     }
 
     public static EntityAttributes getDefault() {
-        return new EntityAttributes(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.CREEPER), new ArrayList<>(), false);
+        return new EntityAttributes(BuiltInRegistries.ENTITY_TYPE.getKey(EntityTypes.CREEPER), new ArrayList<>(), false);
     }
 
     public record AttributeBaseValue(Identifier attribute, double baseValue) {

@@ -17,30 +17,30 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(Player.class)
 public abstract class PlayerMixin extends Avatar implements LivingEntityExtension {
     @Shadow
-    protected abstract void playServerSideSound(SoundEvent par1);
+    protected abstract void playServerSideSound(SoundEvent sound);
 
     protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level world) {
         super(entityType, world);
     }
 
     @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;playServerSideSound(Lnet/minecraft/sounds/SoundEvent;)V"))
-    public void disableAttackSounds(Player instance, SoundEvent soundEvent) {
-        if (level().isClientSide() || shouldPlayAttackSound(soundEvent)) {
-            playServerSideSound(soundEvent);
+    public void disableAttackSounds(Player instance, SoundEvent sound) {
+        if (level().isClientSide() || shouldPlayAttackSound(sound)) {
+            playServerSideSound(sound);
         }
     }
 
     @Redirect(method = "doSweepAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;playServerSideSound(Lnet/minecraft/sounds/SoundEvent;)V"))
-    public void disableSweepAttackSounds(Player instance, SoundEvent soundEvent) {
-        if (level().isClientSide() || shouldPlayAttackSound(soundEvent)) {
-            playServerSideSound(soundEvent);
+    public void disableSweepAttackSounds(Player instance, SoundEvent sound) {
+        if (level().isClientSide() || shouldPlayAttackSound(sound)) {
+            playServerSideSound(sound);
         }
     }
 
     @Redirect(method = "attackVisualEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;playServerSideSound(Lnet/minecraft/sounds/SoundEvent;)V"))
-    public void disableSpecialAttackSounds(Player instance, SoundEvent soundEvent) {
-        if (level().isClientSide() || shouldPlayAttackSound(soundEvent)) {
-            playServerSideSound(soundEvent);
+    public void disableSpecialAttackSounds(Player instance, SoundEvent sound) {
+        if (level().isClientSide() || shouldPlayAttackSound(sound)) {
+            playServerSideSound(sound);
         }
     }
 

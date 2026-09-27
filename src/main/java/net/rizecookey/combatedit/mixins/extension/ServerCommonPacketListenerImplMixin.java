@@ -22,12 +22,12 @@ public abstract class ServerCommonPacketListenerImplMixin implements ServerCommo
     private boolean shouldPatchAttributes;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void disableAttributePatchingByDefault(MinecraftServer server, Connection connection, CommonListenerCookie clientData, CallbackInfo ci) {
+    private void disableAttributePatchingByDefault(MinecraftServer server, Connection connection, CommonListenerCookie cookie, CallbackInfo ci) {
         shouldPatchAttributes = false;
     }
 
     @Inject(method = "send(Lnet/minecraft/network/protocol/Packet;Lio/netty/channel/ChannelFutureListener;)V", at = @At("HEAD"))
-    private void potentiallyPatchPacket(Packet<?> packet, @Nullable ChannelFutureListener channelFutureListener, CallbackInfo ci) {
+    private void potentiallyPatchPacket(Packet<?> packet, @Nullable ChannelFutureListener listener, CallbackInfo ci) {
         if (!((ServerCommonPacketListenerImpl) (Object) this instanceof ServerGamePacketListenerImpl handler)) {
             return;
         }

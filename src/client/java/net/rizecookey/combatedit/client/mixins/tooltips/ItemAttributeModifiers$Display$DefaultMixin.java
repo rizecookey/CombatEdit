@@ -13,14 +13,14 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ItemAttributeModifiers.Display.Default.class)
 public abstract class ItemAttributeModifiers$Display$DefaultMixin {
     @ModifyExpressionValue(method = "apply", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/attributes/AttributeModifier;is(Lnet/minecraft/resources/Identifier;)Z", ordinal = 0))
-    private boolean enableOrDisableGreenTooltipForAttackDamage(boolean original, @Local(argsOnly = true) AttributeModifier modifier) {
+    private boolean enableOrDisableGreenTooltipForAttackDamage(boolean original, @Local(argsOnly = true, name = "modifier") AttributeModifier modifier) {
         Settings settings = CombatEdit.getInstance().getCurrentSettings();
 
         return !settings.getClientOnly().shouldDisableNewTooltips() && (original || modifier.is(ReservedIdentifiers.ATTACK_DAMAGE_MODIFIER_ID_ALT));
     }
 
     @ModifyExpressionValue(method = "apply", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/attributes/AttributeModifier;is(Lnet/minecraft/resources/Identifier;)Z", ordinal = 1))
-    private boolean enableOrDisableGreenTooltipForAttackSpeed(boolean original, @Local(argsOnly = true) AttributeModifier modifier) {
+    private boolean enableOrDisableGreenTooltipForAttackSpeed(boolean original, @Local(argsOnly = true, name = "modifier") AttributeModifier modifier) {
         Settings settings = CombatEdit.getInstance().getCurrentSettings();
 
         return !settings.getClientOnly().shouldDisableNewTooltips() && (original || modifier.is(ReservedIdentifiers.ATTACK_SPEED_MODIFIER_ID_ALT));

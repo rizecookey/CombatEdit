@@ -27,20 +27,20 @@ public abstract class ServerboundSetCreativeModeSlotPacketMixin implements Serve
     private boolean hadPacketModification;
 
     @Inject(method = "handle(Lnet/minecraft/network/protocol/game/ServerGamePacketListener;)V", at = @At("HEAD"))
-    public void preApply(ServerGamePacketListener serverPlayPacketListener, CallbackInfo ci) {
+    public void preApply(ServerGamePacketListener listener, CallbackInfo ci) {
         var unmodifiedStack = ConfigurationManager.getInstance().getAttributeHelper().reverseDisplayModifiers(this.itemStack);
         this.hadPacketModification = unmodifiedStack != this.itemStack;
         this.itemStack = unmodifiedStack;
     }
 
     @Inject(method = "handle(Lnet/minecraft/network/protocol/game/ServerGamePacketListener;)V", at = @At("TAIL"))
-    public void postApply(ServerGamePacketListener serverPlayPacketListener, CallbackInfo ci) {
+    public void postApply(ServerGamePacketListener listener, CallbackInfo ci) {
         if (hadPacketModification || slotNum < 1 || slotNum > 45) {
             return;
         }
 
         ItemStack displayModified = ConfigurationManager.getInstance().getAttributeHelper().getDisplayModified(this.itemStack);
-        if (displayModified == itemStack || !(serverPlayPacketListener instanceof ServerGamePacketListenerImpl networkHandler)) {
+        if (displayModified == itemStack || !(listener instanceof ServerGamePacketListenerImpl networkHandler)) {
             return;
         }
 

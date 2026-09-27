@@ -9,6 +9,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.level.Level;
 import net.rizecookey.combatedit.extension.AttributeMapExtension;
 import net.rizecookey.combatedit.extension.LivingEntityExtension;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,7 +30,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityEx
 
     @ModifyArg(method = "readAdditionalSaveData", slice = @Slice(
             from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;internalSetAbsorptionAmount(F)V"),
-            to = @At(value = "FIELD", target = "Lnet/minecraft/world/effect/MobEffectInstance;CODEC:Lcom/mojang/serialization/Codec;")),
+            to = @At(value = "FIELD", target = "Lnet/minecraft/world/effect/MobEffectInstance;CODEC:Lcom/mojang/serialization/Codec;", opcode = Opcodes.GETSTATIC)),
             at = @At(value = "INVOKE", target = "Ljava/util/Optional;ifPresent(Ljava/util/function/Consumer;)V", ordinal = 0), index = 0)
     public Consumer<? super List<AttributeInstance.Packed>> useNewDefaults(Consumer<? super List<AttributeInstance.Packed>> action) {
         return list -> {

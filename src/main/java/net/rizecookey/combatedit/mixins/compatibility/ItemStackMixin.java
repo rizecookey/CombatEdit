@@ -19,7 +19,7 @@ import java.util.Objects;
 public abstract class ItemStackMixin implements ItemStackExtension {
     @Mutable
     @Shadow @Final
-    PatchedDataComponentMap components;
+    private PatchedDataComponentMap components;
 
     @Shadow public abstract Item getItem();
 

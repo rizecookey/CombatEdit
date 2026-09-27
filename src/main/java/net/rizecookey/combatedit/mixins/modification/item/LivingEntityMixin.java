@@ -43,8 +43,8 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityEx
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void initializeFields(EntityType<? extends LivingEntity> entityType, Level world, CallbackInfo ci) {
-        if (world.isClientSide()) {
+    private void initializeFields(EntityType<? extends LivingEntity> type, Level level, CallbackInfo ci) {
+        if (level.isClientSide()) {
             return;
         }
         lastKnownReload = combatEdit$configurationManager().getLastAttributeReload();
@@ -69,7 +69,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityEx
         EnchantmentHelper.stopLocationBasedEffects(((LivingEntity) (Object) this));
     }
 
-    @ModifyVariable(method = "collectEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;"), ordinal = 0)
+    @ModifyVariable(method = "collectEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;"), name = "previous")
     private ItemStack useEmptyStackToForceModifierReload(ItemStack previous) {
         return lastKnownReload < combatEdit$configurationManager().getLastAttributeReload() ? ItemStack.EMPTY : previous;
     }

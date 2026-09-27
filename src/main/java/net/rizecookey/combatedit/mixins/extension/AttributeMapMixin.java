@@ -27,15 +27,15 @@ import java.util.stream.Stream;
 public abstract class AttributeMapMixin implements AttributeMapExtension {
     @Shadow @Final private Map<Holder<Attribute>, AttributeInstance> attributes;
 
-    @Shadow protected abstract void onAttributeModified(AttributeInstance instance);
+    @Shadow protected abstract void onAttributeModified(AttributeInstance attributeInstance);
 
     @Shadow @Final private AttributeSupplier supplier;
     @Unique
     private boolean combatEdit$sendAllAttributes;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void setSendAllAttributes(AttributeSupplier defaultAttributes, CallbackInfo ci) {
-        combatEdit$sendAllAttributes = defaultAttributes.combatEdit$sendAllAttributes();
+    private void setSendAllAttributes(AttributeSupplier supplier, CallbackInfo ci) {
+        combatEdit$sendAllAttributes = supplier.combatEdit$sendAllAttributes();
     }
 
     @Inject(method = "getAttributesToSync", at = @At("HEAD"))

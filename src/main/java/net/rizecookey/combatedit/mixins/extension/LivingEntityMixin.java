@@ -17,7 +17,7 @@ public class LivingEntityMixin implements LivingEntityExtension {
     private ConfigurationManager configurationManager;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void initConfigurationManagerReference(EntityType<? extends LivingEntity> entityType, Level world, CallbackInfo ci) {
+    private void initConfigurationManagerReference(EntityType<? extends LivingEntity> type, Level level, CallbackInfo ci) {
         configurationManager = ConfigurationManager.getInstance();
     }
 

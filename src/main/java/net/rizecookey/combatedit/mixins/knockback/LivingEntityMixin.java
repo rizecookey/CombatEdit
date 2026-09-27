@@ -24,17 +24,17 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void initCombatEditReference(EntityType<? extends LivingEntity> entityType, Level world, CallbackInfo ci) {
+    private void initCombatEditReference(EntityType<? extends LivingEntity> type, Level level, CallbackInfo ci) {
         configurationProvider = ConfigurationManager.getInstance();
     }
 
-    @ModifyArg(method = "knockback", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;setDeltaMovement(DDD)V"), index = 1)
-    public double changeKnockbackY(double y, @Local(ordinal = 0, argsOnly = true) double strength, @Local(ordinal = 0) Vec3 vec3d) {
+    @ModifyArg(method = "knockback(DDDLnet/minecraft/world/damagesource/DamageSource;FZ)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;setDeltaMovement(DDD)V"), index = 1)
+    public double changeKnockbackY(double y, @Local(argsOnly = true, name = "power") double power, @Local(name = "deltaMovement") Vec3 deltaMovement) {
         if (level().isClientSide() || !configurationProvider.getConfiguration().getMiscOptions().is1_8KnockbackEnabled().orElse(false)) {
             return y;
         }
 
-        y = vec3d.y / 2.0 + strength;
-        return vec3d.y > 0.4D ? 0.4D : y;
+        y = deltaMovement.y / 2.0 + power;
+        return deltaMovement.y > 0.4D ? 0.4D : y;
     }
 }
