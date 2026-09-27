@@ -142,6 +142,10 @@ public class ItemComponents {
                 return; // value irrelevant
             }
 
+            if (type == DataComponents.ATTRIBUTE_MODIFIERS) {
+                throw new InvalidConfigurationException("Attribute modifiers should be changed using attribute modifier entries");
+            }
+
             Tag element;
             try {
                 element = TAG_PARSER.parseFully(value());

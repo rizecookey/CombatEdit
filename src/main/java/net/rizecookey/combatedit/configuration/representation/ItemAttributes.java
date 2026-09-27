@@ -8,6 +8,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
+import net.rizecookey.combatedit.utils.ReservedIdentifiers;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -129,6 +130,14 @@ public class ItemAttributes {
             return new ModifierEntry(BuiltInRegistries.ATTRIBUTE.getKey(Attributes.ATTACK_DAMAGE.value()), Item.BASE_ATTACK_DAMAGE_ID, 1, AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.MAINHAND);
         }
 
+        public void validateModifierId() throws InvalidConfigurationException {
+            if (modifierId() == null || !modifierId().getNamespace().equals(ReservedIdentifiers.RESERVED_NAMESPACE)) {
+                return;
+            }
+
+            throw new InvalidConfigurationException("Cannot use reserved namespace " + ReservedIdentifiers.RESERVED_NAMESPACE);
+        }
+
         public void validate() throws InvalidConfigurationException {
             if (attribute == null || !BuiltInRegistries.ATTRIBUTE.containsKey(attribute)) {
                 throw new InvalidConfigurationException("No attribute with id %s found".formatted(attribute));
@@ -141,6 +150,8 @@ public class ItemAttributes {
             if (slot == null) {
                 throw new InvalidConfigurationException("No slot has been specified for this modifier");
             }
+
+            validateModifierId();
         }
     }
 

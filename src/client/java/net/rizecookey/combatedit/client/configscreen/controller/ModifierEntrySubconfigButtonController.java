@@ -3,6 +3,7 @@ package net.rizecookey.combatedit.client.configscreen.controller;
 import dev.isxander.yacl3.api.Binding;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.DoubleFieldControllerBuilder;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
@@ -13,11 +14,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.rizecookey.combatedit.configuration.exception.InvalidConfigurationException;
 import net.rizecookey.combatedit.configuration.representation.ItemAttributes;
-import net.rizecookey.combatedit.utils.ReservedIdentifiers;
 import net.rizecookey.yacl3.extension.api.DropdownIdentifierControllerFactory;
 import net.rizecookey.yacl3.extension.gui.controllers.IdentifierController;
 import net.rizecookey.yacl3.extension.gui.controllers.SubconfigButtonController;
+import net.rizecookey.yacl3.extension.gui.controllers.ValidatedController;
 import org.jspecify.annotations.Nullable;
 
 public class ModifierEntrySubconfigButtonController extends SubconfigButtonController<ItemAttributes.ModifierEntry> {
@@ -49,18 +51,21 @@ public class ModifierEntrySubconfigButtonController extends SubconfigButtonContr
                                 .build())
                         .option(Option.<String>createBuilder()
                                 .name(Component.translatable("option.combatedit.item.item_attributes.modifier_entry.modifier_id"))
+                                .description(OptionDescription.of(Component.translatable("option.combatedit.item.item_attributes.modifier_entry.modifier_id.tooltip")))
                                 .binding(
                                         nullableIdentifierToString(DEFAULT.modifierId()),
                                         () -> nullableIdentifierToString(option().pendingValue().modifierId()),
                                         value -> {
-                                            Identifier id = value.isEmpty() ? null : Identifier.parse(value);
-                                            if (id != null && id.getNamespace().equals(ReservedIdentifiers.RESERVED_NAMESPACE)) {
+                                            Identifier id = stringToNullableIdentifier(value);
+                                            if (!validateModifierId(id)) {
                                                 return;
                                             }
+
                                             option().requestSet(option().pendingValue().withModifierId(id));
                                         }
                                 )
-                                .customController(IdentifierController::new) // TODO formatting for invalid values
+                                .customController(opt -> new ValidatedController<>(new IdentifierController(opt),
+                                        value -> validateModifierId(stringToNullableIdentifier(value))))
                                 .build())
                         .option(Option.<Double>createBuilder()
                                 .name(Component.translatable("option.combatedit.item.item_attributes.modifier_entry.value"))
@@ -94,6 +99,21 @@ public class ModifierEntrySubconfigButtonController extends SubconfigButtonContr
                                 .build())
                         .build())
                 .build().generateScreen(previousScreen);
+    }
+
+    private boolean validateModifierId(Identifier modifierId) {
+        ItemAttributes.ModifierEntry newValue = option().pendingValue().withModifierId(modifierId);
+        try {
+            newValue.validateModifierId();
+        } catch (InvalidConfigurationException e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static @Nullable Identifier stringToNullableIdentifier(String value) {
+        return value.isEmpty() ? null : Identifier.parse(value);
     }
 
     private static String nullableIdentifierToString(@Nullable Identifier identifier) {
