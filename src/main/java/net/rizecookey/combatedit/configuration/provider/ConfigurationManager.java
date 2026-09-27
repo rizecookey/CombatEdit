@@ -62,12 +62,13 @@ public class ConfigurationManager extends SimpleReloadListener<ConfigurationMana
     @Override
     protected LoadResult prepare(SharedState store) {
         ResourceManager manager = store.resourceManager();
-        var settings = loadSettings(combatEdit);
+        var settings = loadSettings(combatEdit).copy();
         var baseProfiles = loadBaseProfiles(manager);
         Identifier selectedProfile = settings.getSelectedBaseProfile();
         if (!baseProfiles.containsKey(selectedProfile)) {
             LOGGER.error("No base profile with id {} found! Using default profile.", settings.getSelectedBaseProfile());
             selectedProfile = Settings.loadDefault().getSelectedBaseProfile();
+            settings.setSelectedBaseProfile(selectedProfile);
             if (!baseProfiles.containsKey(selectedProfile)) {
                 LOGGER.error("Failed to load CombatEdit configuration resources: Default base profile does not exist");
                 return null;
