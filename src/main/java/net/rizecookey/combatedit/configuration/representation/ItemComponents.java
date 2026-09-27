@@ -110,7 +110,9 @@ public class ItemComponents {
      * @param value the value to use for this component, or an empty string if the component type has no values or the component is to be removed
      */
     public record ComponentChangeEntry(Identifier componentType, ChangeType changeType, String value) {
-        private static final DynamicOps<Tag> TAG_OPS = VanillaRegistries.createLookup().createSerializationContext(NbtOps.INSTANCE);
+        private static final DynamicOps<Tag> TAG_OPS = VanillaRegistries
+                .createReloadableLookup(VanillaRegistries.createWorldLookup())
+                .createSerializationContext(NbtOps.INSTANCE);
         private static final TagParser<Tag> TAG_PARSER = TagParser.create(TAG_OPS);
 
         public ComponentChangeEntry(Identifier componentType, @Nullable ChangeType changeType, @Nullable String value) {
