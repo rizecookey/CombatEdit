@@ -60,23 +60,30 @@ public class ItemModificationMap implements ItemModificationProvider {
     public static ItemModificationMap fromConfiguration(List<ItemAttributes> itemAttributes, List<ItemComponents> itemComponents, DefaultsSupplier.Items itemDefaultsSupplier, RegistryAccess regAccess) {
         Map<Item, ItemAttributeModifiers> attributeModifiers = new HashMap<>();
         Map<Item, DataComponentMap> componentMap = new HashMap<>();
-        Function<Item, ItemAttributeModifiers> defaultProvider = item -> {
+        Function<Item, ItemAttributeModifiers> defaultModifierProvider = item -> {
             if (attributeModifiers.containsKey(item)) {
                 return attributeModifiers.get(item);
             } else {
                 return itemDefaultsSupplier.getVanillaAttributeModifiers(item);
             }
         };
+        Function<Item, DataComponentMap> defaultComponentProvider = item -> {
+            if (componentMap.containsKey(item)) {
+                return componentMap.get(item);
+            } else {
+                return itemDefaultsSupplier.getVanillaComponents(item);
+            }
+        };
 
         for (var attribute : itemAttributes) {
-            var result = fromConfigurationEntry(attribute, defaultProvider);
+            var result = fromConfigurationEntry(attribute, defaultModifierProvider);
             if (result != null) {
                 attributeModifiers.put(result.getKey(), result.getValue());
             }
         }
 
         for (var components : itemComponents) {
-            var result = fromConfigurationEntry(components, itemDefaultsSupplier::getVanillaComponents, regAccess);
+            var result = fromConfigurationEntry(components, defaultComponentProvider, regAccess);
             if (result != null) {
                 componentMap.put(result.getKey(), result.getValue());
             }
