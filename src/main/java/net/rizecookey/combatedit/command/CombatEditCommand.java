@@ -12,10 +12,14 @@ import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.IdentifierArgument;
+import net.minecraft.commands.suggestions.SuggestionContext;
+import net.minecraft.commands.suggestions.SuggestionProviders;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.permissions.PermissionCheck;
+import net.minecraft.server.permissions.PermissionProviderCheck;
 import net.minecraft.server.permissions.Permissions;
 import net.rizecookey.combatedit.CombatEdit;
 import net.rizecookey.combatedit.configuration.BaseProfile;
@@ -40,7 +44,7 @@ public class CombatEditCommand implements CommandRegistrationCallback {
             id -> ComponentUtils.fallBackToServerTranslation(Component.translatable("command.combatedit.profile.set.error.already_enabled", id.toString()))
     );
     private static final DynamicCommandExceptionType FAILED_TO_SAVE = new DynamicCommandExceptionType(
-            none -> ComponentUtils.fallBackToServerTranslation(Component.translatable("command.combatedit.profile.set.error.settings_save_failed"))
+            _ -> ComponentUtils.fallBackToServerTranslation(Component.translatable("command.combatedit.profile.set.error.settings_save_failed"))
     );
 
     private final CombatEdit combatEdit;
@@ -54,7 +58,7 @@ public class CombatEditCommand implements CommandRegistrationCallback {
     @Override
     public void register(CommandDispatcher<CommandSourceStack> dispatcher, @NonNull CommandBuildContext registryAccess, Commands.@NonNull CommandSelection environment) {
         dispatcher.register(literal("combatedit")
-                .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
+                .requires(new PermissionProviderCheck<>(new PermissionCheck.Require(Permissions.COMMANDS_GAMEMASTER)))
                 .then(literal("profile")
                         .then(literal("list")
                                 .executes(this::executeList))
@@ -62,7 +66,7 @@ public class CombatEditCommand implements CommandRegistrationCallback {
                                 .executes(this::executeGet))
                         .then(literal("set")
                                 .then(argument("profile", IdentifierArgument.id())
-                                        .suggests(this::provideSuggestions)
+                                        .suggests(SuggestionProviders.serverOnly(this::provideSuggestions))
                                         .executes(this::executeSet)))));
     }
 
@@ -83,10 +87,11 @@ public class CombatEditCommand implements CommandRegistrationCallback {
         return 1;
     }
 
-    private CompletableFuture<Suggestions> provideSuggestions(CommandContext<CommandSourceStack> ctx, SuggestionsBuilder builder) {
+    private CompletableFuture<Suggestions> provideSuggestions(MinecraftServer server, CommandContext<? extends SuggestionContext> ctx, SuggestionsBuilder builder) {
         Set<Identifier> validIds = configurationManager.getBaseProfiles().keySet();
         validIds.stream()
-                .filter(id -> id.toString().startsWith(builder.getRemaining()) || (id.getNamespace().equals("minecraft") && id.getPath().startsWith(builder.getRemaining())))
+                .filter(id -> id.toString().startsWith(builder.getRemaining())
+                        || (id.getNamespace().equals("minecraft") && id.getPath().startsWith(builder.getRemaining())))
                 .forEach(id -> builder.suggest(id.toString()));
 
         return builder.buildFuture();
